@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ARoundMeNow</string>
+    <string name="places">Places</string>
+    <string name="pois">POIs</string>
+</resources>
