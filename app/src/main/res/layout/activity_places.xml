@@ -23,7 +23,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/places_bottom_navigation_view"/>
 
-        <android.support.design.widget.BottomNavigationView
+        <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/places_bottom_navigation_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
