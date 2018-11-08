@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class RxViewModel<State>(initialState: State) : ViewModel() {
+abstract class RxViewModel<State>(val initialState: State) : ViewModel() {
     val state = BehaviorRelay.createDefault(initialState)!!
 
     val disposables = CompositeDisposable()
