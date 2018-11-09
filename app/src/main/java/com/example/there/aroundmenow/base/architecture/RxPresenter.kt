@@ -5,6 +5,8 @@ import com.example.there.aroundmenow.util.ext.disposeWith
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Action
+import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 
@@ -202,31 +204,37 @@ abstract class RxPresenter<State, VM : RxViewModel<State>> {
     ): Completable = execute().subscribeOn(scheduler)
 
     protected fun <TaskReturn> Observable<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
-        mapTaskReturnToState: (State, TaskReturn) -> State
+        mapTaskReturnToState: (State, TaskReturn) -> State,
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
         .zipWith(viewModel.state)
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
-        .subscribe(viewModel.state)
+        .subscribe(viewModel.state, onError)
         .disposeWith(viewModel.disposables)
 
     protected fun <TaskReturn> Single<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
-        mapTaskReturnToState: (State, TaskReturn) -> State
+        mapTaskReturnToState: (State, TaskReturn) -> State,
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
         .zipWith(viewModel.state.single(viewModel.initialState))
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
-        .subscribe(viewModel.state)
+        .subscribe(viewModel.state, onError)
         .disposeWith(viewModel.disposables)
 
     protected fun <TaskReturn> Flowable<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,
-        backpressureStrategy: BackpressureStrategy
+        backpressureStrategy: BackpressureStrategy,
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
         .zipWith(viewModel.state.toFlowable(backpressureStrategy))
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
-        .subscribe(viewModel.state)
+        .subscribe(viewModel.state, onError)
         .disposeWith(viewModel.disposables)
 
-    protected fun Completable.subscribeAndDisposeWithViewModel() = observeOn(AndroidSchedulers.mainThread())
-        .subscribe()
+    protected fun Completable.subscribeAndDisposeWithViewModel(
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
+        onComplete: Action = RxHandlers.OnCompleteAction.empty
+    ) = observeOn(AndroidSchedulers.mainThread())
+        .subscribe(onComplete, onError)
         .disposeWith(viewModel.disposables)
 }

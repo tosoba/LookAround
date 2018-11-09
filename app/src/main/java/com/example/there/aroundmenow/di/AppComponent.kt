@@ -3,6 +3,7 @@ package com.example.there.aroundmenow.di
 import android.app.Application
 import com.example.there.aroundmenow.AroundMeNowApp
 import com.example.there.aroundmenow.di.module.AppModule
+import com.example.there.aroundmenow.di.module.PlacesActivityModule
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -10,7 +11,8 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        AppModule::class
+        AppModule::class,
+        PlacesActivityModule::class
     ]
 )
 interface AppComponent {
