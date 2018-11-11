@@ -28,5 +28,18 @@ class PlacesRepository @Inject constructor(
     override fun getNearbyPOIs(
         latitude: Double,
         longitude: Double
-    ): Single<NearbyPOIsData> = remote.getNearbyPOIs(latitude, longitude)
+    ): Single<NearbyPOIsData> = local.getLastNearbyPOIs(latitude, longitude).flatMap { localPOIs ->
+        when (localPOIs) {
+            is NearbyPOIsData.Success -> Single.just(localPOIs)
+            else -> remote.getNearbyPOIs(latitude, longitude).flatMap { remotePOIs ->
+                when (remotePOIs) {
+                    is NearbyPOIsData.Success -> Single.just(remotePOIs).flatMap { poisToSave ->
+                        local.saveNearbyPOIs(latitude, longitude, poisToSave.places)
+                            .andThen(Single.just(poisToSave))
+                    }
+                    else -> Single.just(remotePOIs)
+                }
+            }
+        }
+    }
 }

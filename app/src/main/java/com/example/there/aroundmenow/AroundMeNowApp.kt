@@ -3,6 +3,7 @@ package com.example.there.aroundmenow
 import android.app.Activity
 import android.app.Application
 import com.example.there.aroundmenow.di.AppInjector
+import com.pacoworks.rxpaper2.RxPaperBook
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -17,6 +18,8 @@ class AroundMeNowApp : Application(), HasActivityInjector {
 
     override fun onCreate() {
         super.onCreate()
+
         AppInjector.init(this)
+        RxPaperBook.init(this)
     }
 }

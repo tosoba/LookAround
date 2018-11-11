@@ -47,7 +47,7 @@ class RemotePlacesDataStore @Inject constructor(
     ): Single<NearbyPOIsData> = reverseGeocodeLocation(latitude, longitude).flatMap {
         when (it) {
             is ReverseGeocodingData.Success -> getPOIsNearbyAddress(it.address)
-            is ReverseGeocodingData.GeocodingError -> Single.just(NearbyPOIsData.ReverseGeocodingError(it.status))
+            is ReverseGeocodingData.GeocodingError -> Single.just(NearbyPOIsData.RemoteError.ReverseGeocodingError(it.status))
         }
     }
 
@@ -55,6 +55,6 @@ class RemotePlacesDataStore @Inject constructor(
         address: String
     ): Single<NearbyPOIsData> = Single.just(googlePlaces.getPlacesByQuery("$address points of interest")).map {
         if (it.isNotEmpty()) NearbyPOIsData.Success(it)
-        else NearbyPOIsData.NoResultsError
+        else NearbyPOIsData.RemoteError.NoResultsError
     }
 }

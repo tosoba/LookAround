@@ -7,6 +7,7 @@ import com.example.data.repo.datastore.RemotePlacesDataStore
 import com.example.domain.repo.IPlaceRepository
 import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
+import com.pacoworks.rxpaper2.RxPaperBook
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -14,6 +15,7 @@ import se.walkercrou.places.GooglePlaces
 
 @Module
 abstract class DataModule {
+
     @Binds
     abstract fun localPlacesDataStore(ds: LocalPlacesDataStore): ILocalPlacesDataStore
 
@@ -29,5 +31,9 @@ abstract class DataModule {
         @Provides
         @JvmStatic
         fun googlePlacesClient(): GooglePlaces = GooglePlaces(Keys.GOOGLE_PLACES)
+
+        @Provides
+        @JvmStatic
+        fun placesDatabase(): RxPaperBook = RxPaperBook.with("places")
     }
 }
