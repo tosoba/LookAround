@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.there.aroundmenow.R
 
 
-class PoisFragment : Fragment() {
+class POIsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
