@@ -2,4 +2,6 @@
     <string name="app_name">ARoundMeNow</string>
     <string name="places">Places</string>
     <string name="pois">POIs</string>
+    <string name="search_places">Search places…</string>
+    <string name="about">About</string>
 </resources>

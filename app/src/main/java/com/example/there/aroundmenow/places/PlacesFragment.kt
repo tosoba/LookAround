@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_places.*
 
 class PlacesFragment : Fragment() {
 
-    private val viewPagerItemIndexes = mapOf(R.id.navigation_place_types to 0, R.id.navigation_pois to 1)
+    private val viewPagerItemIndexes = mapOf(R.id.bottom_navigation_place_types_item to 0, R.id.bottom_navigation_pois_item to 1)
 
     private val viewPagerAdapter by lazy {
         FragmentViewPagerAdapter(
@@ -27,7 +27,12 @@ class PlacesFragment : Fragment() {
         )
     }
 
-    private val disposablesComponent = UiDisposablesComponent()
+    private val uiDisposables = UiDisposablesComponent()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(uiDisposables)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +53,7 @@ class PlacesFragment : Fragment() {
     }
 
     private fun bindBottomNavigationToViewPager() {
-        disposablesComponent += places_bottom_navigation_view.onItemWithIdSelected {
+        uiDisposables += places_bottom_navigation_view.onItemWithIdSelected {
             places_view_pager.currentItem = viewPagerItemIndexes[it]!!
         }
     }
