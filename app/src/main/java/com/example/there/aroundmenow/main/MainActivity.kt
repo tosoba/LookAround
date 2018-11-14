@@ -1,22 +1,29 @@
-package com.example.there.aroundmenow
+package com.example.there.aroundmenow.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.example.there.aroundmenow.R
+import com.example.there.aroundmenow.base.architecture.LayoutInitializer
+import com.example.there.aroundmenow.base.architecture.RxActivity
 import com.example.there.aroundmenow.places.PlacesFragment
 import com.example.there.aroundmenow.search.SearchFragment
 import com.example.there.aroundmenow.util.ext.onItemWithIdSelected
+import com.example.there.aroundmenow.util.ext.onTextChanged
 import com.example.there.aroundmenow.util.ext.toggle
-import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainViewModel::class.java) {
+
+    override val layoutInitializer: LayoutInitializer = object : LayoutInitializer.DefaultLayoutInitializer() {
+        override fun initializeLayout() = setContentView(R.layout.activity_main)
+    }
 
     private val currentlyShowingFragment: Fragment?
         get() = supportFragmentManager?.findFragmentById(backStackLayoutId)
@@ -38,13 +45,10 @@ class MainActivity : AppCompatActivity() {
         updateHomeAsUpIndicator()
     }
 
-    private val uiDisposables = UiDisposablesComponent()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
         showPlacesFragmentIfNotAlreadyShown()
-        lifecycle.addObserver(uiDisposables)
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -69,6 +73,10 @@ class MainActivity : AppCompatActivity() {
 
         val searchViewMenuItem = menu.findItem(R.id.search_places_toolbar_item)
         searchViewMenuItem.setOnActionExpandListener(onSearchViewActionExpandListener)
+        uiDisposables += (searchViewMenuItem.actionView as SearchView).onTextChanged {
+            presenter.updatePlacesQuery(it.toString())
+        }
+
         return true
     }
 
@@ -81,6 +89,8 @@ class MainActivity : AppCompatActivity() {
         }
         else -> false
     }
+
+    override fun observeState() = Unit
 
     fun showFragment(fragment: Fragment, addToBackStack: Boolean) = with(supportFragmentManager.beginTransaction()) {
         setCustomAnimations(

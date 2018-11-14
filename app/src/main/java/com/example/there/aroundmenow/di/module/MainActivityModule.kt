@@ -1,11 +1,11 @@
 package com.example.there.aroundmenow.di.module
 
-import com.example.there.aroundmenow.MainActivity
+import com.example.there.aroundmenow.main.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-abstract class PlacesActivityModule {
+abstract class MainActivityModule {
     @ContributesAndroidInjector
-    abstract fun placesActivity(): MainActivity
+    abstract fun mainActivity(): MainActivity
 }
