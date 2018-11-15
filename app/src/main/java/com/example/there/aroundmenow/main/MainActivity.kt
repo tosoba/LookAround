@@ -9,7 +9,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.there.aroundmenow.R
-import com.example.there.aroundmenow.base.architecture.LayoutInitializer
 import com.example.there.aroundmenow.base.architecture.RxActivity
 import com.example.there.aroundmenow.places.PlacesFragment
 import com.example.there.aroundmenow.search.SearchFragment
@@ -20,10 +19,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainViewModel::class.java) {
-
-    override val layoutInitializer: LayoutInitializer = object : LayoutInitializer.DefaultActivityLayoutInitializer() {
-        override fun initializeLayout() = setContentView(R.layout.activity_main)
-    }
 
     private val currentlyShowingFragment: Fragment?
         get() = supportFragmentManager?.findFragmentById(backStackLayoutId)
@@ -61,6 +56,8 @@ class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainVie
             drawer_layout.closeDrawers()
         }
     }
+
+    override fun initializeLayout() = setContentView(R.layout.activity_main)
 
     override fun onResume() {
         super.onResume()

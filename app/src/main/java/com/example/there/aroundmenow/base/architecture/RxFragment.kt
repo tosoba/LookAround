@@ -1,9 +1,7 @@
 package com.example.there.aroundmenow.base.architecture
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.there.aroundmenow.di.Injectable
@@ -16,8 +14,6 @@ abstract class RxFragment<ActivityState, State, VM, Presenter>(
     private val viewModelClass: Class<VM>,
     private val activityStateClass: Class<ActivityState>
 ) : Fragment(), Injectable where VM : RxViewModel<State>, Presenter : RxPresenter<State, VM> {
-
-    abstract val layoutInitializer: LayoutInitializer
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -47,22 +43,6 @@ abstract class RxFragment<ActivityState, State, VM, Presenter>(
         super.onCreate(savedInstanceState)
         presenter.viewModel = viewModel
         lifecycle.addObserver(uiDisposables)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val initializer = layoutInitializer
-        return when (initializer) {
-            is LayoutInitializer.DataBindingLayoutInitializer<*> -> {
-                val binding = initializer.initializeLayout()
-                binding.setLifecycleOwner(this)
-                binding.root
-            }
-            is LayoutInitializer.DefaultFragmentLayoutInitializer -> initializer.initializeLayout(
-                inflater,
-                container
-            )
-            else -> throw IllegalStateException("Could not initialize layout - invalid initializer.")
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -19,8 +19,6 @@ abstract class RxActivity<State, VM, Presenter>(
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
-    abstract val layoutInitializer: LayoutInitializer
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -51,17 +49,7 @@ abstract class RxActivity<State, VM, Presenter>(
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
 
-    private fun initializeLayout() {
-        val initializer = layoutInitializer
-        when (initializer) {
-            is LayoutInitializer.DataBindingLayoutInitializer<*> -> {
-                val binding = initializer.initializeLayout()
-                binding.setLifecycleOwner(this)
-            }
-            is LayoutInitializer.DefaultActivityLayoutInitializer -> initializer.initializeLayout()
-            else -> throw IllegalStateException("Could not initialize layout - invalid initializer.")
-        }
-    }
+    abstract fun initializeLayout()
 
     abstract fun observeState()
 }
