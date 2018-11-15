@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainViewModel::class.java) {
 
-    override val layoutInitializer: LayoutInitializer = object : LayoutInitializer.DefaultLayoutInitializer() {
+    override val layoutInitializer: LayoutInitializer = object : LayoutInitializer.DefaultActivityLayoutInitializer() {
         override fun initializeLayout() = setContentView(R.layout.activity_main)
     }
 

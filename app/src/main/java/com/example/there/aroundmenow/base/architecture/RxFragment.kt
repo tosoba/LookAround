@@ -1,23 +1,21 @@
 package com.example.there.aroundmenow.base.architecture
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import com.example.there.aroundmenow.di.Injectable
 import com.example.there.aroundmenow.di.vm.ViewModelFactory
 import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
 import io.reactivex.Observable
 import javax.inject.Inject
 
-abstract class RxActivity<State, VM, Presenter>(
-    private val viewModelClass: Class<VM>
-) : AppCompatActivity(), HasSupportFragmentInjector where VM : RxViewModel<State>, Presenter : RxPresenter<State, VM> {
-
-    @Inject
-    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+abstract class RxFragment<ActivityState, State, VM, Presenter>(
+    private val viewModelClass: Class<VM>,
+    private val activityStateClass: Class<ActivityState>
+) : Fragment(), Injectable where VM : RxViewModel<State>, Presenter : RxPresenter<State, VM> {
 
     abstract val layoutInitializer: LayoutInitializer
 
@@ -28,8 +26,17 @@ abstract class RxActivity<State, VM, Presenter>(
         ViewModelProviders.of(this, viewModelFactory).get(viewModelClass)
     }
 
-    val observableState: Observable<State>
+    protected val observableState: Observable<State>
         get() = viewModel.observableState
+
+    protected val observableActivityState: Observable<ActivityState>?
+        get() {
+            val hostActivity = activity
+            return if (hostActivity != null && hostActivity is RxActivity<*, *, *>) hostActivity.observableState.cast(
+                activityStateClass
+            )
+            else null
+        }
 
     @Inject
     lateinit var presenter: Presenter
@@ -38,29 +45,29 @@ abstract class RxActivity<State, VM, Presenter>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initializeLayout()
         presenter.viewModel = viewModel
         lifecycle.addObserver(uiDisposables)
-        observeState()
     }
 
-    override fun onDestroy() {
-        uiDisposables.clear()
-        super.onDestroy()
-    }
-
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
-
-    private fun initializeLayout() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val initializer = layoutInitializer
-        when (initializer) {
+        return when (initializer) {
             is LayoutInitializer.DataBindingLayoutInitializer<*> -> {
                 val binding = initializer.initializeLayout()
                 binding.setLifecycleOwner(this)
+                binding.root
             }
-            is LayoutInitializer.DefaultActivityLayoutInitializer -> initializer.initializeLayout()
+            is LayoutInitializer.DefaultFragmentLayoutInitializer -> initializer.initializeLayout(
+                inflater,
+                container
+            )
             else -> throw IllegalStateException("Could not initialize layout - invalid initializer.")
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeState()
     }
 
     abstract fun observeState()
