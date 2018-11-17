@@ -4,4 +4,5 @@
     <string name="pois">POIs</string>
     <string name="search_places">Search places…</string>
     <string name="about">About</string>
+    <string name="google_maps_key">AIzaSyBeKbXbGWzymX-tlL5GKMC9qD5Hirr7JqI</string>
 </resources>

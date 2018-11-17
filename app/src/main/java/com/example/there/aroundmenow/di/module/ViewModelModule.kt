@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.there.aroundmenow.di.vm.ViewModelFactory
 import com.example.there.aroundmenow.di.vm.ViewModelKey
 import com.example.there.aroundmenow.main.MainViewModel
+import com.example.there.aroundmenow.search.SearchViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -19,4 +20,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     abstract fun mainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchViewModel::class)
+    abstract fun searchViewModel(viewModel: SearchViewModel): ViewModel
 }

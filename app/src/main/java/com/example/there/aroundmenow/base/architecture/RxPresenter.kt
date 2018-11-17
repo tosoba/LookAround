@@ -55,7 +55,7 @@ abstract class RxPresenter<State, VM : RxViewModel<State>> {
         .subscribeOn(scheduler)
         .mapToInputAndExecuteTask(this, mapEventArgsToInput)
 
-    protected fun <EventArgs, TaskInput, TaskReturn> ObservableTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndExecuteEventArgs(
+    protected fun <EventArgs, TaskInput, TaskReturn> ObservableTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndWithExecuteEventArgs(
         disposable: Disposable,
         eventArgs: EventArgs,
         mapEventArgsToInput: (EventArgs) -> TaskInput,
@@ -74,7 +74,7 @@ abstract class RxPresenter<State, VM : RxViewModel<State>> {
         return executeWithState(mapStateToParams, scheduler)
     }
 
-    protected fun <EventArgs, TaskInput, TaskReturn> SingleTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndExecuteEventArgs(
+    protected fun <EventArgs, TaskInput, TaskReturn> SingleTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndWithExecuteEventArgs(
         disposable: Disposable,
         eventArgs: EventArgs,
         mapEventArgsToInput: (EventArgs) -> TaskInput,
@@ -93,7 +93,7 @@ abstract class RxPresenter<State, VM : RxViewModel<State>> {
         return executeWithState(mapStateToParams, scheduler)
     }
 
-    protected fun <EventArgs, TaskInput, TaskReturn> FlowableTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndExecuteEventArgs(
+    protected fun <EventArgs, TaskInput, TaskReturn> FlowableTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndWithExecuteEventArgs(
         disposable: Disposable,
         eventArgs: EventArgs,
         mapEventArgsToInput: (EventArgs) -> TaskInput,
@@ -112,7 +112,7 @@ abstract class RxPresenter<State, VM : RxViewModel<State>> {
         return executeWithState(mapStateToParams, scheduler)
     }
 
-    protected fun <EventArgs, TaskInput> CompletableTaskWithInput<TaskInput>.cancelUnfinishedAndExecuteEventArgs(
+    protected fun <EventArgs, TaskInput> CompletableTaskWithInput<TaskInput>.cancelUnfinishedAndWithExecuteEventArgs(
         disposable: Disposable,
         eventArgs: EventArgs,
         mapEventArgsToInput: (EventArgs) -> TaskInput,

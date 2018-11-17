@@ -10,6 +10,7 @@ import com.example.there.aroundmenow.di.module.view.MainActivityModule
 import com.example.there.aroundmenow.di.module.view.SearchFragmentModule
 import dagger.BindsInstance
 import dagger.Component
+import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton

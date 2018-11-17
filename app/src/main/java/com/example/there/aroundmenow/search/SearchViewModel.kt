@@ -6,4 +6,7 @@ import javax.inject.Inject
 
 class SearchViewModel @Inject constructor() : RxViewModel<SearchState>(SearchState.INITIAL) {
     lateinit var placesAutocompleteDisposable: Disposable
+
+    val isPlacesAutocompleteDisposableInitialized: Boolean
+        get() = ::placesAutocompleteDisposable.isInitialized
 }
