@@ -1,7 +1,6 @@
 package com.example.there.aroundmenow.base.architecture
 
 import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.there.aroundmenow.di.Injectable
@@ -45,8 +44,8 @@ abstract class RxFragment<ActivityState, State, VM, Presenter>(
         lifecycle.addObserver(uiDisposables)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         observeState()
     }
 

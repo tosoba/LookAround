@@ -1,6 +1,6 @@
 package com.example.domain.repo.model
 
-import se.walkercrou.places.Place
+import com.google.android.gms.location.places.Place
 
 sealed class NearbyPOIsData {
     class Success(val places: List<Place>) : NearbyPOIsData()

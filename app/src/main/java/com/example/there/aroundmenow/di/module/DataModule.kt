@@ -1,17 +1,18 @@
 package com.example.there.aroundmenow.di.module
 
-import com.example.data.Keys
+import android.content.Context
 import com.example.data.repo.PlacesRepository
 import com.example.data.repo.datastore.LocalPlacesDataStore
 import com.example.data.repo.datastore.RemotePlacesDataStore
 import com.example.domain.repo.IPlaceRepository
 import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
+import com.google.android.gms.location.places.GeoDataClient
+import com.google.android.gms.location.places.Places
 import com.pacoworks.rxpaper2.RxPaperBook
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import se.walkercrou.places.GooglePlaces
 
 @Module
 abstract class DataModule {
@@ -30,7 +31,7 @@ abstract class DataModule {
 
         @Provides
         @JvmStatic
-        fun googlePlacesClient(): GooglePlaces = GooglePlaces(Keys.GOOGLE_PLACES)
+        fun googlePlacesClient(context: Context): GeoDataClient = Places.getGeoDataClient(context)
 
         @Provides
         @JvmStatic

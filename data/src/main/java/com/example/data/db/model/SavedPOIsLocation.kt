@@ -1,11 +1,12 @@
 package com.example.data.db.model
 
 import android.location.Location
+import com.google.android.gms.maps.model.LatLng
 
-class SavedPOIsLocation(val latitude: Double, val longitude: Double) {
+class SavedPOIsLocation(val latLng: LatLng) {
     val location: Location
         get() = Location("").also {
-            it.latitude = latitude
-            it.longitude = longitude
+            it.latitude = latLng.latitude
+            it.longitude = latLng.longitude
         }
 }

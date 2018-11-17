@@ -2,59 +2,87 @@ package com.example.data.repo.datastore
 
 import com.example.data.AppPreferences
 import com.example.data.api.GeocodingAPIClient
+import com.example.data.util.ext.toBoundsWithRadius
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
 import com.example.domain.repo.model.NearbyPOIsData
 import com.example.domain.repo.model.ReverseGeocodingData
+import com.google.android.gms.location.places.AutocompleteFilter
+import com.google.android.gms.location.places.GeoDataClient
+import com.google.android.gms.location.places.Place
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import io.ashdavies.rx.rxtasks.toSingle
 import io.reactivex.Single
-import se.walkercrou.places.GooglePlaces
-import se.walkercrou.places.Place
-import se.walkercrou.places.TypeParam
 import javax.inject.Inject
 
 class RemotePlacesDataStore @Inject constructor(
-    private val googlePlaces: GooglePlaces,
+    private val geoDataClient: GeoDataClient,
     private val preferences: AppPreferences,
     private val geocodingAPIClient: GeocodingAPIClient
 ) : IRemotePlacesDataStore {
 
     override fun getNearbyPlacesOfType(
-        latitude: Double,
-        longitude: Double,
+        latLng: LatLng,
         type: String
     ): Single<List<Place>> = Single.just(
-        googlePlaces.getNearbyPlaces(
-            latitude,
-            longitude,
-            preferences.radius.toDouble(),
-            TypeParam.name("types").value(type)
-        )
+        emptyList()
     )
 
     override fun reverseGeocodeLocation(
-        latitude: Double,
-        longitude: Double
+        latLng: LatLng
     ): Single<ReverseGeocodingData> = geocodingAPIClient.reverseGeocode(
-        latitude = latitude,
-        longitude = longitude
+        latitude = latLng.latitude,
+        longitude = latLng.longitude
     ).map {
         if (it.hasResults) ReverseGeocodingData.Success(it.results.first().formattedAddress)
         else ReverseGeocodingData.GeocodingError(it.status)
     }
 
     override fun getNearbyPOIs(
-        latitude: Double,
-        longitude: Double
-    ): Single<NearbyPOIsData> = reverseGeocodeLocation(latitude, longitude).flatMap {
+        latLng: LatLng
+    ): Single<NearbyPOIsData> = reverseGeocodeLocation(latLng).flatMap {
         when (it) {
-            is ReverseGeocodingData.Success -> getPOIsNearbyAddress(it.address)
-            is ReverseGeocodingData.GeocodingError -> Single.just(NearbyPOIsData.RemoteError.ReverseGeocodingError(it.status))
+            is ReverseGeocodingData.Success ->
+                getPOIsNearbyAddress(latLng, it.address)
+            is ReverseGeocodingData.GeocodingError ->
+                Single.just(NearbyPOIsData.RemoteError.ReverseGeocodingError(it.status))
         }
     }
 
+    override fun getPlacesAutocompletePredictions(
+        query: String
+    ): Single<List<Place>> = getPlacesFromAutocompletePrediction(query, null, null)
+
     private fun getPOIsNearbyAddress(
+        latLng: LatLng,
         address: String
-    ): Single<NearbyPOIsData> = Single.just(googlePlaces.getPlacesByQuery("$address points of interest")).map {
+    ): Single<NearbyPOIsData> = getPlacesFromAutocompletePrediction(
+        "$address points of interest",
+        latLng.toBoundsWithRadius(preferences.radius.toDouble()),
+        null
+    ).map {
         if (it.isNotEmpty()) NearbyPOIsData.Success(it)
         else NearbyPOIsData.RemoteError.NoResultsError
     }
+
+    private fun getPlacesFromAutocompletePrediction(
+        query: String,
+        bounds: LatLngBounds?,
+        filter: AutocompleteFilter?
+    ): Single<List<Place>> = geoDataClient.getAutocompletePredictions(query, bounds, filter).toSingle()
+        .map {
+            it.asIterable()
+                .mapNotNull { prediction -> prediction.placeId }
+                .chunked(20)
+        }
+        .toObservable()
+        .flatMapIterable { it }
+        .flatMap {
+            geoDataClient.getPlaceById(*it.toTypedArray())
+                .toSingle()
+                .toObservable()
+        }
+        .map { it.toList() }
+        .toList()
+        .map { it.flatten() }
 }
