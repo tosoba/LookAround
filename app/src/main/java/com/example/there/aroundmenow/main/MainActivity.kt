@@ -1,47 +1,49 @@
 package com.example.there.aroundmenow.main
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.there.aroundmenow.R
-import com.example.there.aroundmenow.base.architecture.RxActivity
 import com.example.there.aroundmenow.places.PlacesFragment
-import com.example.there.aroundmenow.search.SearchFragment
 import com.example.there.aroundmenow.util.ext.onItemWithIdSelected
-import com.example.there.aroundmenow.util.ext.onTextChanged
 import com.example.there.aroundmenow.util.ext.toggle
+import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
+import com.google.android.gms.location.places.ui.PlaceAutocomplete
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 
-class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainViewModel::class.java) {
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
+
+    @Inject
+    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
     private val currentlyShowingFragment: Fragment?
         get() = supportFragmentManager?.findFragmentById(backStackLayoutId)
 
-    private val onSearchViewActionExpandListener = object : MenuItem.OnActionExpandListener {
-        override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-            drawer_layout.closeDrawers()
-            showSearchFragmentIfNotAlreadyShown()
-            return true
-        }
-
-        override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-            removeFragment()
-            return true
-        }
-    }
 
     private val onBackStackChangedListener = FragmentManager.OnBackStackChangedListener {
         updateHomeAsUpIndicator()
     }
 
+    private val uiDisposables = UiDisposablesComponent()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        lifecycle.addObserver(uiDisposables)
 
         showPlacesFragmentIfNotAlreadyShown()
 
@@ -57,8 +59,6 @@ class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainVie
         }
     }
 
-    override fun initializeLayout() = setContentView(R.layout.activity_main)
-
     override fun onResume() {
         super.onResume()
         updateHomeAsUpIndicator()
@@ -67,13 +67,6 @@ class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainVie
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.toolbar_menu, menu)
-
-        val searchViewMenuItem = menu.findItem(R.id.search_places_toolbar_item)
-        searchViewMenuItem.setOnActionExpandListener(onSearchViewActionExpandListener)
-        uiDisposables += (searchViewMenuItem.actionView as SearchView).onTextChanged {
-            presenter.updatePlacesQuery(it.toString())
-        }
-
         return true
     }
 
@@ -84,10 +77,33 @@ class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainVie
             else drawer_layout?.toggle(Gravity.LEFT)
             true
         }
+        R.id.search_places_toolbar_menu_item -> {
+            startPlaceAutocompleteActivity()
+            true
+        }
         else -> false
     }
 
-    override fun observeState() = Unit
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE) {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    val place = PlaceAutocomplete.getPlace(this, data)
+                    Log.i("PLACE", "Place: " + place.name)
+                }
+                PlaceAutocomplete.RESULT_ERROR -> {
+                    val status = PlaceAutocomplete.getStatus(this, data)
+                    // TODO: Handle the error.
+                    Log.i("PLACE", status.statusMessage)
+                }
+                Activity.RESULT_CANCELED -> {
+                    // The user canceled the operation.
+                }
+            }
+        }
+    }
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
 
     fun showFragment(fragment: Fragment, addToBackStack: Boolean) = with(supportFragmentManager.beginTransaction()) {
         setCustomAnimations(
@@ -110,10 +126,10 @@ class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainVie
         }
     }
 
-    private fun showSearchFragmentIfNotAlreadyShown() {
-        if (currentlyShowingFragment !is SearchFragment)
-            showFragment(SearchFragment(), true)
-    }
+    private fun startPlaceAutocompleteActivity() = startActivityForResult(
+        PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).build(this),
+        PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE
+    )
 
     private fun updateHomeAsUpIndicator() = if (supportFragmentManager.backStackEntryCount > 0)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_24dp)
@@ -121,5 +137,7 @@ class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainVie
 
     companion object {
         private const val backStackLayoutId = R.id.container
+
+        private const val PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE = 100
     }
 }
