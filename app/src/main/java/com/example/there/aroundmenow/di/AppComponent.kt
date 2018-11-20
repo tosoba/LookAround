@@ -6,6 +6,7 @@ import com.example.there.aroundmenow.di.module.AppModule
 import com.example.there.aroundmenow.di.module.DataModule
 import com.example.there.aroundmenow.di.module.NetworkModule
 import com.example.there.aroundmenow.di.module.view.MainActivityModule
+import com.example.there.aroundmenow.di.module.view.POIsFragmentModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule
@@ -18,7 +19,8 @@ import javax.inject.Singleton
         AppModule::class,
         DataModule::class,
         NetworkModule::class,
-        MainActivityModule::class
+        MainActivityModule::class,
+        POIsFragmentModule::class
     ]
 )
 interface AppComponent {

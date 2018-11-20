@@ -8,42 +8,32 @@ import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.there.aroundmenow.R
+import com.example.there.aroundmenow.base.architecture.RxActivity
 import com.example.there.aroundmenow.places.PlacesFragment
 import com.example.there.aroundmenow.util.ext.onItemWithIdSelected
 import com.example.there.aroundmenow.util.ext.toggle
-import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
-import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
+class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainViewModel::class.java) {
+    override fun initializeLayout() = setContentView(R.layout.activity_main)
 
-    @Inject
-    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+    override fun observeState() = Unit
 
     private val currentlyShowingFragment: Fragment?
         get() = supportFragmentManager?.findFragmentById(backStackLayoutId)
-
 
     private val onBackStackChangedListener = FragmentManager.OnBackStackChangedListener {
         updateHomeAsUpIndicator()
     }
 
-    private val uiDisposables = UiDisposablesComponent()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        lifecycle.addObserver(uiDisposables)
 
         showPlacesFragmentIfNotAlreadyShown()
 
@@ -105,7 +95,10 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
 
-    fun showFragment(fragment: Fragment, addToBackStack: Boolean) = with(supportFragmentManager.beginTransaction()) {
+    fun showFragment(
+        fragment: Fragment,
+        addToBackStack: Boolean
+    ) = with(supportFragmentManager.beginTransaction()) {
         setCustomAnimations(
             android.R.anim.fade_in,
             android.R.anim.fade_out,
