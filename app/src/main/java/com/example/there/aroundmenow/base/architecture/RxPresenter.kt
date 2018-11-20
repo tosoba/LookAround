@@ -216,7 +216,7 @@ abstract class RxPresenter<State, VM : RxViewModel<State>> {
         mapTaskReturnToState: (State, TaskReturn) -> State,
         onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
-        .zipWith(viewModel.state.single(viewModel.initialState))
+        .zipWith(Single.just(viewModel.state.value))
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
         .subscribe(viewModel.state, onError)
         .disposeWith(viewModel.disposables)

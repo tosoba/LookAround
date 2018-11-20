@@ -6,6 +6,6 @@ data class POIsState(
     val pois: List<Place>
 ) {
     companion object {
-        val IINITAL = POIsState(emptyList())
+        val INITIAL = POIsState(emptyList())
     }
 }

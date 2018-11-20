@@ -10,18 +10,9 @@ interface GeocodingAPIClient {
 
     @GET("json")
     fun reverseGeocode(
-        @Query("latLng") latLng: String,
+        @Query("latlng") latLng: String,
         @Query("key") key: String = Keys.GOOGLE_PLACES
     ): Single<ReverseGeocodingResponse>
-
-    fun reverseGeocode(
-        latitude: Double,
-        longitude: Double,
-        key: String = Keys.GOOGLE_PLACES
-    ): Single<ReverseGeocodingResponse> = reverseGeocode(
-        latLng = "$latitude,$longitude",
-        key = key
-    )
 
     companion object {
         const val BASE_URL = "https://maps.googleapis.com/maps/api/geocode/"

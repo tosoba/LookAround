@@ -31,8 +31,7 @@ class RemotePlacesDataStore @Inject constructor(
     override fun reverseGeocodeLocation(
         latLng: LatLng
     ): Single<ReverseGeocodingData> = geocodingAPIClient.reverseGeocode(
-        latitude = latLng.latitude,
-        longitude = latLng.longitude
+        latLng = "${latLng.latitude},${latLng.longitude}"
     ).map {
         if (it.hasResults) ReverseGeocodingData.Success(it.results.first().formattedAddress)
         else ReverseGeocodingData.GeocodingError(it.status)
