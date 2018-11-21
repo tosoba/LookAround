@@ -30,6 +30,6 @@ class POIsFragment : RxFragment<MainState, POIsState, POIsViewModel, POIsPresent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.findPOIsNearby(LatLng(52.237049, 21.017532))
+        presenter.findPOIsNearby(LatLng(51.50354, -0.12768))
     }
 }

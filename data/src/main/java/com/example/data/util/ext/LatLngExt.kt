@@ -18,3 +18,6 @@ val LatLng.location: Location
         it.latitude = latitude
         it.longitude = longitude
     }
+
+val LatLng.reverseGeocodingString: String
+    get() = "$latitude,$longitude"

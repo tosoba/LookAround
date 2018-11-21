@@ -2,6 +2,7 @@ package com.example.data.repo.datastore
 
 import com.example.data.AppPreferences
 import com.example.data.api.GeocodingAPIClient
+import com.example.data.util.ext.reverseGeocodingString
 import com.example.data.util.ext.toBoundsWithRadius
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
 import com.example.domain.repo.model.NearbyPOIsData
@@ -31,10 +32,10 @@ class RemotePlacesDataStore @Inject constructor(
     override fun reverseGeocodeLocation(
         latLng: LatLng
     ): Single<ReverseGeocodingData> = geocodingAPIClient.reverseGeocode(
-        latLng = "${latLng.latitude},${latLng.longitude}"
+        latLng = latLng.reverseGeocodingString
     ).map {
-        if (it.hasResults) ReverseGeocodingData.Success(it.results.first().formattedAddress)
-        else ReverseGeocodingData.GeocodingError(it.status)
+        if (it.isValid) ReverseGeocodingData.Success(it.formattedAddress)
+        else ReverseGeocodingData.GeocodingError
     }
 
     override fun getNearbyPOIs(
@@ -44,7 +45,7 @@ class RemotePlacesDataStore @Inject constructor(
             is ReverseGeocodingData.Success ->
                 getPOIsNearbyAddress(latLng, it.address)
             is ReverseGeocodingData.GeocodingError ->
-                Single.just(NearbyPOIsData.RemoteError.ReverseGeocodingError(it.status))
+                Single.just(NearbyPOIsData.RemoteError.ReverseGeocodingError)
         }
     }
 

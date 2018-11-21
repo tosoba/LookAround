@@ -6,7 +6,7 @@ sealed class NearbyPOIsData {
     class Success(val places: List<Place>) : NearbyPOIsData()
 
     sealed class RemoteError : NearbyPOIsData() {
-        class ReverseGeocodingError(val status: String) : RemoteError()
+        object ReverseGeocodingError : RemoteError()
         object NoResultsError : RemoteError()
     }
 

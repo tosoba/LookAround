@@ -26,6 +26,6 @@ class AppPreferences @Inject constructor(context: Context) {
     }
 
     object DefaultValues {
-        const val SEARCH_RADIUS = 5000
+        const val SEARCH_RADIUS = 100000
     }
 }
