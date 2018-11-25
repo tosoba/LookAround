@@ -7,7 +7,6 @@ import com.example.there.aroundmenow.di.app.AppModule
 import com.example.there.aroundmenow.di.app.DataModule
 import com.example.there.aroundmenow.di.app.NetworkModule
 import com.example.there.aroundmenow.di.app.VMModule
-import com.example.there.aroundmenow.di.fragment.FragmentBindingModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule
@@ -21,8 +20,7 @@ import javax.inject.Singleton
         DataModule::class,
         NetworkModule::class,
         VMModule::class,
-        ActivityBindingModule::class,
-        FragmentBindingModule::class
+        ActivityBindingModule::class
     ]
 )
 interface AppComponent {
