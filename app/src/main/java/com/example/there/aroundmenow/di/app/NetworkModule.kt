@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.di.module
+package com.example.there.aroundmenow.di.app
 
 import com.example.data.api.GeocodingAPIClient
 import dagger.Module

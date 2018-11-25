@@ -12,9 +12,10 @@ import dagger.android.support.HasSupportFragmentInjector
 import io.reactivex.Observable
 import javax.inject.Inject
 
-abstract class RxActivity<State, VM, Presenter>(
+abstract class RxActivity<State, VM, Actions>(
     private val viewModelClass: Class<VM>
-) : AppCompatActivity(), HasSupportFragmentInjector where VM : RxViewModel<State>, Presenter : RxPresenter<State, VM> {
+) : AppCompatActivity(), ObservesState, RxDisposer, HasSupportFragmentInjector
+        where VM : RxViewModel<State>, Actions : RxViewModelHolder<State, VM> {
 
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -30,26 +31,19 @@ abstract class RxActivity<State, VM, Presenter>(
         get() = viewModel.observableState
 
     @Inject
-    lateinit var presenter: Presenter
+    lateinit var actions: Actions
 
-    protected val uiDisposables = UiDisposablesComponent()
+    override val uiDisposables = UiDisposablesComponent()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeLayout()
-        presenter.viewModel = viewModel
+        actions.viewModel = viewModel
         lifecycle.addObserver(uiDisposables)
         observeState()
-    }
-
-    override fun onDestroy() {
-        uiDisposables.clear()
-        super.onDestroy()
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
 
     abstract fun initializeLayout()
-
-    abstract fun observeState()
 }

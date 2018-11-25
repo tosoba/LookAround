@@ -20,10 +20,7 @@ import dagger.android.AndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainViewModel::class.java) {
-    override fun initializeLayout() = setContentView(R.layout.activity_main)
-
-    override fun observeState() = Unit
+class MainActivity : RxActivity<MainState, MainViewModel, MainActions>(MainViewModel::class.java) {
 
     private val currentlyShowingFragment: Fragment?
         get() = supportFragmentManager?.findFragmentById(backStackLayoutId)
@@ -44,10 +41,13 @@ class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainVie
 
         supportFragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
 
-        uiDisposables += drawer_navigation_view.onItemWithIdSelected {
-            drawer_layout.closeDrawers()
-        }
+        drawer_navigation_view.onItemWithIdSelected { drawer_layout.closeDrawers() }
+            .disposeOnDestroy()
     }
+
+    override fun initializeLayout() = setContentView(R.layout.activity_main)
+
+    override fun observeState() = Unit
 
     override fun onResume() {
         super.onResume()
@@ -83,11 +83,9 @@ class MainActivity : RxActivity<MainState, MainViewModel, MainPresenter>(MainVie
                 }
                 PlaceAutocomplete.RESULT_ERROR -> {
                     val status = PlaceAutocomplete.getStatus(this, data)
-                    // TODO: Handle the error.
                     Log.i("PLACE", status.statusMessage)
                 }
                 Activity.RESULT_CANCELED -> {
-                    // The user canceled the operation.
                 }
             }
         }

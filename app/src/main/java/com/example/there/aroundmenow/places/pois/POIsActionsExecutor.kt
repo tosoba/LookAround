@@ -2,15 +2,15 @@ package com.example.there.aroundmenow.places.pois
 
 import com.example.domain.repo.model.NearbyPOIsData
 import com.example.domain.task.impl.FindNearbyPOIs
-import com.example.there.aroundmenow.base.architecture.RxPresenter
+import com.example.there.aroundmenow.base.architecture.RxActionsExecutor
 import com.google.android.gms.maps.model.LatLng
 import javax.inject.Inject
 
-class POIsPresenter @Inject constructor(
+class POIsActionsExecutor @Inject constructor(
     private val findNearbyPOIs: FindNearbyPOIs
-) : RxPresenter<POIsState, POIsViewModel>() {
+) : RxActionsExecutor<POIsState, POIsViewModel>(), POIsActions {
 
-    fun findPOIsNearby(latLng: LatLng) {
+    override fun findPOIsNearby(latLng: LatLng) {
         findNearbyPOIs.executeWithEventArgs(latLng, { it })
             .mapToStateThenSubscribeAndDisposeWithViewModel({ currentState, nearbyPOIsData ->
                 when (nearbyPOIsData) {

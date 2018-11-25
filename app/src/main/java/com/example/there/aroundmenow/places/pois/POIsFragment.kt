@@ -7,18 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.RxFragment
-import com.example.there.aroundmenow.main.MainState
 import com.google.android.gms.maps.model.LatLng
 
 
-class POIsFragment : RxFragment<MainState, POIsState, POIsViewModel, POIsPresenter>(
-    POIsViewModel::class.java,
-    MainState::class.java
+class POIsFragment : RxFragment<POIsState, POIsViewModel, POIsActions>(
+    POIsViewModel::class.java
 ) {
     override fun observeState() {
-        uiDisposables += observableState.subscribe {
-            Log.e("STATE", "STATE")
-        }
+        observableState.subscribe { Log.e("STATE", "STATE") }
+            .disposeOnDestroy()
     }
 
     override fun onCreateView(
@@ -30,6 +27,6 @@ class POIsFragment : RxFragment<MainState, POIsState, POIsViewModel, POIsPresent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.findPOIsNearby(LatLng(51.50354, -0.12768))
+        actions.findPOIsNearby(LatLng(51.50354, -0.12768))
     }
 }

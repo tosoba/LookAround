@@ -2,11 +2,12 @@ package com.example.there.aroundmenow.di
 
 import android.app.Application
 import com.example.there.aroundmenow.AroundMeNowApp
-import com.example.there.aroundmenow.di.module.AppModule
-import com.example.there.aroundmenow.di.module.DataModule
-import com.example.there.aroundmenow.di.module.NetworkModule
-import com.example.there.aroundmenow.di.module.view.MainActivityModule
-import com.example.there.aroundmenow.di.module.view.POIsFragmentModule
+import com.example.there.aroundmenow.di.activity.ActivityBindingModule
+import com.example.there.aroundmenow.di.app.AppModule
+import com.example.there.aroundmenow.di.app.DataModule
+import com.example.there.aroundmenow.di.app.NetworkModule
+import com.example.there.aroundmenow.di.app.VMModule
+import com.example.there.aroundmenow.di.fragment.FragmentBindingModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule
@@ -19,13 +20,16 @@ import javax.inject.Singleton
         AppModule::class,
         DataModule::class,
         NetworkModule::class,
-        MainActivityModule::class,
-        POIsFragmentModule::class
+        VMModule::class,
+        ActivityBindingModule::class,
+        FragmentBindingModule::class
     ]
 )
 interface AppComponent {
+
     @Component.Builder
     interface Builder {
+
         @BindsInstance
         fun application(application: Application): Builder
 

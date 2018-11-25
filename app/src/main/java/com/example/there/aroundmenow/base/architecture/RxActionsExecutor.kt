@@ -4,15 +4,14 @@ import com.example.domain.task.base.*
 import com.example.there.aroundmenow.util.ext.disposeWith
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 
-abstract class RxPresenter<State, VM : RxViewModel<State>> {
+abstract class RxActionsExecutor<State, VM : RxViewModel<State>> : RxViewModelHolder<State, VM> {
 
-    lateinit var viewModel: VM
+    override lateinit var viewModel: VM
 
     protected fun mutate(mapCurrentStateToNextState: (State) -> State) {
         Observable.just(mapCurrentStateToNextState)
@@ -54,82 +53,6 @@ abstract class RxPresenter<State, VM : RxViewModel<State>> {
     ): Completable = Single.just(eventArgs)
         .subscribeOn(scheduler)
         .mapToInputAndExecuteTask(this, mapEventArgsToInput)
-
-    protected fun <EventArgs, TaskInput, TaskReturn> ObservableTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndWithExecuteEventArgs(
-        disposable: Disposable,
-        eventArgs: EventArgs,
-        mapEventArgsToInput: (EventArgs) -> TaskInput,
-        scheduler: Scheduler = Schedulers.io()
-    ): Observable<TaskReturn> {
-        viewModel.disposables.remove(disposable)
-        return executeWithEventArgs(eventArgs, mapEventArgsToInput, scheduler)
-    }
-
-    protected fun <TaskInput, TaskReturn> ObservableTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndExecuteWithState(
-        disposable: Disposable,
-        mapStateToParams: (State) -> TaskInput,
-        scheduler: Scheduler = Schedulers.io()
-    ): Observable<TaskReturn> {
-        viewModel.disposables.remove(disposable)
-        return executeWithState(mapStateToParams, scheduler)
-    }
-
-    protected fun <EventArgs, TaskInput, TaskReturn> SingleTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndWithExecuteEventArgs(
-        disposable: Disposable,
-        eventArgs: EventArgs,
-        mapEventArgsToInput: (EventArgs) -> TaskInput,
-        scheduler: Scheduler = Schedulers.io()
-    ): Single<TaskReturn> {
-        viewModel.disposables.remove(disposable)
-        return executeWithEventArgs(eventArgs, mapEventArgsToInput, scheduler)
-    }
-
-    protected fun <TaskInput, TaskReturn> SingleTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndExecuteWithState(
-        disposable: Disposable,
-        mapStateToParams: (State) -> TaskInput,
-        scheduler: Scheduler = Schedulers.io()
-    ): Single<TaskReturn> {
-        viewModel.disposables.remove(disposable)
-        return executeWithState(mapStateToParams, scheduler)
-    }
-
-    protected fun <EventArgs, TaskInput, TaskReturn> FlowableTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndWithExecuteEventArgs(
-        disposable: Disposable,
-        eventArgs: EventArgs,
-        mapEventArgsToInput: (EventArgs) -> TaskInput,
-        scheduler: Scheduler = Schedulers.io()
-    ): Flowable<TaskReturn> {
-        viewModel.disposables.remove(disposable)
-        return executeWithEventArgs(eventArgs, mapEventArgsToInput, scheduler)
-    }
-
-    protected fun <TaskInput, TaskReturn> FlowableTaskWithInput<TaskInput, TaskReturn>.cancelUnfinishedAndExecuteWithState(
-        disposable: Disposable,
-        mapStateToParams: (State) -> TaskInput,
-        scheduler: Scheduler = Schedulers.io()
-    ): Flowable<TaskReturn> {
-        viewModel.disposables.remove(disposable)
-        return executeWithState(mapStateToParams, scheduler)
-    }
-
-    protected fun <EventArgs, TaskInput> CompletableTaskWithInput<TaskInput>.cancelUnfinishedAndWithExecuteEventArgs(
-        disposable: Disposable,
-        eventArgs: EventArgs,
-        mapEventArgsToInput: (EventArgs) -> TaskInput,
-        scheduler: Scheduler = Schedulers.io()
-    ): Completable {
-        viewModel.disposables.remove(disposable)
-        return executeWithEventArgs(eventArgs, mapEventArgsToInput, scheduler)
-    }
-
-    protected fun <TaskInput> CompletableTaskWithInput<TaskInput>.cancelUnfinishedAndExecuteWithState(
-        disposable: Disposable,
-        mapStateToParams: (State) -> TaskInput,
-        scheduler: Scheduler = Schedulers.io()
-    ): Completable {
-        viewModel.disposables.remove(disposable)
-        return executeWithState(mapStateToParams, scheduler)
-    }
 
     protected fun <TaskInput, TaskReturn> ObservableTaskWithInput<TaskInput, TaskReturn>.executeWithState(
         mapStateToParams: (State) -> TaskInput,
@@ -178,14 +101,6 @@ abstract class RxPresenter<State, VM : RxViewModel<State>> {
         task: CompletableTaskWithInput<TaskInput>,
         mapper: (T) -> TaskInput
     ): Completable = map(mapper).flatMapCompletable { task.execute(it) }
-
-    protected fun <TaskReturn> ObservableTask<TaskReturn>.cancelUnfinishedAndExecute(
-        disposable: Disposable,
-        scheduler: Scheduler = Schedulers.io()
-    ): Observable<TaskReturn> {
-        viewModel.disposables.remove(disposable)
-        return execute(scheduler)
-    }
 
     protected fun <TaskReturn> ObservableTask<TaskReturn>.execute(
         scheduler: Scheduler = Schedulers.io()

@@ -11,10 +11,12 @@ class UiDisposablesComponent : LifecycleObserver {
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPause() = clear()
+
     operator fun plusAssign(disposable: Disposable) {
         disposables += disposable
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun clear() = disposables.clear()
+    private fun clear() = disposables.clear()
 }

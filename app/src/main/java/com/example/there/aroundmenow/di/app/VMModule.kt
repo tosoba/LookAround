@@ -1,19 +1,20 @@
-package com.example.there.aroundmenow.di.module.view
+package com.example.there.aroundmenow.di.app
 
 import androidx.lifecycle.ViewModel
 import com.example.there.aroundmenow.di.vm.ViewModelKey
-import com.example.there.aroundmenow.places.pois.POIsFragment
+import com.example.there.aroundmenow.main.MainViewModel
 import com.example.there.aroundmenow.places.pois.POIsViewModel
 import dagger.Binds
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 
 @Module
-abstract class POIsFragmentModule {
+abstract class VMModule {
 
-    @ContributesAndroidInjector
-    abstract fun poisFragment(): POIsFragment
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewModel::class)
+    abstract fun mainViewModel(viewModel: MainViewModel): ViewModel
 
     @Binds
     @IntoMap

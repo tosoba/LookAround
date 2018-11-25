@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.there.aroundmenow.R
+import com.example.there.aroundmenow.base.architecture.RxDisposer
 import com.example.there.aroundmenow.databinding.FragmentPlacesBinding
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
@@ -16,9 +17,10 @@ import com.example.there.aroundmenow.util.view.FragmentViewPagerAdapter
 import kotlinx.android.synthetic.main.fragment_places.*
 
 
-class PlacesFragment : Fragment() {
+class PlacesFragment : Fragment(), RxDisposer {
 
-    private val viewPagerItemIndexes = mapOf(R.id.bottom_navigation_place_types_item to 0, R.id.bottom_navigation_pois_item to 1)
+    private val viewPagerItemIndexes =
+        mapOf(R.id.bottom_navigation_place_types_item to 0, R.id.bottom_navigation_pois_item to 1)
 
     private val viewPagerAdapter by lazy {
         FragmentViewPagerAdapter(
@@ -27,7 +29,7 @@ class PlacesFragment : Fragment() {
         )
     }
 
-    private val uiDisposables = UiDisposablesComponent()
+    override val uiDisposables = UiDisposablesComponent()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +51,9 @@ class PlacesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bindBottomNavigationToViewPager()
-    }
 
-    private fun bindBottomNavigationToViewPager() {
-        uiDisposables += places_bottom_navigation_view.onItemWithIdSelected {
+        places_bottom_navigation_view.onItemWithIdSelected {
             places_view_pager.currentItem = viewPagerItemIndexes[it]!!
-        }
+        }.disposeOnDestroy()
     }
 }

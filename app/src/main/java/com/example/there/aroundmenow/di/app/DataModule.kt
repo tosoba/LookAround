@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.di.module
+package com.example.there.aroundmenow.di.app
 
 import android.content.Context
 import com.example.data.repo.PlacesRepository
