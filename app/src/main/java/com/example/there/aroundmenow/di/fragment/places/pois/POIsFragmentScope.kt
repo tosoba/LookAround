@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.di.fragment.pois
+package com.example.there.aroundmenow.di.fragment.places.pois
 
 import javax.inject.Scope
 

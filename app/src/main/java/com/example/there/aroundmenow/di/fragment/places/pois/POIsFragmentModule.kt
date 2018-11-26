@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.di.fragment.pois
+package com.example.there.aroundmenow.di.fragment.places.pois
 
 import com.example.there.aroundmenow.places.pois.POIsActions
 import com.example.there.aroundmenow.places.pois.POIsActionsExecutor
