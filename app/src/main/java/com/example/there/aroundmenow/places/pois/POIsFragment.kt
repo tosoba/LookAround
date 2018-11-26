@@ -10,9 +10,8 @@ import com.example.there.aroundmenow.base.architecture.RxFragment
 import com.google.android.gms.maps.model.LatLng
 
 
-class POIsFragment : RxFragment<POIsState, POIsViewModel, POIsActions>(
-    POIsViewModel::class.java
-) {
+class POIsFragment : RxFragment<POIsState, POIsActions>() {
+
     override fun observeState() {
         observableState.subscribe { Log.e("STATE", "STATE") }
             .disposeOnDestroy()

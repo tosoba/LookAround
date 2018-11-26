@@ -20,7 +20,7 @@ import dagger.android.AndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : RxActivity<MainState, MainViewModel, MainActions>(MainViewModel::class.java) {
+class MainActivity : RxActivity<MainState, MainActions>() {
 
     private val currentlyShowingFragment: Fragment?
         get() = supportFragmentManager?.findFragmentById(backStackLayoutId)

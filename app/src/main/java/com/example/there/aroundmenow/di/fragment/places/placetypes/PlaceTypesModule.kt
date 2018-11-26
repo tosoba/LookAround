@@ -1,11 +1,9 @@
 package com.example.there.aroundmenow.di.fragment.places.placetypes
 
 import androidx.lifecycle.ViewModelProviders
+import com.example.there.aroundmenow.base.architecture.SharesObservableState
 import com.example.there.aroundmenow.di.vm.ViewModelFactory
-import com.example.there.aroundmenow.places.placetypes.PlaceTypesActions
-import com.example.there.aroundmenow.places.placetypes.PlaceTypesActionsExecutor
-import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
-import com.example.there.aroundmenow.places.placetypes.PlaceTypesViewModel
+import com.example.there.aroundmenow.places.placetypes.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -15,7 +13,10 @@ abstract class PlaceTypesModule {
 
     @PlaceTypesScope
     @Binds
-    abstract fun PlaceTypesPresenter(actionsExecutor: PlaceTypesActionsExecutor): PlaceTypesActions
+    abstract fun placeTypesPresenter(actionsExecutor: PlaceTypesActionsExecutor): PlaceTypesActions
+
+    @Binds
+    abstract fun placeTypesObservableState(viewModel: PlaceTypesViewModel): SharesObservableState<PlaceTypesState>
 
     @Module
     companion object {

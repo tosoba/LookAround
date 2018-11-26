@@ -8,9 +8,8 @@ import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.RxFragment
 
 
-class PlaceTypesFragment : RxFragment<PlaceTypesState, PlaceTypesViewModel, PlaceTypesActions>(
-    PlaceTypesViewModel::class.java
-) {
+class PlaceTypesFragment : RxFragment<PlaceTypesState, PlaceTypesActions>() {
+
     override fun observeState() = Unit
 
     override fun onCreateView(

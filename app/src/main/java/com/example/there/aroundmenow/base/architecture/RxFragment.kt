@@ -7,24 +7,21 @@ import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import io.reactivex.Observable
 import javax.inject.Inject
 
-abstract class RxFragment<State, VM, Actions : Any>(
-    private val viewModelClass: Class<VM>
-) : Fragment(), ObservesState, Injectable, RxDisposer
-        where VM : RxViewModel<State> {
+abstract class RxFragment<State, Actions : Any> : Fragment(), ObservesState, Injectable, RxDisposer {
 
-    protected val observableState: Observable<State>
-        get() = viewModel.observableState
+    @Inject
+    lateinit var observableStateSharer: SharesObservableState<State>
+
+    val observableState: Observable<State>
+        get() = observableStateSharer.observableState
 
     @Suppress("UNCHECKED_CAST")
     protected fun <ActivityState> observableActivityState(): Observable<ActivityState>? {
         val hostActivity = activity
-        return if (hostActivity != null && hostActivity is RxActivity<*, *, *>)
+        return if (hostActivity != null && hostActivity is RxActivity<*, *>)
             hostActivity.observableState.map { it as ActivityState }
         else null
     }
-
-    @Inject
-    lateinit var viewModel: VM
 
     @Inject
     lateinit var actions: Actions

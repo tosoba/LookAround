@@ -1,16 +1,14 @@
 package com.example.there.aroundmenow.di.activity.main
 
 import androidx.lifecycle.ViewModelProviders
+import com.example.there.aroundmenow.base.architecture.SharesObservableState
 import com.example.there.aroundmenow.di.activity.ActivityScope
 import com.example.there.aroundmenow.di.fragment.places.placetypes.PlaceTypesModule
 import com.example.there.aroundmenow.di.fragment.places.placetypes.PlaceTypesScope
 import com.example.there.aroundmenow.di.fragment.places.pois.POIsModule
 import com.example.there.aroundmenow.di.fragment.places.pois.POIsScope
 import com.example.there.aroundmenow.di.vm.ViewModelFactory
-import com.example.there.aroundmenow.main.MainActions
-import com.example.there.aroundmenow.main.MainActionsExecutor
-import com.example.there.aroundmenow.main.MainActivity
-import com.example.there.aroundmenow.main.MainViewModel
+import com.example.there.aroundmenow.main.*
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import dagger.Binds
@@ -32,6 +30,9 @@ abstract class MainModule {
     @PlaceTypesScope
     @ContributesAndroidInjector(modules = [PlaceTypesModule::class])
     abstract fun placeTypesFragment(): PlaceTypesFragment
+
+    @Binds
+    abstract fun mainObservableState(viewModel: MainViewModel): SharesObservableState<MainState>
 
     @Module
     companion object {

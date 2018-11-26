@@ -10,19 +10,17 @@ import dagger.android.support.HasSupportFragmentInjector
 import io.reactivex.Observable
 import javax.inject.Inject
 
-abstract class RxActivity<State, VM, Actions : Any>(
-    private val viewModelClass: Class<VM>
-) : AppCompatActivity(), ObservesState, RxDisposer, HasSupportFragmentInjector
-        where VM : RxViewModel<State> {
+abstract class RxActivity<State : Any, Actions : Any> : AppCompatActivity(), ObservesState, RxDisposer,
+    HasSupportFragmentInjector {
 
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
     @Inject
-    lateinit var viewModel: VM
+    lateinit var observableStateSharer: SharesObservableState<State>
 
     val observableState: Observable<State>
-        get() = viewModel.observableState
+        get() = observableStateSharer.observableState
 
     @Inject
     lateinit var actions: Actions

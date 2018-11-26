@@ -5,11 +5,11 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class RxViewModel<State>(initialState: State) : ViewModel() {
+abstract class RxViewModel<State>(initialState: State) : ViewModel(), SharesObservableState<State> {
 
     val state = BehaviorRelay.createDefault(initialState)!!
 
-    val observableState: Observable<State>
+    override val observableState: Observable<State>
         get() = state
 
     val disposables = CompositeDisposable()
