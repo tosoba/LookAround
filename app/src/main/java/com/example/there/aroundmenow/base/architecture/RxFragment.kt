@@ -2,17 +2,15 @@ package com.example.there.aroundmenow.base.architecture
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.example.there.aroundmenow.di.Injectable
-import com.example.there.aroundmenow.di.vm.ViewModelFactory
 import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import io.reactivex.Observable
 import javax.inject.Inject
 
-abstract class RxFragment<State, VM, Actions>(
+abstract class RxFragment<State, VM, Actions : Any>(
     private val viewModelClass: Class<VM>
 ) : Fragment(), ObservesState, Injectable, RxDisposer
-        where VM : RxViewModel<State>, Actions : RxViewModelHolder<State, VM> {
+        where VM : RxViewModel<State> {
 
     protected val observableState: Observable<State>
         get() = viewModel.observableState
@@ -26,11 +24,7 @@ abstract class RxFragment<State, VM, Actions>(
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private val viewModel: VM by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(viewModelClass)
-    }
+    lateinit var viewModel: VM
 
     @Inject
     lateinit var actions: Actions
@@ -39,7 +33,6 @@ abstract class RxFragment<State, VM, Actions>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actions.viewModel = viewModel
         lifecycle.addObserver(uiDisposables)
     }
 
