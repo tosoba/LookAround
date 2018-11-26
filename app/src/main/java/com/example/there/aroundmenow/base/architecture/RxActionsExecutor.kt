@@ -6,6 +6,7 @@ import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
+import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -18,7 +19,7 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>> {
     protected fun mutate(mapCurrentStateToNextState: (State) -> State) {
         Observable.just(mapCurrentStateToNextState)
             .observeOn(AndroidSchedulers.mainThread()) // ensures mutations happen serially on main thread
-            .zipWith(viewModel.state)
+            .withLatestFrom(viewModel.state)
             .map { (reducer, state) -> reducer(state) }
             .subscribe(viewModel.state)
             .disposeWith(viewModel.disposables)
@@ -124,7 +125,7 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>> {
         mapTaskReturnToState: (State, TaskReturn) -> State,
         onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
-        .zipWith(viewModel.state)
+        .withLatestFrom(viewModel.state)
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
         .subscribe(viewModel.state, onError)
         .disposeWith(viewModel.disposables)
@@ -140,10 +141,9 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>> {
 
     protected fun <TaskReturn> Flowable<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,
-        backpressureStrategy: BackpressureStrategy,
         onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
-        .zipWith(viewModel.state.toFlowable(backpressureStrategy))
+        .withLatestFrom(Flowable.just(viewModel.state.value))
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
         .subscribe(viewModel.state, onError)
         .disposeWith(viewModel.disposables)
