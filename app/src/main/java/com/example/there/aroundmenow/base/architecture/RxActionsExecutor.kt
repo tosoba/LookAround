@@ -9,12 +9,8 @@ import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
-abstract class RxActionsExecutor<State, VM : RxViewModel<State>> {
-
-    @Inject
-    lateinit var viewModel: VM
+abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val viewModel: VM) {
 
     protected fun mutate(mapCurrentStateToNextState: (State) -> State) {
         Observable.just(mapCurrentStateToNextState)

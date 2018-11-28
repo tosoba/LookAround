@@ -7,8 +7,9 @@ import com.google.android.gms.maps.model.LatLng
 import javax.inject.Inject
 
 class POIsActionsExecutor @Inject constructor(
+    poIsViewModel: POIsViewModel,
     private val findNearbyPOIs: FindNearbyPOIs
-) : RxActionsExecutor<POIsState, POIsViewModel>(), POIsActions {
+) : RxActionsExecutor<POIsState, POIsViewModel>(poIsViewModel), POIsActions {
 
     override fun findPOIsNearby(latLng: LatLng) {
         findNearbyPOIs.executeWithEventArgs(latLng, { it })
