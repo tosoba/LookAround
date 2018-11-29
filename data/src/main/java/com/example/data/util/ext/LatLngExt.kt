@@ -21,3 +21,6 @@ val LatLng.location: Location
 
 val LatLng.reverseGeocodingString: String
     get() = "$latitude,$longitude"
+
+val LatLngBounds.overpassString: String
+    get() = "(${southwest.latitude},${southwest.longitude},${northeast.latitude},${northeast.longitude})"

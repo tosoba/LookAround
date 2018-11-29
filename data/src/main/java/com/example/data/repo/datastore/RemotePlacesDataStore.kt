@@ -1,6 +1,6 @@
 package com.example.data.repo.datastore
 
-import com.example.data.api.GeocodingAPIClient
+import com.example.data.api.geocoding.GeocodingAPIClient
 import com.example.data.preferences.AppPreferences
 import com.example.data.util.ext.reverseGeocodingString
 import com.example.data.util.ext.toBoundsWithRadius

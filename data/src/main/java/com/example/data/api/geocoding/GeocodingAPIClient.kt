@@ -1,13 +1,12 @@
-package com.example.data.api
+package com.example.data.api.geocoding
 
-import com.example.data.api.model.ReverseGeocodingResponse
+import com.example.data.api.geocoding.model.ReverseGeocodingResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GeocodingAPIClient {
-
     @GET("{latLng}")
     fun reverseGeocode(
         @Path(value = "latLng") latLng: String,
