@@ -5,34 +5,18 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 
-interface ObservableTask<Ret> {
-    fun execute(): Observable<Ret>
-}
+interface ObservableTask<Ret> : Task<Observable<Ret>>
 
-interface ObservableTaskWithInput<Input, Ret> {
-    fun execute(input: Input): Observable<Ret>
-}
+interface ObservableTaskWithInput<Input, Ret> : TaskWithInput<Input, Observable<Ret>>
 
-interface SingleTask<Ret> {
-    fun execute(): Single<Ret>
-}
+interface SingleTask<Ret> : Task<Single<Ret>>
 
-interface SingleTaskWithInput<Input, Ret> {
-    fun execute(input: Input): Single<Ret>
-}
+interface SingleTaskWithInput<Input, Ret> : TaskWithInput<Input, Single<Ret>>
 
-interface FlowableTask<Ret> {
-    fun execute(): Flowable<Ret>
-}
+interface FlowableTask<Ret> : Task<Flowable<Ret>>
 
-interface FlowableTaskWithInput<Input, Ret> {
-    fun execute(input: Input): Flowable<Ret>
-}
+interface FlowableTaskWithInput<Input, Ret> : TaskWithInput<Input, Flowable<Ret>>
 
-interface CompletableTask {
-    fun execute(): Completable
-}
+interface CompletableTask : Task<Completable>
 
-interface CompletableTaskWithInput<Input> {
-    fun execute(input: Input): Completable
-}
+interface CompletableTaskWithInput<Input> : TaskWithInput<Input, Completable>

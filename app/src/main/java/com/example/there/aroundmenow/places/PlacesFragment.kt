@@ -12,6 +12,7 @@ import com.example.there.aroundmenow.databinding.FragmentPlacesBinding
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import com.example.there.aroundmenow.util.ext.onItemWithIdSelected
+import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import com.example.there.aroundmenow.util.view.FragmentViewPagerAdapter
 import kotlinx.android.synthetic.main.fragment_places.*
@@ -33,7 +34,7 @@ class PlacesFragment : Fragment(), RxDisposer {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(uiDisposables)
+        lifecycle += uiDisposables
     }
 
     override fun onCreateView(

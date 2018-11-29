@@ -11,7 +11,7 @@ class FindNearbyPlacesOfType @Inject constructor(
     private val repository: IPlaceRepository
 ) : SingleTaskWithInput<FindNearbyPlacesOfType.Input, List<Place>> {
 
-    override fun execute(
+    override fun executeWith(
         input: Input
     ): Single<List<Place>> = repository.getNearbyPlacesOfType(
         latLng = input.latLng,

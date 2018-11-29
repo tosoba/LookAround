@@ -3,6 +3,7 @@ package com.example.there.aroundmenow.base.architecture
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -30,7 +31,7 @@ abstract class RxActivity<State : Any, Actions : Any> : AppCompatActivity(), Obs
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeLayout()
-        lifecycle.addObserver(uiDisposables)
+        lifecycle += uiDisposables
         observeState()
     }
 

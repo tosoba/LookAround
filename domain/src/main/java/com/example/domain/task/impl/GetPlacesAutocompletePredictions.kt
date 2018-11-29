@@ -9,5 +9,5 @@ import javax.inject.Inject
 class GetPlacesAutocompletePredictions @Inject constructor(
     private val repository: IPlaceRepository
 ) : SingleTaskWithInput<String, List<Place>> {
-    override fun execute(input: String): Single<List<Place>> = repository.getPlacesAutocompletePredictions(input)
+    override fun executeWith(input: String): Single<List<Place>> = repository.getPlacesAutocompletePredictions(input)
 }

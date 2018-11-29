@@ -10,5 +10,5 @@ import javax.inject.Inject
 class ReverseGeocodeLocation @Inject constructor(
     private val repository: IPlaceRepository
 ) : SingleTaskWithInput<LatLng, ReverseGeocodingData> {
-    override fun execute(input: LatLng): Single<ReverseGeocodingData> = repository.reverseGeocodeLocation(input)
+    override fun executeWith(input: LatLng): Single<ReverseGeocodingData> = repository.reverseGeocodeLocation(input)
 }

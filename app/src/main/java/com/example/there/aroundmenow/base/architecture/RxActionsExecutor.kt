@@ -84,38 +84,38 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
     private fun <T, TaskInput, TaskReturn> Observable<T>.mapToInputAndExecuteTask(
         task: ObservableTaskWithInput<TaskInput, TaskReturn>,
         mapper: (T) -> TaskInput
-    ): Observable<TaskReturn> = map(mapper).flatMap { task.execute(it) }
+    ): Observable<TaskReturn> = map(mapper).flatMap { task.executeWith(it) }
 
     private fun <T, TaskInput, TaskReturn> Single<T>.mapToInputAndExecuteTask(
         task: SingleTaskWithInput<TaskInput, TaskReturn>,
         mapper: (T) -> TaskInput
-    ): Single<TaskReturn> = map(mapper).flatMap { task.execute(it) }
+    ): Single<TaskReturn> = map(mapper).flatMap { task.executeWith(it) }
 
     private fun <T, TaskInput, TaskReturn> Flowable<T>.mapToInputAndExecuteTask(
         task: FlowableTaskWithInput<TaskInput, TaskReturn>,
         mapper: (T) -> TaskInput
-    ): Flowable<TaskReturn> = map(mapper).flatMap { task.execute(it) }
+    ): Flowable<TaskReturn> = map(mapper).flatMap { task.executeWith(it) }
 
     private fun <T, TaskInput> Single<T>.mapToInputAndExecuteTask(
         task: CompletableTaskWithInput<TaskInput>,
         mapper: (T) -> TaskInput
-    ): Completable = map(mapper).flatMapCompletable { task.execute(it) }
+    ): Completable = map(mapper).flatMapCompletable { task.executeWith(it) }
 
     protected fun <TaskReturn> ObservableTask<TaskReturn>.execute(
         scheduler: Scheduler = Schedulers.io()
-    ): Observable<TaskReturn> = execute().subscribeOn(scheduler)
+    ): Observable<TaskReturn> = result.subscribeOn(scheduler)
 
     protected fun <TaskReturn> SingleTask<TaskReturn>.execute(
         scheduler: Scheduler = Schedulers.io()
-    ): Single<TaskReturn> = execute().subscribeOn(scheduler)
+    ): Single<TaskReturn> = result.subscribeOn(scheduler)
 
     protected fun <TaskReturn> FlowableTask<TaskReturn>.execute(
         scheduler: Scheduler = Schedulers.io()
-    ): Flowable<TaskReturn> = execute().subscribeOn(scheduler)
+    ): Flowable<TaskReturn> = result.subscribeOn(scheduler)
 
     protected fun CompletableTask.execute(
         scheduler: Scheduler = Schedulers.io()
-    ): Completable = execute().subscribeOn(scheduler)
+    ): Completable = result.subscribeOn(scheduler)
 
     protected fun <TaskReturn> Observable<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,

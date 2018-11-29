@@ -3,6 +3,7 @@ package com.example.there.aroundmenow.base.architecture
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.there.aroundmenow.di.Injectable
+import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -30,7 +31,7 @@ abstract class RxFragment<State, Actions : Any> : Fragment(), ObservesState, Inj
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(uiDisposables)
+        lifecycle += uiDisposables
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -10,5 +10,5 @@ import javax.inject.Inject
 class FindNearbyPOIs @Inject constructor(
     private val repository: IPlaceRepository
 ) : SingleTaskWithInput<LatLng, NearbyPOIsData> {
-    override fun execute(input: LatLng): Single<NearbyPOIsData> = repository.getNearbyPOIs(input)
+    override fun executeWith(input: LatLng): Single<NearbyPOIsData> = repository.getNearbyPOIs(input)
 }
