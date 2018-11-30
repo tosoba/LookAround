@@ -1,9 +1,10 @@
 package com.example.there.aroundmenow.places.pois
 
-import com.google.android.gms.location.places.Place
+import com.example.domain.repo.model.SimplePOI
+
 
 data class POIsState(
-    val pois: List<Place>
+    val pois: List<SimplePOI>
 ) {
     companion object {
         val INITIAL = POIsState(emptyList())

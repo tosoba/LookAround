@@ -6,10 +6,10 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface OverpassAPIClient {
-    @GET
+    @GET(".")
     fun getPlaces(@Query("data") query: String): Single<OverpassPlacesResponse>
 
     companion object {
-        const val BASE_URL = "https://www.overpass-api.de/api/interpreter"
+        const val BASE_URL = "https://www.overpass-api.de/api/interpreter/"
     }
 }

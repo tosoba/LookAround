@@ -1,11 +1,12 @@
 package com.example.data.repo
 
 import com.example.domain.repo.IPlaceRepository
+import com.example.domain.repo.RepositoryResult
+import com.example.domain.repo.datastore.DataStoreResult
 import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
-import com.example.domain.repo.model.NearbyPOIsData
-import com.example.domain.repo.model.ReverseGeocodingData
-import com.google.android.gms.location.places.Place
+import com.example.domain.task.result.FindNearbyPOIsResult
+import com.example.domain.task.result.ReverseGeocodeLocationResult
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
 import javax.inject.Inject
@@ -15,33 +16,23 @@ class PlacesRepository @Inject constructor(
     private val remote: IRemotePlacesDataStore
 ) : IPlaceRepository {
 
-    override fun getNearbyPlacesOfType(
-        latLng: LatLng,
-        type: String
-    ): Single<List<Place>> = remote.getNearbyPlacesOfType(latLng, type)
-
     override fun reverseGeocodeLocation(
         latLng: LatLng
-    ): Single<ReverseGeocodingData> = remote.reverseGeocodeLocation(latLng)
-
-    override fun getNearbyPOIs(
-        latLng: LatLng
-    ): Single<NearbyPOIsData> = local.getLastNearbyPOIs(latLng).flatMap { localPOIs ->
-        when (localPOIs) {
-            is NearbyPOIsData.Success -> Single.just(localPOIs)
-            else -> remote.getNearbyPOIs(latLng).flatMap { remotePOIs ->
-                when (remotePOIs) {
-                    is NearbyPOIsData.Success -> Single.just(remotePOIs).flatMap { poisToSave ->
-                        local.saveNearbyPOIs(latLng, poisToSave.places)
-                            .andThen(Single.just(poisToSave))
-                    }
-                    else -> Single.just(remotePOIs)
-                }
-            }
+    ): Single<ReverseGeocodeLocationResult> = remote.reverseGeocodeLocation(latLng).map {
+        when (it) {
+            is DataStoreResult.Value -> ReverseGeocodeLocationResult.Data(RepositoryResult.Value(it.value))
+            is DataStoreResult.Empty, DataStoreResult.Invalid -> ReverseGeocodeLocationResult.GeocodingError
+            is DataStoreResult.Error -> ReverseGeocodeLocationResult.Data(RepositoryResult.Error(it.throwable))
         }
-    }
+    }.onErrorReturn { ReverseGeocodeLocationResult.Data(RepositoryResult.Error(it)) }
 
-    override fun getPlacesAutocompletePredictions(
-        query: String
-    ): Single<List<Place>> = remote.getPlacesAutocompletePredictions(query)
+    override fun findNearbyPOIs(
+        latLng: LatLng
+    ): Single<FindNearbyPOIsResult> = remote.findNearbyPOIs(latLng).map {
+        when (it) {
+            is DataStoreResult.Value -> FindNearbyPOIsResult.Data(RepositoryResult.Value(it.value))
+            is DataStoreResult.Empty, DataStoreResult.Invalid -> FindNearbyPOIsResult.NoPOIsFound
+            is DataStoreResult.Error -> FindNearbyPOIsResult.Data(RepositoryResult.Error(it.throwable))
+        }
+    }.onErrorReturn { FindNearbyPOIsResult.Data(RepositoryResult.Error(it)) }
 }

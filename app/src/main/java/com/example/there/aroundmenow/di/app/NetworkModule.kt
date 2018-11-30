@@ -5,6 +5,7 @@ import com.example.data.api.overpass.OverpassAPIClient
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -34,7 +35,19 @@ class NetworkModule {
     @Provides
     @Named(OVERPASS_API_RETROFIT)
     fun overpassAPIClientRetrofit(): Retrofit = Retrofit.Builder()
-        .buildWithDefaultClientFactoriesAndBaseURL(OverpassAPIClient.BASE_URL)
+        .client(OkHttpClient.Builder().addInterceptor {
+            val urlStr = it.request().url().toString()
+                .replace("%25", "%")
+                .replace("%3D", "=")
+            val newRequest = Request.Builder()
+                .url(urlStr)
+                .build()
+            it.proceed(newRequest)
+        }.build())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(OverpassAPIClient.BASE_URL)
+        .build()
 
     @Provides
     fun overpassAPIClient(

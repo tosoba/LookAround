@@ -1,17 +1,11 @@
 package com.example.domain.repo.datastore
 
-import com.example.domain.repo.model.NearbyPOIsData
-import com.example.domain.repo.model.ReverseGeocodingData
-import com.google.android.gms.location.places.Place
+import com.example.domain.repo.model.GeocodingInfo
+import com.example.domain.repo.model.SimplePOI
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
 
 interface IRemotePlacesDataStore {
-    fun getNearbyPlacesOfType(latLng: LatLng, type: String): Single<List<Place>>
-
-    fun reverseGeocodeLocation(latLng: LatLng): Single<ReverseGeocodingData>
-
-    fun getNearbyPOIs(latLng: LatLng): Single<NearbyPOIsData>
-
-    fun getPlacesAutocompletePredictions(query: String): Single<List<Place>>
+    fun reverseGeocodeLocation(latLng: LatLng): Single<DataStoreResult<GeocodingInfo>>
+    fun findNearbyPOIs(latLng: LatLng): Single<DataStoreResult<List<SimplePOI>>>
 }

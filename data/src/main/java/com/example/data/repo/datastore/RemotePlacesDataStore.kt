@@ -1,88 +1,49 @@
 package com.example.data.repo.datastore
 
 import com.example.data.api.geocoding.GeocodingAPIClient
+import com.example.data.api.overpass.OverpassAPIClient
 import com.example.data.preferences.AppPreferences
 import com.example.data.util.ext.reverseGeocodingString
-import com.example.data.util.ext.toBoundsWithRadius
+import com.example.data.util.ext.toOverpassPOIsQueryWithRadius
+import com.example.domain.repo.datastore.DataStoreResult
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
-import com.example.domain.repo.model.NearbyPOIsData
-import com.example.domain.repo.model.ReverseGeocodingData
-import com.google.android.gms.location.places.AutocompleteFilter
+import com.example.domain.repo.model.GeocodingInfo
+import com.example.domain.repo.model.SimplePOI
 import com.google.android.gms.location.places.GeoDataClient
-import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import io.ashdavies.rx.rxtasks.toSingle
 import io.reactivex.Single
 import javax.inject.Inject
 
 class RemotePlacesDataStore @Inject constructor(
     private val geoDataClient: GeoDataClient,
     private val preferences: AppPreferences,
-    private val geocodingAPIClient: GeocodingAPIClient
+    private val geocodingAPIClient: GeocodingAPIClient,
+    private val overpassAPIClient: OverpassAPIClient
 ) : IRemotePlacesDataStore {
-
-    override fun getNearbyPlacesOfType(
-        latLng: LatLng,
-        type: String
-    ): Single<List<Place>> = Single.just(
-        emptyList()
-    )
 
     override fun reverseGeocodeLocation(
         latLng: LatLng
-    ): Single<ReverseGeocodingData> = geocodingAPIClient.reverseGeocode(
+    ): Single<DataStoreResult<GeocodingInfo>> = geocodingAPIClient.reverseGeocode(
         latLng = latLng.reverseGeocodingString
     ).map {
-        if (it.isValid) ReverseGeocodingData.Success(it.formattedAddress)
-        else ReverseGeocodingData.GeocodingError
+        if (it.isValid) DataStoreResult.Value(GeocodingInfo(latLng, it.formattedAddress))
+        else DataStoreResult.Invalid
     }
 
-    override fun getNearbyPOIs(
+    override fun findNearbyPOIs(
         latLng: LatLng
-    ): Single<NearbyPOIsData> = reverseGeocodeLocation(latLng).flatMap {
-        when (it) {
-            is ReverseGeocodingData.Success ->
-                getPOIsNearbyAddress(latLng, it.address)
-            is ReverseGeocodingData.GeocodingError ->
-                Single.just(NearbyPOIsData.RemoteError.ReverseGeocodingError)
+    ): Single<DataStoreResult<List<SimplePOI>>> = overpassAPIClient.getPlaces(
+        latLng.toOverpassPOIsQueryWithRadius(
+            radius = preferences.radius
+        )
+    ).flatMap { response ->
+        if (response.places.isEmpty())
+            return@flatMap Single.just(DataStoreResult.Empty)
+        else Single.just(response.places.filter { it.tags.name != null }).flatMap { places ->
+            if (places.isEmpty()) Single.just(DataStoreResult.Invalid)
+            else Single.just(DataStoreResult.Value(places.map {
+                SimplePOI(LatLng(it.latitude, it.longitude), it.tags.name!!)
+            }))
         }
     }
-
-    override fun getPlacesAutocompletePredictions(
-        query: String
-    ): Single<List<Place>> = getPlacesFromAutocompletePrediction(query, null, null)
-
-    private fun getPOIsNearbyAddress(
-        latLng: LatLng,
-        address: String
-    ): Single<NearbyPOIsData> = getPlacesFromAutocompletePrediction(
-        "$address points of interest",
-        latLng.toBoundsWithRadius(preferences.radius.toDouble()),
-        null
-    ).map {
-        if (it.isNotEmpty()) NearbyPOIsData.Success(it)
-        else NearbyPOIsData.RemoteError.NoResultsError
-    }
-
-    private fun getPlacesFromAutocompletePrediction(
-        query: String,
-        bounds: LatLngBounds?,
-        filter: AutocompleteFilter?
-    ): Single<List<Place>> = geoDataClient.getAutocompletePredictions(query, bounds, filter).toSingle()
-        .map {
-            it.asIterable()
-                .mapNotNull { prediction -> prediction.placeId }
-                .chunked(20)
-        }
-        .toObservable()
-        .flatMapIterable { it }
-        .flatMap {
-            geoDataClient.getPlaceById(*it.toTypedArray())
-                .toSingle()
-                .toObservable()
-        }
-        .map { it.toList() }
-        .toList()
-        .map { it.flatten() }
 }

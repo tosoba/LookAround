@@ -9,7 +9,6 @@ import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.Places
-import com.pacoworks.rxpaper2.RxPaperBook
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -32,9 +31,5 @@ abstract class DataModule {
         @Provides
         @JvmStatic
         fun googlePlacesClient(context: Context): GeoDataClient = Places.getGeoDataClient(context)
-
-        @Provides
-        @JvmStatic
-        fun placesDatabase(): RxPaperBook = RxPaperBook.with("places")
     }
 }
