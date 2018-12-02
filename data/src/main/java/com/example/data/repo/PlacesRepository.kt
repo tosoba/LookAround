@@ -2,7 +2,6 @@ package com.example.data.repo
 
 import com.example.domain.repo.IPlaceRepository
 import com.example.domain.repo.Result
-import com.example.domain.repo.datastore.DataStoreError
 import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
 import com.example.domain.task.FindNearbyPOIsResult
@@ -20,39 +19,26 @@ class PlacesRepository @Inject constructor(
 
     override fun reverseGeocodeLocation(
         latLng: LatLng
-    ): Single<ReverseGeocodeLocationResult> = remote.reverseGeocodeLocation(latLng).map {
-        when (it) {
-            is Result.Value -> it.withErrorType()
-            is Result.Error -> {
-                val error = it.error
-                when (error) {
-                    is DataStoreError.Data -> it.withError<ReverseGeocodeLocationError>(
-                        ReverseGeocodeLocationError.GeocodingError
-                    )
-                    is DataStoreError.Exception -> it.withError<ReverseGeocodeLocationError>(
-                        ReverseGeocodeLocationError.Exception(error.throwable)
-                    )
-                }
-            }
+    ): Single<ReverseGeocodeLocationResult> = remote.reverseGeocodeLocation(latLng).map { result ->
+        when (result) {
+            is Result.Value -> result.toErrorType()
+            is Result.Error -> result.error.toResult<ReverseGeocodeLocationResult>(
+                onException = { result.withError(ReverseGeocodeLocationError.Exception(it)) },
+                onDataError = { result.withError(ReverseGeocodeLocationError.GeocodingError) }
+            )
         }
+
     }.onErrorReturn { Result.Error(ReverseGeocodeLocationError.Exception(it)) }
 
     override fun findNearbyPOIs(
         latLng: LatLng
-    ): Single<FindNearbyPOIsResult> = remote.findNearbyPOIs(latLng).map {
-        when (it) {
-            is Result.Value -> it.withErrorType()
-            is Result.Error -> {
-                val error = it.error
-                when (error) {
-                    is DataStoreError.Data -> it.withError<FindNearbyPOIsError>(
-                        FindNearbyPOIsError.NoPOIsFound
-                    )
-                    is DataStoreError.Exception -> it.withError<FindNearbyPOIsError>(
-                        FindNearbyPOIsError.Exception(error.throwable)
-                    )
-                }
-            }
+    ): Single<FindNearbyPOIsResult> = remote.findNearbyPOIs(latLng).map { result ->
+        when (result) {
+            is Result.Value -> result.toErrorType()
+            is Result.Error -> result.error.toResult<FindNearbyPOIsResult>(
+                onException = { result.withError(FindNearbyPOIsError.Exception(it)) },
+                onDataError = { result.withError(FindNearbyPOIsError.NoPOIsFound) }
+            )
         }
     }.onErrorReturn { Result.Error(FindNearbyPOIsError.Exception(it)) }
 }
