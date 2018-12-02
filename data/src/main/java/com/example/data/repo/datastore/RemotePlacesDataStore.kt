@@ -5,7 +5,8 @@ import com.example.data.api.overpass.OverpassAPIClient
 import com.example.data.preferences.AppPreferences
 import com.example.data.util.ext.reverseGeocodingString
 import com.example.data.util.ext.toOverpassPOIsQueryWithRadius
-import com.example.domain.repo.datastore.DataStoreResult
+import com.example.domain.repo.Result
+import com.example.domain.repo.datastore.DataStoreError
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
 import com.example.domain.repo.model.GeocodingInfo
 import com.example.domain.repo.model.SimplePOI
@@ -23,25 +24,23 @@ class RemotePlacesDataStore @Inject constructor(
 
     override fun reverseGeocodeLocation(
         latLng: LatLng
-    ): Single<DataStoreResult<GeocodingInfo>> = geocodingAPIClient.reverseGeocode(
+    ): Single<Result<GeocodingInfo, DataStoreError>> = geocodingAPIClient.reverseGeocode(
         latLng = latLng.reverseGeocodingString
     ).map {
-        if (it.isValid) DataStoreResult.Value(GeocodingInfo(latLng, it.formattedAddress))
-        else DataStoreResult.Invalid
+        if (it.isValid) Result.Value<GeocodingInfo, DataStoreError>(GeocodingInfo(latLng, it.formattedAddress))
+        else Result.Error<GeocodingInfo, DataStoreError>(DataStoreError.Data.Invalid)
     }
 
     override fun findNearbyPOIs(
         latLng: LatLng
-    ): Single<DataStoreResult<List<SimplePOI>>> = overpassAPIClient.getPlaces(
-        latLng.toOverpassPOIsQueryWithRadius(
-            radius = preferences.radius
-        )
+    ): Single<Result<List<SimplePOI>, DataStoreError>> = overpassAPIClient.getPlaces(
+        latLng.toOverpassPOIsQueryWithRadius(preferences.radius)
     ).flatMap { response ->
         if (response.places.isEmpty())
-            return@flatMap Single.just(DataStoreResult.Empty)
+            return@flatMap Single.just(Result.Error<List<SimplePOI>, DataStoreError>(DataStoreError.Data.Empty))
         else Single.just(response.places.filter { it.tags.name != null }).flatMap { places ->
-            if (places.isEmpty()) Single.just(DataStoreResult.Invalid)
-            else Single.just(DataStoreResult.Value(places.map {
+            if (places.isEmpty()) Single.just(Result.Error<List<SimplePOI>, DataStoreError>(DataStoreError.Data.Invalid))
+            else Single.just(Result.Value<List<SimplePOI>, DataStoreError>(places.map {
                 SimplePOI(LatLng(it.latitude, it.longitude), it.tags.name!!)
             }))
         }

@@ -1,12 +1,14 @@
 package com.example.data.repo
 
 import com.example.domain.repo.IPlaceRepository
-import com.example.domain.repo.RepositoryResult
-import com.example.domain.repo.datastore.DataStoreResult
+import com.example.domain.repo.Result
+import com.example.domain.repo.datastore.DataStoreError
 import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
-import com.example.domain.task.result.FindNearbyPOIsResult
-import com.example.domain.task.result.ReverseGeocodeLocationResult
+import com.example.domain.task.FindNearbyPOIsResult
+import com.example.domain.task.ReverseGeocodeLocationResult
+import com.example.domain.task.error.FindNearbyPOIsError
+import com.example.domain.task.error.ReverseGeocodeLocationError
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
 import javax.inject.Inject
@@ -20,19 +22,37 @@ class PlacesRepository @Inject constructor(
         latLng: LatLng
     ): Single<ReverseGeocodeLocationResult> = remote.reverseGeocodeLocation(latLng).map {
         when (it) {
-            is DataStoreResult.Value -> ReverseGeocodeLocationResult.Data(RepositoryResult.Value(it.value))
-            is DataStoreResult.Empty, DataStoreResult.Invalid -> ReverseGeocodeLocationResult.GeocodingError
-            is DataStoreResult.Error -> ReverseGeocodeLocationResult.Data(RepositoryResult.Error(it.throwable))
+            is Result.Value -> it.withErrorType()
+            is Result.Error -> {
+                val error = it.error
+                when (error) {
+                    is DataStoreError.Data -> it.withError<ReverseGeocodeLocationError>(
+                        ReverseGeocodeLocationError.GeocodingError
+                    )
+                    is DataStoreError.Exception -> it.withError<ReverseGeocodeLocationError>(
+                        ReverseGeocodeLocationError.Exception(error.throwable)
+                    )
+                }
+            }
         }
-    }.onErrorReturn { ReverseGeocodeLocationResult.Data(RepositoryResult.Error(it)) }
+    }.onErrorReturn { Result.Error(ReverseGeocodeLocationError.Exception(it)) }
 
     override fun findNearbyPOIs(
         latLng: LatLng
     ): Single<FindNearbyPOIsResult> = remote.findNearbyPOIs(latLng).map {
         when (it) {
-            is DataStoreResult.Value -> FindNearbyPOIsResult.Data(RepositoryResult.Value(it.value))
-            is DataStoreResult.Empty, DataStoreResult.Invalid -> FindNearbyPOIsResult.NoPOIsFound
-            is DataStoreResult.Error -> FindNearbyPOIsResult.Data(RepositoryResult.Error(it.throwable))
+            is Result.Value -> it.withErrorType()
+            is Result.Error -> {
+                val error = it.error
+                when (error) {
+                    is DataStoreError.Data -> it.withError<FindNearbyPOIsError>(
+                        FindNearbyPOIsError.NoPOIsFound
+                    )
+                    is DataStoreError.Exception -> it.withError<FindNearbyPOIsError>(
+                        FindNearbyPOIsError.Exception(error.throwable)
+                    )
+                }
+            }
         }
-    }.onErrorReturn { FindNearbyPOIsResult.Data(RepositoryResult.Error(it)) }
+    }.onErrorReturn { Result.Error(FindNearbyPOIsError.Exception(it)) }
 }

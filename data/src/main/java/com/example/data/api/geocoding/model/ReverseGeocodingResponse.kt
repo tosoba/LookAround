@@ -18,6 +18,6 @@ class ReverseGeocodingResponse(
     val formattedAddress: String
         get() = if (isValid)
             "${address!!.eachWordCapitalized} ${if (streetNumber != null) "$streetNumber, ${city!!.eachWordCapitalized}" else city!!.eachWordCapitalized}"
-        else throw IllegalStateException("Invalid response")
+        else throw IllegalStateException("InvalidData response")
 }
 
