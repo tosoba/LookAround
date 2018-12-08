@@ -14,7 +14,7 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
 
     protected fun mutate(mapCurrentStateToNextState: (State) -> State) {
         Observable.just(mapCurrentStateToNextState)
-            .observeOn(AndroidSchedulers.mainThread()) // ensures mutations happen serially on main thread
+            .observeOn(AndroidSchedulers.mainThread())
             .withLatestFrom(viewModel.state)
             .map { (reducer, state) -> reducer(state) }
             .subscribe(viewModel.state)
@@ -29,6 +29,13 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
         .subscribeOn(scheduler)
         .mapToInputAndExecuteTask(this, mapEventArgsToInput)
 
+    protected fun <TaskInput, TaskReturn> ObservableTaskWithInput<TaskInput, TaskReturn>.executeWithInput(
+        input: TaskInput,
+        scheduler: Scheduler = Schedulers.io()
+    ): Observable<TaskReturn> = Observable.just(input)
+        .subscribeOn(scheduler)
+        .flatMap { executeWith(it) }
+
     protected fun <EventArgs, TaskInput, TaskReturn> SingleTaskWithInput<TaskInput, TaskReturn>.executeWithEventArgs(
         eventArgs: EventArgs,
         mapEventArgsToInput: (EventArgs) -> TaskInput,
@@ -36,6 +43,13 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
     ): Single<TaskReturn> = Single.just(eventArgs)
         .subscribeOn(scheduler)
         .mapToInputAndExecuteTask(this, mapEventArgsToInput)
+
+    protected fun <TaskInput, TaskReturn> SingleTaskWithInput<TaskInput, TaskReturn>.executeWithInput(
+        input: TaskInput,
+        scheduler: Scheduler = Schedulers.io()
+    ): Single<TaskReturn> = Single.just(input)
+        .subscribeOn(scheduler)
+        .flatMap { executeWith(it) }
 
     protected fun <EventArgs, TaskInput, TaskReturn> FlowableTaskWithInput<TaskInput, TaskReturn>.executeWithEventArgs(
         eventArgs: EventArgs,
@@ -45,6 +59,13 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
         .subscribeOn(scheduler)
         .mapToInputAndExecuteTask(this, mapEventArgsToInput)
 
+    protected fun <TaskInput, TaskReturn> FlowableTaskWithInput<TaskInput, TaskReturn>.executeWithInput(
+        input: TaskInput,
+        scheduler: Scheduler = Schedulers.io()
+    ): Flowable<TaskReturn> = Flowable.just(input)
+        .subscribeOn(scheduler)
+        .flatMap { executeWith(it) }
+
     protected fun <EventArgs, TaskInput> CompletableTaskWithInput<TaskInput>.executeWithEventArgs(
         eventArgs: EventArgs,
         mapEventArgsToInput: (EventArgs) -> TaskInput,
@@ -52,6 +73,13 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
     ): Completable = Single.just(eventArgs)
         .subscribeOn(scheduler)
         .mapToInputAndExecuteTask(this, mapEventArgsToInput)
+
+    protected fun <TaskInput> CompletableTaskWithInput<TaskInput>.executeWithInput(
+        input: TaskInput,
+        scheduler: Scheduler = Schedulers.io()
+    ): Completable = Single.just(input)
+        .subscribeOn(scheduler)
+        .flatMapCompletable { executeWith(it) }
 
     protected fun <TaskInput, TaskReturn> ObservableTaskWithInput<TaskInput, TaskReturn>.executeWithState(
         mapStateToParams: (State) -> TaskInput,
@@ -119,8 +147,10 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
 
     protected fun <TaskReturn> Observable<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,
-        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
+        sideEffect: ((TaskReturn) -> Unit)? = null
     ) = observeOn(AndroidSchedulers.mainThread())
+        .apply { sideEffect?.let { doOnNext(it) } }
         .withLatestFrom(viewModel.state)
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
         .subscribe(viewModel.state, onError)
@@ -128,8 +158,10 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
 
     protected fun <TaskReturn> Single<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,
-        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
+        sideEffect: ((TaskReturn) -> Unit)? = null
     ) = observeOn(AndroidSchedulers.mainThread())
+        .apply { sideEffect?.let { doOnSuccess(it) } }
         .zipWith(Single.just(viewModel.state.value))
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
         .subscribe(viewModel.state, onError)
@@ -137,17 +169,43 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
 
     protected fun <TaskReturn> Flowable<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,
-        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
+        sideEffect: ((TaskReturn) -> Unit)? = null
     ) = observeOn(AndroidSchedulers.mainThread())
+        .apply { sideEffect?.let { doOnNext(it) } }
         .withLatestFrom(Flowable.just(viewModel.state.value))
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
         .subscribe(viewModel.state, onError)
         .disposeWith(viewModel.disposables)
 
     protected fun Completable.subscribeAndDisposeWithViewModel(
-        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
-        onComplete: Action = RxHandlers.OnCompleteAction.empty
+        onComplete: Action = RxHandlers.OnCompleteAction.empty,
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
         .subscribe(onComplete, onError)
+        .disposeWith(viewModel.disposables)
+
+    protected fun <TaskReturn> Observable<TaskReturn>.subscribeWithSideEffect(
+        onNext: Consumer<TaskReturn>,
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
+        scheduler: Scheduler = AndroidSchedulers.mainThread()
+    ) = observeOn(scheduler)
+        .subscribe(onNext, onError)
+        .disposeWith(viewModel.disposables)
+
+    protected fun <TaskReturn> Single<TaskReturn>.subscribeWithSideEffect(
+        onNext: Consumer<TaskReturn>,
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
+        scheduler: Scheduler = AndroidSchedulers.mainThread()
+    ) = observeOn(scheduler)
+        .subscribe(onNext, onError)
+        .disposeWith(viewModel.disposables)
+
+    protected fun <TaskReturn> Flowable<TaskReturn>.subscribeWithSideEffect(
+        onNext: Consumer<TaskReturn>,
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
+        scheduler: Scheduler = AndroidSchedulers.mainThread()
+    ) = observeOn(scheduler)
+        .subscribe(onNext, onError)
         .disposeWith(viewModel.disposables)
 }
