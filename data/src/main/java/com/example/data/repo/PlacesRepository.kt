@@ -21,24 +21,21 @@ class PlacesRepository @Inject constructor(
         latLng: LatLng
     ): Single<ReverseGeocodeLocationResult> = remote.reverseGeocodeLocation(latLng).map { result ->
         when (result) {
-            is Result.Value -> result.toErrorType()
-            is Result.Error -> result.error.toResult<ReverseGeocodeLocationResult>(
-                onException = { result.withError(ReverseGeocodeLocationError.Exception(it)) },
-                onDataError = { result.withError(ReverseGeocodeLocationError.GeocodingError) }
-            )
+            is Result.Value -> result.mapToType()
+            is Result.Error -> result.error.toRepositoryResult<ReverseGeocodeLocationResult> {
+                result.mapTo(ReverseGeocodeLocationError.GeocodingError)
+            }
         }
-
-    }.onErrorReturn { Result.Error(ReverseGeocodeLocationError.Exception(it)) }
+    }
 
     override fun findNearbyPOIs(
         latLng: LatLng
     ): Single<FindNearbyPOIsResult> = remote.findNearbyPOIs(latLng).map { result ->
         when (result) {
-            is Result.Value -> result.toErrorType()
-            is Result.Error -> result.error.toResult<FindNearbyPOIsResult>(
-                onException = { result.withError(FindNearbyPOIsError.Exception(it)) },
-                onDataError = { result.withError(FindNearbyPOIsError.NoPOIsFound) }
-            )
+            is Result.Value -> result.mapToType()
+            is Result.Error -> result.error.toRepositoryResult<FindNearbyPOIsResult> {
+                result.mapTo(FindNearbyPOIsError.NoPOIsFound)
+            }
         }
-    }.onErrorReturn { Result.Error(FindNearbyPOIsError.Exception(it)) }
+    }
 }

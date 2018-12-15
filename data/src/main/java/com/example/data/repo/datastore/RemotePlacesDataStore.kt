@@ -28,7 +28,7 @@ class RemotePlacesDataStore @Inject constructor(
         latLng = latLng.reverseGeocodingString
     ).map {
         if (it.isValid) Result.Value<GeocodingInfo, DataStoreError>(GeocodingInfo(latLng, it.formattedAddress))
-        else Result.Error<GeocodingInfo, DataStoreError>(DataStoreError.Data.Invalid)
+        else Result.Error<GeocodingInfo, DataStoreError>(DataStoreError.Invalid)
     }
 
     override fun findNearbyPOIs(
@@ -37,9 +37,9 @@ class RemotePlacesDataStore @Inject constructor(
         latLng.toOverpassPOIsQueryWithRadius(preferences.radius)
     ).flatMap { response ->
         if (response.places.isEmpty())
-            return@flatMap Single.just(Result.Error<List<SimplePOI>, DataStoreError>(DataStoreError.Data.Empty))
+            return@flatMap Single.just(Result.Error<List<SimplePOI>, DataStoreError>(DataStoreError.Empty))
         else Single.just(response.places.filter { it.tags.name != null }).flatMap { places ->
-            if (places.isEmpty()) Single.just(Result.Error<List<SimplePOI>, DataStoreError>(DataStoreError.Data.Invalid))
+            if (places.isEmpty()) Single.just(Result.Error<List<SimplePOI>, DataStoreError>(DataStoreError.Invalid))
             else Single.just(Result.Value<List<SimplePOI>, DataStoreError>(places.map {
                 SimplePOI(LatLng(it.latitude, it.longitude), it.tags.name!!)
             }))
