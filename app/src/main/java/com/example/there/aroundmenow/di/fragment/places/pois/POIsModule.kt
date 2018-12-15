@@ -1,7 +1,7 @@
 package com.example.there.aroundmenow.di.fragment.places.pois
 
 import androidx.lifecycle.ViewModelProviders
-import com.example.there.aroundmenow.base.architecture.SharesObservableState
+import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
 import com.example.there.aroundmenow.di.vm.ViewModelFactory
 import com.example.there.aroundmenow.places.pois.*
 import dagger.Binds
@@ -16,7 +16,7 @@ abstract class POIsModule {
     abstract fun poisPresenter(actionsExecutor: POIsActionsExecutor): POIsActions
 
     @Binds
-    abstract fun poisViewObservableState(viewModel: POIsViewModel): SharesObservableState<POIsState>
+    abstract fun poisViewObservableState(viewModel: POIsViewModel): ObservableStateHolder<POIsState>
 
     @Module
     companion object {

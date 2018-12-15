@@ -1,7 +1,9 @@
-package com.example.there.aroundmenow.base.architecture
+package com.example.there.aroundmenow.base.architecture.executor
 
 import com.example.domain.task.base.*
+import com.example.there.aroundmenow.base.architecture.vm.RxViewModel
 import com.example.there.aroundmenow.util.ext.disposeWith
+import com.example.there.aroundmenow.util.rx.RxHandlers
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Action
@@ -10,9 +12,11 @@ import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 
-abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val viewModel: VM) {
+abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(
+    private val viewModel: VM
+) {
 
-    protected fun mutate(mapCurrentStateToNextState: (State) -> State) {
+    protected fun mutateState(mapCurrentStateToNextState: (State) -> State) {
         Observable.just(mapCurrentStateToNextState)
             .observeOn(AndroidSchedulers.mainThread())
             .withLatestFrom(viewModel.state)
@@ -112,7 +116,8 @@ abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(private val vie
     private fun <T, TaskInput, TaskReturn> Observable<T>.mapToInputAndExecuteTask(
         task: ObservableTaskWithInput<TaskInput, TaskReturn>,
         mapper: (T) -> TaskInput
-    ): Observable<TaskReturn> = map(mapper).flatMap { task.executeWith(it) }
+    ): Observable<TaskReturn> = map(mapper)
+        .flatMap { task.executeWith(it) }
 
     private fun <T, TaskInput, TaskReturn> Single<T>.mapToInputAndExecuteTask(
         task: SingleTaskWithInput<TaskInput, TaskReturn>,

@@ -11,16 +11,16 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.there.aroundmenow.R
-import com.example.there.aroundmenow.base.architecture.RxActivity
+import com.example.there.aroundmenow.base.architecture.view.RxActivity
 import com.example.there.aroundmenow.places.PlacesFragment
-import com.example.there.aroundmenow.util.ext.onItemWithIdSelected
 import com.example.there.aroundmenow.util.ext.toggle
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import dagger.android.AndroidInjector
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : RxActivity<MainState, MainActions>() {
+class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity_main) {
 
     private val currentlyShowingFragment: Fragment?
         get() = supportFragmentManager?.findFragmentById(backStackLayoutId)
@@ -42,16 +42,15 @@ class MainActivity : RxActivity<MainState, MainActions>() {
         supportFragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
 
         drawer_navigation_view.onItemWithIdSelected { drawer_layout.closeDrawers() }
-            .disposeOnDestroy()
     }
-
-    override fun initializeLayout() = setContentView(R.layout.activity_main)
-
-    override fun observeState() = Unit
 
     override fun onResume() {
         super.onResume()
         updateHomeAsUpIndicator()
+    }
+
+    override fun Observable<MainState>.observe() {
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

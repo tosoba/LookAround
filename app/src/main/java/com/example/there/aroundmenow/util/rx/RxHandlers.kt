@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.base.architecture
+package com.example.there.aroundmenow.util.rx
 
 import android.util.Log
 import io.reactivex.functions.Action

@@ -1,7 +1,7 @@
 package com.example.there.aroundmenow.di.activity.main
 
 import androidx.lifecycle.ViewModelProviders
-import com.example.there.aroundmenow.base.architecture.SharesObservableState
+import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
 import com.example.there.aroundmenow.di.activity.ActivityScope
 import com.example.there.aroundmenow.di.fragment.places.placetypes.PlaceTypesModule
 import com.example.there.aroundmenow.di.fragment.places.placetypes.PlaceTypesScope
@@ -32,7 +32,7 @@ abstract class MainModule {
     abstract fun placeTypesFragment(): PlaceTypesFragment
 
     @Binds
-    abstract fun mainObservableState(viewModel: MainViewModel): SharesObservableState<MainState>
+    abstract fun mainObservableState(viewModel: MainViewModel): ObservableStateHolder<MainState>
 
     @Module
     companion object {

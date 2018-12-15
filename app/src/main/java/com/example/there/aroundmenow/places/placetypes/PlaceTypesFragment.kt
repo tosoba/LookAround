@@ -1,21 +1,14 @@
 package com.example.there.aroundmenow.places.placetypes
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.example.there.aroundmenow.R
-import com.example.there.aroundmenow.base.architecture.RxFragment
+import com.example.there.aroundmenow.base.architecture.view.RxFragment
+import io.reactivex.Observable
 
 
-class PlaceTypesFragment : RxFragment<PlaceTypesState, PlaceTypesActions>() {
+class PlaceTypesFragment :
+    RxFragment.HostUnaware.WithLayout<PlaceTypesState, PlaceTypesActions>(R.layout.fragment_place_types) {
 
-    override fun observeState() = Unit
+    override fun Observable<PlaceTypesState>.observe() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_place_types, container, false)
     }
 }

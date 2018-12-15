@@ -7,14 +7,14 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 class DefaultSharedPreferences<T>(
-    private val context: Context,
+    context: Context,
     private val entry: PreferencesEntry<T>
 ) : ReadWriteProperty<Any?, T> {
 
-    private val preferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(context).also {
-            if (!it.contains(entry.key)) put(entry.defaultValue)
-        }
+    private val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    init {
+        if (!preferences.contains(entry.key)) put(entry.defaultValue)
     }
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T = with(preferences) {
