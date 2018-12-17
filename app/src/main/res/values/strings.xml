@@ -5,4 +5,5 @@
     <string name="search_places">Search places…</string>
     <string name="about">About</string>
     <string name="google_maps_key">AIzaSyBeKbXbGWzymX-tlL5GKMC9qD5Hirr7JqI</string>
+    <string name="no_places_of_interest_found_around_you_yet">No places of interest found around you yet.</string>
 </resources>
