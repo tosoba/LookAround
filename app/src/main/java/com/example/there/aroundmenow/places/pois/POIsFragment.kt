@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewData
+import com.example.there.aroundmenow.main.MainActivity
 import com.example.there.aroundmenow.model.UISimplePOI
 import com.example.there.aroundmenow.places.pois.recyclerview.POIsAdapter
-import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_pois.*
 
@@ -23,7 +23,7 @@ class POIsFragment : RxFragment.HostUnaware.WithLayout<POIsState, POIsActions>(R
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState == null) {
-            actions.findPOIsNearby(testUserLatLng)
+            actions.findPOIsNearby(MainActivity.testUserLatLng)
         }
     }
 
@@ -41,21 +41,22 @@ class POIsFragment : RxFragment.HostUnaware.WithLayout<POIsState, POIsActions>(R
                     no_pois_found_text_view?.visibility = View.VISIBLE
                 } else {
                     no_pois_found_text_view?.visibility = View.GONE
-                    poisAdapter.pois = state.pois.value.map { UISimplePOI.fromDomainWithUserLatLng(it, testUserLatLng) }
+                    poisAdapter.pois = state.pois.value.map {
+                        UISimplePOI.fromDomainWithUserLatLng(
+                            it,
+                            MainActivity.testUserLatLng
+                        )
+                    }
                 }
             }
             is ViewData.Error -> {
                 pois_loading_progress_bar?.visibility = View.GONE
-                Log.e("ERROR", "POIs loading error.")
+                Log.e(this@POIsFragment.javaClass.name, "POIs loading error.")
             }
             is ViewData.Loading -> {
                 pois_loading_progress_bar?.visibility = View.VISIBLE
                 no_pois_found_text_view?.visibility = View.GONE
             }
         }
-    }
-
-    companion object {
-        private val testUserLatLng = LatLng(51.50354, -0.12768)
     }
 }

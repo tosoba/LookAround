@@ -9,9 +9,9 @@ import com.google.android.gms.maps.model.LatLng
 import javax.inject.Inject
 
 class POIsActionsExecutor @Inject constructor(
-    poIsViewModel: POIsViewModel,
+    poisViewModel: POIsViewModel,
     private val findNearbyPOIsTask: FindNearbyPOIsTask
-) : RxActionsExecutor<POIsState, POIsViewModel>(poIsViewModel), POIsActions {
+) : RxActionsExecutor<POIsState, POIsViewModel>(poisViewModel), POIsActions {
 
     override fun findPOIsNearby(latLng: LatLng) {
         mutateState {
@@ -21,10 +21,10 @@ class POIsActionsExecutor @Inject constructor(
         findNearbyPOIsTask.executeWithInput(
             input = latLng,
             onErrorReturn = { Result.Error(FindNearbyPOIsError.Exception(it)) }
-        ).mapToStateThenSubscribeAndDisposeWithViewModel({ _, nearbyPOIsData ->
-            when (nearbyPOIsData) {
-                is Result.Value -> POIsState(ViewData.Value(nearbyPOIsData.value))
-                is Result.Error -> POIsState(ViewData.Error(nearbyPOIsData.error))
+        ).mapToStateThenSubscribeAndDisposeWithViewModel({ _, result ->
+            when (result) {
+                is Result.Value -> POIsState(ViewData.Value(result.value))
+                is Result.Error -> POIsState(ViewData.Error(result.error))
             }
         })
     }

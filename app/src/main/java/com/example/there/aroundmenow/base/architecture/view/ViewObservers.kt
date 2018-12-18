@@ -5,13 +5,12 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import com.example.there.aroundmenow.util.ext.itemWithIdSelected
 import com.example.there.aroundmenow.util.ext.plusAssign
+import com.example.there.aroundmenow.util.ext.queryTextChanged
 import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import com.jakewharton.rxbinding2.support.design.widget.RxBottomNavigationView
-import com.jakewharton.rxbinding2.support.design.widget.RxNavigationView
-import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
@@ -31,24 +30,15 @@ interface ViewObserver {
 
     fun NavigationView.onItemWithIdSelected(
         onNextId: (Int) -> Unit
-    ) = RxNavigationView.itemSelections(this)
-        .map { it.itemId }
-        .subscribeWithAutoDispose(onNextId)
+    ) = itemWithIdSelected.subscribeWithAutoDispose(onNextId)
 
     fun SearchView.onTextChanged(
         onTextChanged: (CharSequence) -> Unit
-    ) = RxSearchView.queryTextChanges(this)
-        .distinctUntilChanged()
-        .filter { it.isNotEmpty() }
-        .subscribeWithAutoDispose(onTextChanged)
+    ) = queryTextChanged.subscribeWithAutoDispose(onTextChanged)
 
     fun BottomNavigationView.onItemWithIdSelected(
         onNextId: (Int) -> Unit
-    ) = RxBottomNavigationView.itemSelections(this)
-        .map { it.itemId }
-        .skip(1)
-        .distinctUntilChanged()
-        .subscribeWithAutoDispose(onNextId)
+    ) = itemWithIdSelected.subscribeWithAutoDispose(onNextId)
 }
 
 abstract class ViewObservingActivity : AppCompatActivity(), ViewObserver {

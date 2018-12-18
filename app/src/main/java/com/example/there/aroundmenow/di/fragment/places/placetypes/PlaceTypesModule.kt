@@ -13,7 +13,7 @@ abstract class PlaceTypesModule {
 
     @PlaceTypesScope
     @Binds
-    abstract fun placeTypesPresenter(actionsExecutor: PlaceTypesActionsExecutor): PlaceTypesActions
+    abstract fun placeTypesActions(actionsExecutor: PlaceTypesActionsExecutor): PlaceTypesActions
 
     @Binds
     abstract fun placeTypesObservableState(viewModel: PlaceTypesViewModel): ObservableStateHolder<PlaceTypesState>

@@ -13,7 +13,7 @@ abstract class POIsModule {
 
     @POIsScope
     @Binds
-    abstract fun poisPresenter(actionsExecutor: POIsActionsExecutor): POIsActions
+    abstract fun poisActions(actionsExecutor: POIsActionsExecutor): POIsActions
 
     @Binds
     abstract fun poisViewObservableState(viewModel: POIsViewModel): ObservableStateHolder<POIsState>

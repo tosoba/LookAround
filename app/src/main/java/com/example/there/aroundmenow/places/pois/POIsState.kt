@@ -9,6 +9,6 @@ data class POIsState(
     val pois: ViewData<List<SimplePOI>, FindNearbyPOIsError>
 ) {
     companion object {
-        val INITIAL = POIsState(pois = ViewData.Value(emptyList()))
+        val INITIAL = POIsState(pois = ViewData.Idle)
     }
 }

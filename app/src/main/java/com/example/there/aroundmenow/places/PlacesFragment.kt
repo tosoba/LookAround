@@ -1,20 +1,22 @@
 package com.example.there.aroundmenow.places
 
-import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import com.example.there.aroundmenow.R
-import com.example.there.aroundmenow.base.architecture.view.ViewObservingFragment
+import com.example.there.aroundmenow.base.architecture.view.RxFragment
+import com.example.there.aroundmenow.base.architecture.view.ViewData
 import com.example.there.aroundmenow.databinding.FragmentPlacesBinding
+import com.example.there.aroundmenow.main.MainActivity
+import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import com.example.there.aroundmenow.util.view.FragmentViewPagerAdapter
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_places.*
 
 
-class PlacesFragment : ViewObservingFragment() {
+class PlacesFragment :
+    RxFragment.RxHostAware.DataBound<PlacesState, MainState, PlacesActions, FragmentPlacesBinding>(R.layout.fragment_places) {
 
     private val viewPagerAdapter by lazy {
         FragmentViewPagerAdapter(
@@ -23,23 +25,27 @@ class PlacesFragment : ViewObservingFragment() {
         )
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = DataBindingUtil.inflate<FragmentPlacesBinding>(
-        layoutInflater,
-        R.layout.fragment_places,
-        container,
-        false
-    ).apply {
+    override fun FragmentPlacesBinding.init() {
         pagerAdapter = viewPagerAdapter
-    }.root
+        onReverseGeocodingFabClick = View.OnClickListener {
+            actions.reverseGeocodeLocation(MainActivity.testUserLatLng)
+        }
+    }
 
     override fun observeViews() {
         places_bottom_navigation_view.onItemWithIdSelected {
             places_view_pager.currentItem = viewPagerItemIndexes[it]!!
         }
+    }
+
+    override fun Observable<PlacesState>.observe() = subscribeWithAutoDispose {
+        when (it.lastGeocodingResult) {
+            is ViewData.Value -> Log.e("ADDR", it.lastGeocodingResult.value.address)
+            is ViewData.Error -> Log.e(this@PlacesFragment.javaClass.name, "Reverse geocoding error.")
+        }
+    }
+
+    override fun Observable<MainState>.observeHost() {
     }
 
     companion object {
