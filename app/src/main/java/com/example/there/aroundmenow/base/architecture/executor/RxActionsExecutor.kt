@@ -18,15 +18,31 @@ import io.reactivex.schedulers.Schedulers
 abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(
     private val viewModel: VM
 ) {
+    protected val lastState: State
+        get() = viewModel.state.value
 
-    protected fun mutateState(mapCurrentStateToNextState: (State) -> State) {
-        Observable.just(mapCurrentStateToNextState)
-            .observeOn(AndroidSchedulers.mainThread())
-            .withLatestFrom(viewModel.state)
-            .map { (reducer, state) -> reducer(state) }
-            .subscribe(viewModel.state)
-            .disposeWith(viewModel.disposables)
+    private fun reduceState(
+        mapCurrentStateToNextState: (State) -> State
+    ): Observable<State> = Observable.just(mapCurrentStateToNextState)
+        .observeOn(AndroidSchedulers.mainThread())
+        .withLatestFrom(viewModel.state)
+        .map { (reducer, state) -> reducer(state) }
+
+    private fun Observable<State>.subscribeAndDisposeWithViewModel() {
+        subscribe(viewModel.state).disposeWith(viewModel.disposables)
     }
+
+    protected fun mutateState(
+        mapCurrentStateToNextState: (State) -> State
+    ) = reduceState(mapCurrentStateToNextState)
+        .subscribeAndDisposeWithViewModel()
+
+    protected fun mutateStateWithSideEffect(
+        mapCurrentStateToNextState: (State) -> State,
+        sideEffect: (State) -> Unit
+    ) = reduceState(mapCurrentStateToNextState)
+        .doOnNext(sideEffect)
+        .subscribeAndDisposeWithViewModel()
 
     protected fun <EventArgs, TaskInput, TaskReturn> ObservableTaskWithInput<TaskInput, TaskReturn>.executeWithEventArgs(
         eventArgs: EventArgs,

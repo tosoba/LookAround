@@ -6,17 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.Fragment
 import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
 import com.example.there.aroundmenow.di.Injectable
 import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 sealed class RxFragment<State : Any, Actions : Any>(
     @LayoutRes protected val layoutResource: Int
-) : Fragment(), Injectable, ViewObserver,
+) : ViewObservingFragment(), Injectable,
     StateObserver<State> {
 
     @Inject
@@ -34,7 +34,9 @@ sealed class RxFragment<State : Any, Actions : Any>(
 
     override fun onStart() {
         super.onStart()
-        observableStateHolderSharer.observableState.observe()
+        observableStateHolderSharer.observableState
+            .observeOn(AndroidSchedulers.mainThread())
+            .observe()
     }
 
     override fun onCreateView(
@@ -78,7 +80,8 @@ sealed class RxFragment<State : Any, Actions : Any>(
 
         override fun onStart() {
             super.onStart()
-            observableActivityState.observeHost()
+            observableActivityState.observeOn(AndroidSchedulers.mainThread())
+                .observeHost()
         }
 
         abstract class WithLayout<State : Any, HostState : Any, Actions : Any>(

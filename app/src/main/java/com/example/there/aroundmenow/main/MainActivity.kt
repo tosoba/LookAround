@@ -15,7 +15,6 @@ import com.example.there.aroundmenow.base.architecture.view.RxActivity
 import com.example.there.aroundmenow.places.PlacesFragment
 import com.example.there.aroundmenow.util.ext.toggle
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
-import com.google.android.gms.maps.model.LatLng
 import dagger.android.AndroidInjector
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -130,7 +129,5 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
         private const val backStackLayoutId = R.id.container
 
         private const val PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE = 100
-
-        val testUserLatLng = LatLng(51.50354, -0.12768)
     }
 }

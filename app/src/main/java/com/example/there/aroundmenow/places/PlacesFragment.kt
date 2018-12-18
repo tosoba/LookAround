@@ -6,7 +6,6 @@ import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewData
 import com.example.there.aroundmenow.databinding.FragmentPlacesBinding
-import com.example.there.aroundmenow.main.MainActivity
 import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
@@ -15,9 +14,9 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_places.*
 
 
-class PlacesFragment :
-    RxFragment.RxHostAware.DataBound<PlacesState, MainState, PlacesActions, FragmentPlacesBinding>(R.layout.fragment_places) {
-
+class PlacesFragment : RxFragment.RxHostAware.DataBound<PlacesState, MainState, PlacesActions, FragmentPlacesBinding>(
+    R.layout.fragment_places
+) {
     private val viewPagerAdapter by lazy {
         FragmentViewPagerAdapter(
             manager = childFragmentManager,
@@ -28,7 +27,7 @@ class PlacesFragment :
     override fun FragmentPlacesBinding.init() {
         pagerAdapter = viewPagerAdapter
         onReverseGeocodingFabClick = View.OnClickListener {
-            actions.reverseGeocodeLocation(MainActivity.testUserLatLng)
+            actions.reverseGeocodeLocation()
         }
     }
 
@@ -40,12 +39,17 @@ class PlacesFragment :
 
     override fun Observable<PlacesState>.observe() = subscribeWithAutoDispose {
         when (it.lastGeocodingResult) {
-            is ViewData.Value -> Log.e("ADDR", it.lastGeocodingResult.value.address)
+            is ViewData.Value -> Log.e("ADDR", it.lastGeocodingResult.value.formattedAddress)
             is ViewData.Error -> Log.e(this@PlacesFragment.javaClass.name, "Reverse geocoding error.")
         }
     }
 
     override fun Observable<MainState>.observeHost() {
+        map { it.userLatLng }.subscribeWithAutoDispose {
+            when (it) {
+                is ViewData.Value -> actions.updateUserLatLng(it.value)
+            }
+        }
     }
 
     companion object {
