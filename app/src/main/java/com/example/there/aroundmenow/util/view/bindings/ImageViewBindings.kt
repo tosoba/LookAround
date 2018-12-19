@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.util.binding
+package com.example.there.aroundmenow.util.view.bindings
 
 import android.widget.ImageView
 import androidx.annotation.DrawableRes

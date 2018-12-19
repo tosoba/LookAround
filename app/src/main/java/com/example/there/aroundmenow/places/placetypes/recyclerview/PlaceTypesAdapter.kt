@@ -1,5 +1,6 @@
 package com.example.there.aroundmenow.places.placetypes.recyclerview
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -9,6 +10,7 @@ import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.databinding.PlaceTypeItemBinding
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.util.view.recyclerview.SimpleListDiffUtilCallback
+import safety.com.br.progressimageview.ProgressImageView
 
 class PlaceTypesAdapter : RecyclerView.Adapter<PlaceTypesAdapter.ViewHolder>() {
 
@@ -31,6 +33,10 @@ class PlaceTypesAdapter : RecyclerView.Adapter<PlaceTypesAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.placeType = placeTypes[position]
+        holder.binding.root.findViewById<ProgressImageView>(R.id.progress_image_view).showLoading().withAutoHide(false)
+            .withBorderColor(
+                Color.RED
+            ).withBorderSize(10)
     }
 
     class ViewHolder(val binding: PlaceTypeItemBinding) : RecyclerView.ViewHolder(binding.root)
