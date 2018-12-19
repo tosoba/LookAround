@@ -32,8 +32,8 @@ sealed class RxFragment<State : Any, Actions : Any>(
         lifecycle += uiDisposables
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         observableStateHolderSharer.observableState
             .observeOn(AndroidSchedulers.mainThread())
             .observe()
@@ -78,8 +78,8 @@ sealed class RxFragment<State : Any, Actions : Any>(
                 else throw IllegalArgumentException("RxActivity State type error.")
             }
 
-        override fun onStart() {
-            super.onStart()
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
             observableActivityState.observeOn(AndroidSchedulers.mainThread())
                 .observeHost()
         }

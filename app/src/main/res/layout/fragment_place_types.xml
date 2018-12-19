@@ -5,9 +5,8 @@
              android:layout_height="match_parent"
              tools:context=".places.placetypes.PlaceTypesFragment">
 
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Place types"/>
+    <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:id="@+id/place_type_groups_recycler_view"/>
 
 </FrameLayout>

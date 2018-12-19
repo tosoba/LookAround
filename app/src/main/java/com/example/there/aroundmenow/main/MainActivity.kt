@@ -36,7 +36,7 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.ic_menu_24dp)
+            setHomeAsUpIndicator(R.drawable.menu)
         }
 
         supportFragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
@@ -122,8 +122,8 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
     )
 
     private fun updateHomeAsUpIndicator() = if (supportFragmentManager.backStackEntryCount > 0)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_24dp)
-    else supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_24dp)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.arrow_back)
+    else supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
 
     companion object {
         private const val backStackLayoutId = R.id.container

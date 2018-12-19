@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/search_places_toolbar_menu_item"
           android:title="@string/search_places"
-          android:icon="@drawable/ic_search_24dp"
+          android:icon="@drawable/search"
           app:showAsAction="collapseActionView|ifRoom"/>
 </menu>

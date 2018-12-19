@@ -3,12 +3,12 @@
 
     <item
             android:id="@+id/bottom_navigation_place_types_item"
-            android:icon="@drawable/ic_format_list_bulleted_black_24dp"
+            android:icon="@drawable/format_list_bulleted_black"
             android:title="@string/places"/>
 
     <item
             android:id="@+id/bottom_navigation_pois_item"
-            android:icon="@drawable/ic_location_on_black_24dp"
+            android:icon="@drawable/location_on_black"
             android:title="@string/pois"/>
 
 </menu>
