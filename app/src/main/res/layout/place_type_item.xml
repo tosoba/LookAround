@@ -8,19 +8,24 @@
                   android:orientation="vertical"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:padding="3dp">
+                  android:padding="3dp"
+                  android:minWidth="70dp">
 
         <safety.com.br.progressimageview.ProgressImageView
                 android:id="@+id/progress_image_view"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:background="@color/colorPrimary"
-                android:src="@drawable/airport"/>
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:scaleType="centerInside"
+                android:background="@drawable/loading_fab_background"
+                android:src="@{placeType.drawableId}"
+                android:layout_gravity="center"/>
 
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:layout_marginTop="2dp"
+                  android:layout_gravity="center"
                   android:text="@{placeType.label}"
-                  android:textAlignment="center"/>
+                  android:textAlignment="center"
+                  android:textColor="@android:color/white"/>
 
     </LinearLayout>
 

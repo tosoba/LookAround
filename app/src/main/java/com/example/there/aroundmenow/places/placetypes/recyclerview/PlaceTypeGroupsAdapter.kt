@@ -13,6 +13,8 @@ class PlaceTypeGroupsAdapter(
     private val placeTypeGroups: List<UIPlaceTypeGroup>
 ) : RecyclerView.Adapter<PlaceTypeGroupsAdapter.ViewHolder>() {
 
+    private val childrenViewPool = RecyclerView.RecycledViewPool()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
         DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
@@ -32,7 +34,7 @@ class PlaceTypeGroupsAdapter(
         }
     }
 
-    class ViewHolder(
+    inner class ViewHolder(
         val binding: PlaceTypeGroupItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -46,6 +48,8 @@ class PlaceTypeGroupsAdapter(
                     false
                 )
                 adapter = this@ViewHolder.adapter
+                setHasFixedSize(true)
+                setRecycledViewPool(childrenViewPool)
             }
         }
     }
