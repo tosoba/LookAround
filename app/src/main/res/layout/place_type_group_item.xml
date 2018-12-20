@@ -11,6 +11,7 @@
                                        app:cardCornerRadius="5dp">
 
         <ImageView android:id="@+id/group_image_view"
+                   srcGlide="@{group.glideSrc}"
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:scaleType="fitXY"/>
 

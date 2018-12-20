@@ -33,10 +33,11 @@ class PlaceTypesAdapter : RecyclerView.Adapter<PlaceTypesAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.placeType = placeTypes[position]
-        holder.binding.root.findViewById<ProgressImageView>(R.id.progress_image_view).showLoading().withAutoHide(false)
-            .withBorderColor(
-                Color.RED
-            ).withBorderSize(10)
+        holder.binding.root.findViewById<ProgressImageView>(R.id.progress_image_view)
+            .showLoading()
+            .withAutoHide(false)
+            .withBorderColor(Color.RED)
+            .withBorderSize(10)
     }
 
     class ViewHolder(val binding: PlaceTypeItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -55,6 +56,5 @@ class PlaceTypesAdapter : RecyclerView.Adapter<PlaceTypesAdapter.ViewHolder>() {
             val (oldItem, newItem) = getItemPair(oldItemPosition, newItemPosition)
             return oldItem == newItem
         }
-
     }
 }
