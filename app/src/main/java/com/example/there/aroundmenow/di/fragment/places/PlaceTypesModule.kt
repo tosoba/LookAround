@@ -1,7 +1,8 @@
-package com.example.there.aroundmenow.di.fragment.places.placetypes
+package com.example.there.aroundmenow.di.fragment.places
 
 import androidx.lifecycle.ViewModelProviders
 import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
+import com.example.there.aroundmenow.di.scope.ChildFragmentScope
 import com.example.there.aroundmenow.di.vm.ViewModelFactory
 import com.example.there.aroundmenow.places.placetypes.*
 import dagger.Binds
@@ -11,7 +12,7 @@ import dagger.Provides
 @Module
 abstract class PlaceTypesModule {
 
-    @PlaceTypesScope
+    @ChildFragmentScope
     @Binds
     abstract fun placeTypesActions(actionsExecutor: PlaceTypesActionsExecutor): PlaceTypesActions
 

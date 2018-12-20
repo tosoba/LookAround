@@ -1,7 +1,7 @@
-package com.example.there.aroundmenow.di.activity
+package com.example.there.aroundmenow.di.scope
 
 import javax.inject.Scope
 
 @Scope
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-annotation class ActivityScope
+annotation class FragmentScope

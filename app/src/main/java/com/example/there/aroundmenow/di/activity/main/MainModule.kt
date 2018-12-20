@@ -2,13 +2,12 @@ package com.example.there.aroundmenow.di.activity.main
 
 import androidx.lifecycle.ViewModelProviders
 import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
-import com.example.there.aroundmenow.di.activity.ActivityScope
+import com.example.there.aroundmenow.di.fragment.places.POIsModule
+import com.example.there.aroundmenow.di.fragment.places.PlaceTypesModule
 import com.example.there.aroundmenow.di.fragment.places.PlacesModule
-import com.example.there.aroundmenow.di.fragment.places.PlacesScope
-import com.example.there.aroundmenow.di.fragment.places.placetypes.PlaceTypesModule
-import com.example.there.aroundmenow.di.fragment.places.placetypes.PlaceTypesScope
-import com.example.there.aroundmenow.di.fragment.places.pois.POIsModule
-import com.example.there.aroundmenow.di.fragment.places.pois.POIsScope
+import com.example.there.aroundmenow.di.scope.ActivityScope
+import com.example.there.aroundmenow.di.scope.ChildFragmentScope
+import com.example.there.aroundmenow.di.scope.FragmentScope
 import com.example.there.aroundmenow.di.vm.ViewModelFactory
 import com.example.there.aroundmenow.main.*
 import com.example.there.aroundmenow.places.PlacesFragment
@@ -29,15 +28,15 @@ abstract class MainModule {
     @Binds
     abstract fun mainObservableState(viewModel: MainViewModel): ObservableStateHolder<MainState>
 
-    @POIsScope
+    @ChildFragmentScope
     @ContributesAndroidInjector(modules = [POIsModule::class])
     abstract fun poisFragment(): POIsFragment
 
-    @PlaceTypesScope
+    @ChildFragmentScope
     @ContributesAndroidInjector(modules = [PlaceTypesModule::class])
     abstract fun placeTypesFragment(): PlaceTypesFragment
 
-    @PlacesScope
+    @FragmentScope
     @ContributesAndroidInjector(modules = [PlacesModule::class])
     abstract fun placesFragment(): PlacesFragment
 
