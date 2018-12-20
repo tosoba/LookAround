@@ -16,7 +16,7 @@ import io.reactivex.rxkotlin.zipWith
 import kotlinx.android.synthetic.main.fragment_pois.*
 
 
-class POIsFragment : RxFragment.RxHostAware.WithLayout<POIsState, MainState, POIsActions>(
+class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, POIsActions>(
     R.layout.fragment_pois
 ) {
     private val poisAdapter: POIsAdapter by lazy { POIsAdapter() }

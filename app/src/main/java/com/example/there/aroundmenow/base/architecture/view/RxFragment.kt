@@ -46,8 +46,8 @@ sealed class RxFragment<State : Any, Actions : Any>(
     ): View? = when (this) {
         is HostUnaware.WithLayout<*, *> -> inflater.inflate(layoutResource, container, false)
         is HostUnaware.DataBound<*, *, *> -> initializeView(layoutResource, inflater, container)
-        is RxHostAware.WithLayout<*, *, *> -> inflater.inflate(layoutResource, container, false)
-        is RxHostAware.DataBound<*, *, *, *> -> initializeView(layoutResource, inflater, container)
+        is HostAware.WithLayout<*, *, *> -> inflater.inflate(layoutResource, container, false)
+        is HostAware.DataBound<*, *, *, *> -> initializeView(layoutResource, inflater, container)
     }
 
     sealed class HostUnaware<State : Any, Actions : Any>(
@@ -64,7 +64,7 @@ sealed class RxFragment<State : Any, Actions : Any>(
             FragmentBindingInitializer<Binding>
     }
 
-    sealed class RxHostAware<State : Any, HostState : Any, Actions : Any>(
+    sealed class HostAware<State : Any, HostState : Any, Actions : Any>(
         @LayoutRes layoutResource: Int
     ) : RxFragment<State, Actions>(layoutResource),
         HostStateObserver<HostState> {
@@ -86,11 +86,11 @@ sealed class RxFragment<State : Any, Actions : Any>(
 
         abstract class WithLayout<State : Any, HostState : Any, Actions : Any>(
             @LayoutRes layoutResource: Int
-        ) : RxHostAware<State, HostState, Actions>(layoutResource)
+        ) : HostAware<State, HostState, Actions>(layoutResource)
 
         abstract class DataBound<State : Any, HostState : Any, Actions : Any, Binding : ViewDataBinding>(
             @LayoutRes layoutResource: Int
-        ) : RxHostAware<State, HostState, Actions>(layoutResource),
+        ) : HostAware<State, HostState, Actions>(layoutResource),
             FragmentBindingInitializer<Binding>
     }
 }

@@ -5,4 +5,4 @@ import javax.inject.Inject
 
 class MainActionsExecutor @Inject constructor(
     mainViewModel: MainViewModel
-) : RxActionsExecutor<MainState, MainViewModel>(mainViewModel), MainActions
+) : RxActionsExecutor.HostUnaware<MainState, MainViewModel>(mainViewModel), MainActions

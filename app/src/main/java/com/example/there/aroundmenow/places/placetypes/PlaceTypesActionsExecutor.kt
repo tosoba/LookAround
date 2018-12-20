@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class PlaceTypesActionsExecutor @Inject constructor(
     placeTypesViewModel: PlaceTypesViewModel
-) : RxActionsExecutor<PlaceTypesState, PlaceTypesViewModel>(placeTypesViewModel), PlaceTypesActions {
+) : RxActionsExecutor.HostUnaware<PlaceTypesState, PlaceTypesViewModel>(placeTypesViewModel), PlaceTypesActions {
 }

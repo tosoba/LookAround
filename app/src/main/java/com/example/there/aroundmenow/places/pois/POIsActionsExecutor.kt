@@ -12,7 +12,7 @@ import javax.inject.Inject
 class POIsActionsExecutor @Inject constructor(
     poisViewModel: POIsViewModel,
     private val findNearbyPOIsTask: FindNearbyPOIsTask
-) : RxActionsExecutor<POIsState, POIsViewModel>(poisViewModel), POIsActions {
+) : RxActionsExecutor.HostUnaware<POIsState, POIsViewModel>(poisViewModel), POIsActions {
 
     override fun findPOIsNearby(latLng: LatLng) {
         mutateState {

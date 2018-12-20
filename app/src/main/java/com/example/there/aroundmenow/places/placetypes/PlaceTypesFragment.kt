@@ -6,13 +6,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
-import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.places.placetypes.recyclerview.PlaceTypeGroupsAdapter
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_place_types.*
 
 
-class PlaceTypesFragment : RxFragment.RxHostAware.WithLayout<PlaceTypesState, MainState, PlaceTypesActions>(
+class PlaceTypesFragment : RxFragment.HostUnaware.WithLayout<PlaceTypesState, PlaceTypesActions>(
     R.layout.fragment_place_types
 ) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -26,11 +25,5 @@ class PlaceTypesFragment : RxFragment.RxHostAware.WithLayout<PlaceTypesState, Ma
 
     override fun Observable<PlaceTypesState>.observe() {
 
-    }
-
-    override fun Observable<MainState>.observeHost() {
-        map { it.userLatLng }.subscribeWithAutoDispose {
-
-        }
     }
 }

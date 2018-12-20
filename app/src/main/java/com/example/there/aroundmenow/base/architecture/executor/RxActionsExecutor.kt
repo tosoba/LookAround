@@ -15,9 +15,20 @@ import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 
-abstract class RxActionsExecutor<State, VM : RxViewModel<State>>(
+sealed class RxActionsExecutor<State, VM : RxViewModel<State>>(
     private val viewModel: VM
 ) {
+    abstract class HostUnaware<State, VM : RxViewModel<State>>(viewModel: VM) : RxActionsExecutor<State, VM>(viewModel)
+
+    abstract class HostAware<State, HostState, VM : RxViewModel<State>, HVM : RxViewModel<HostState>>(
+        viewModel: VM,
+        private val hostViewModel: HVM
+    ) : RxActionsExecutor<State, VM>(viewModel) {
+
+        protected val lastHostState: HostState
+            get() = hostViewModel.state.value
+    }
+
     protected val lastState: State
         get() = viewModel.state.value
 
