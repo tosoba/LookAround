@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.places.pois.recyclerview
+package com.example.there.aroundmenow.list.simpleplaces
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,16 +11,21 @@ import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.util.view.recyclerview.SimpleListDiffUtilCallback
 import io.reactivex.subjects.PublishSubject
 
-class POIsAdapter : RecyclerView.Adapter<POIsAdapter.ViewHolder>() {
+class SimplePlacesAdapter : RecyclerView.Adapter<SimplePlacesAdapter.ViewHolder>() {
 
-    var pois: List<UISimplePlace> = emptyList()
+    var places: List<UISimplePlace> = emptyList()
         set(value) {
-            DiffUtil.calculateDiff(POIsAdapter.DiffUtilCallback(field, value))
+            DiffUtil.calculateDiff(
+                DiffUtilCallback(
+                    field,
+                    value
+                )
+            )
                 .dispatchUpdatesTo(this)
             field = value
         }
 
-    val poiSelected: PublishSubject<UISimplePlace> = PublishSubject.create()
+    val placeSelected: PublishSubject<UISimplePlace> = PublishSubject.create()
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -33,16 +38,16 @@ class POIsAdapter : RecyclerView.Adapter<POIsAdapter.ViewHolder>() {
         )
     )
 
-    override fun getItemCount(): Int = pois.size
+    override fun getItemCount(): Int = places.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.place = pois[position]
+        holder.binding.place = places[position]
     }
 
     inner class ViewHolder(val binding: SimplePlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener { _ ->
-                binding.place?.let { poiSelected.onNext(it) }
+                binding.place?.let { placeSelected.onNext(it) }
             }
         }
     }

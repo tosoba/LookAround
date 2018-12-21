@@ -6,6 +6,7 @@ import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewData
 import com.example.there.aroundmenow.databinding.FragmentPlacesBinding
+import com.example.there.aroundmenow.places.favourites.FavouritesFragment
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import com.example.there.aroundmenow.util.ext.checkItem
@@ -20,7 +21,7 @@ class PlacesFragment : RxFragment.HostUnaware.DataBound<PlacesState, PlacesActio
     private val viewPagerAdapter by lazy {
         FragmentViewPagerAdapter(
             manager = childFragmentManager,
-            fragments = arrayOf(PlaceTypesFragment(), POIsFragment())
+            fragments = arrayOf(PlaceTypesFragment(), POIsFragment(), FavouritesFragment())
         )
     }
 
@@ -51,7 +52,8 @@ class PlacesFragment : RxFragment.HostUnaware.DataBound<PlacesState, PlacesActio
     companion object {
         private val viewPagerItemIndexes = mapOf(
             R.id.bottom_navigation_place_types_item to 0,
-            R.id.bottom_navigation_pois_item to 1
+            R.id.bottom_navigation_pois_item to 1,
+            R.id.bottom_navigation_favourites_item to 2
         )
     }
 }

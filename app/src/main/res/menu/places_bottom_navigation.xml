@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-            android:id="@+id/bottom_navigation_place_types_item"
-            android:icon="@drawable/format_list_bulleted_black"
-            android:title="@string/places"/>
+    <item android:id="@+id/bottom_navigation_place_types_item"
+          android:icon="@drawable/format_list_bulleted_black"
+          android:title="@string/places"/>
 
-    <item
-            android:id="@+id/bottom_navigation_pois_item"
-            android:icon="@drawable/location_on_black"
-            android:title="@string/pois"/>
+    <item android:id="@+id/bottom_navigation_pois_item"
+          android:icon="@drawable/location_on_black"
+          android:title="@string/pois"/>
+
+    <item android:id="@+id/bottom_navigation_favourites_item"
+          android:icon="@drawable/favourite"
+          android:title="@string/favourites"/>
 
 </menu>

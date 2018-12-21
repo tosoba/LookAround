@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
-import com.example.there.aroundmenow.places.placetypes.recyclerview.PlaceTypeGroupsAdapter
+import com.example.there.aroundmenow.places.placetypes.list.PlaceTypeGroupsAdapter
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_place_types.*
 

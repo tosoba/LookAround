@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.places.placetypes.recyclerview
+package com.example.there.aroundmenow.places.placetypes.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
