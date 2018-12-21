@@ -9,3 +9,7 @@ val BottomNavigationView.itemWithIdSelected: Observable<Int>
         .map { it.itemId }
         .skip(1)
         .distinctUntilChanged()
+
+fun BottomNavigationView.checkItem(index: Int) {
+    menu.getItem(index)?.isChecked = true
+}

@@ -5,7 +5,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
 import com.example.there.aroundmenow.util.ext.itemWithIdSelected
+import com.example.there.aroundmenow.util.ext.pageSelected
 import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.ext.queryTextChanged
 import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
@@ -39,6 +41,10 @@ interface ViewObserver {
     fun BottomNavigationView.onItemWithIdSelected(
         onNextId: (Int) -> Unit
     ) = itemWithIdSelected.subscribeWithAutoDispose(onNextId)
+
+    fun ViewPager.onPageSelected(
+        onNext: (Int) -> Unit
+    ) = pageSelected.subscribeWithAutoDispose(onNext)
 }
 
 abstract class ViewObservingActivity : AppCompatActivity(), ViewObserver {

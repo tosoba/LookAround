@@ -10,7 +10,9 @@ import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewData
 import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.places.pois.recyclerview.POIsAdapter
+import com.example.there.aroundmenow.util.ext.mainActivity
 import com.example.there.aroundmenow.util.ext.withPreviousValue
+import com.example.there.aroundmenow.visualizer.VisualizerFragment
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.zipWith
 import kotlinx.android.synthetic.main.fragment_pois.*
@@ -25,6 +27,16 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, POIsA
         super.onViewCreated(view, savedInstanceState)
         pois_recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         pois_recycler_view.adapter = poisAdapter
+    }
+
+    override fun observeViews() {
+        poisAdapter.poiSelected.subscribeWithAutoDispose {
+            mainActivity?.showFragment(
+                VisualizerFragment.with(
+                    VisualizerFragment.Arguments.SinglePlace(it)
+                ), true
+            )
+        }
     }
 
     override fun Observable<POIsState>.observe() = subscribeWithAutoDispose { state ->

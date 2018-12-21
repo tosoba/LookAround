@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -77,12 +76,8 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
         if (requestCode == PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE) {
             when (resultCode) {
                 Activity.RESULT_OK -> {
-                    val place = PlaceAutocomplete.getPlace(this, data)
-                    Log.i("PLACE", "Place: " + place.name)
                 }
                 PlaceAutocomplete.RESULT_ERROR -> {
-                    val status = PlaceAutocomplete.getStatus(this, data)
-                    Log.i("PLACE", status.statusMessage)
                 }
                 Activity.RESULT_CANCELED -> {
                 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable name="pagerAdapter" type="androidx.viewpager.widget.PagerAdapter"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                       xmlns:tools="http://schemas.android.com/tools"
+                                                       xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                       android:layout_width="match_parent"
+                                                       android:layout_height="match_parent"
+                                                       android:orientation="vertical"
+                                                       tools:context=".visualizer.VisualizerFragment">
+
+        <androidx.viewpager.widget.ViewPager android:id="@+id/visualizer_view_pager"
+                                             android:layout_width="0dp"
+                                             android:layout_height="0dp"
+                                             pagerAdapter="@{pagerAdapter}"
+                                             app:layout_constraintTop_toTopOf="parent"
+                                             app:layout_constraintLeft_toLeftOf="parent"
+                                             app:layout_constraintRight_toRightOf="parent"
+                                             app:layout_constraintBottom_toTopOf="@id/visualizer_bottom_navigation_view"/>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/visualizer_bottom_navigation_view"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:menu="@menu/visualizer_bottom_navigation"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+

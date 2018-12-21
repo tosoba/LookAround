@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/bottom_navigation_camera_item"
+            android:icon="@drawable/camera"
+            android:title="@string/camera"/>
+
+    <item
+            android:id="@+id/bottom_navigation_map_item"
+            android:icon="@drawable/map"
+            android:title="@string/map"/>
+
+    <item
+            android:id="@+id/bottom_navigation_places_list_item"
+            android:icon="@drawable/format_list_bulleted_black"
+            android:title="@string/list"/>
+</menu>

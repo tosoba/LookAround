@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <data>
-        <variable name="poi" type="com.example.there.aroundmenow.model.UISimplePOI"/>
+        <variable name="place" type="com.example.there.aroundmenow.model.UISimplePlace"/>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,11 +10,11 @@
                   android:layout_height="wrap_content"
                   android:padding="5dp">
 
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@{poi.name}"
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@{place.name}"
                   android:textSize="16sp" android:textStyle="bold"/>
 
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:textSize="14sp" android:text="@{poi.formattedDistanceFromUser}"/>
+                  android:textSize="14sp" android:text="@{place.formattedDistanceFromUser}"/>
 
     </LinearLayout>
 </layout>

@@ -9,7 +9,7 @@ import com.example.domain.repo.Result
 import com.example.domain.repo.datastore.DataStoreError
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
 import com.example.domain.repo.model.GeocodingInfo
-import com.example.domain.repo.model.SimplePOI
+import com.example.domain.repo.model.SimplePlace
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
@@ -33,15 +33,15 @@ class RemotePlacesDataStore @Inject constructor(
 
     override fun findNearbyPOIs(
         latLng: LatLng
-    ): Single<Result<List<SimplePOI>, DataStoreError>> = overpassAPIClient.getPlaces(
+    ): Single<Result<List<SimplePlace>, DataStoreError>> = overpassAPIClient.getPlaces(
         latLng.toOverpassPOIsQueryWithRadius(preferences.radius)
     ).flatMap { response ->
         if (response.places.isEmpty())
-            return@flatMap Single.just(Result.Error<List<SimplePOI>, DataStoreError>(DataStoreError.Empty))
+            return@flatMap Single.just(Result.Error<List<SimplePlace>, DataStoreError>(DataStoreError.Empty))
         else Single.just(response.places.filter { it.tags.name != null }).flatMap { places ->
-            if (places.isEmpty()) Single.just(Result.Error<List<SimplePOI>, DataStoreError>(DataStoreError.Invalid))
-            else Single.just(Result.Value<List<SimplePOI>, DataStoreError>(places.map {
-                SimplePOI(LatLng(it.latitude, it.longitude), it.tags.name!!)
+            if (places.isEmpty()) Single.just(Result.Error<List<SimplePlace>, DataStoreError>(DataStoreError.Invalid))
+            else Single.just(Result.Value<List<SimplePlace>, DataStoreError>(places.map {
+                SimplePlace(LatLng(it.latitude, it.longitude), it.tags.name!!)
             }))
         }
     }

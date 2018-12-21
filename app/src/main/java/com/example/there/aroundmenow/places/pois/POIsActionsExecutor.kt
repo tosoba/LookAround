@@ -5,7 +5,7 @@ import com.example.domain.task.error.FindNearbyPOIsError
 import com.example.domain.task.impl.FindNearbyPOIsTask
 import com.example.there.aroundmenow.base.architecture.executor.RxActionsExecutor
 import com.example.there.aroundmenow.base.architecture.view.ViewData
-import com.example.there.aroundmenow.model.UISimplePOI
+import com.example.there.aroundmenow.model.UISimplePlace
 import com.google.android.gms.maps.model.LatLng
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ class POIsActionsExecutor @Inject constructor(
             when (result) {
                 is Result.Value -> lastState.copy(
                     pois = ViewData.Value(result.value.map {
-                        UISimplePOI.fromDomainWithUserLatLng(it, latLng)
+                        UISimplePlace.fromDomainWithUserLatLng(it, latLng)
                     })
                 )
                 is Result.Error -> lastState.copy(

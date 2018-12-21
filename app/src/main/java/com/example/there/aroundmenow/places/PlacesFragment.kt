@@ -8,6 +8,7 @@ import com.example.there.aroundmenow.base.architecture.view.ViewData
 import com.example.there.aroundmenow.databinding.FragmentPlacesBinding
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
+import com.example.there.aroundmenow.util.ext.checkItem
 import com.example.there.aroundmenow.util.view.FragmentViewPagerAdapter
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_places.*
@@ -33,6 +34,10 @@ class PlacesFragment : RxFragment.HostUnaware.DataBound<PlacesState, PlacesActio
     override fun observeViews() {
         places_bottom_navigation_view.onItemWithIdSelected {
             places_view_pager.currentItem = viewPagerItemIndexes[it]!!
+        }
+
+        places_view_pager.onPageSelected {
+            places_bottom_navigation_view?.checkItem(it)
         }
     }
 
