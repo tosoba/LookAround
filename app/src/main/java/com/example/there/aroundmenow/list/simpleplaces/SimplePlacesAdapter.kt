@@ -1,6 +1,7 @@
 package com.example.there.aroundmenow.list.simpleplaces
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
@@ -15,17 +16,12 @@ class SimplePlacesAdapter : RecyclerView.Adapter<SimplePlacesAdapter.ViewHolder>
 
     var places: List<UISimplePlace> = emptyList()
         set(value) {
-            DiffUtil.calculateDiff(
-                DiffUtilCallback(
-                    field,
-                    value
-                )
-            )
+            DiffUtil.calculateDiff(DiffUtilCallback(field, value))
                 .dispatchUpdatesTo(this)
             field = value
         }
 
-    val placeSelected: PublishSubject<UISimplePlace> = PublishSubject.create()
+    val placeSelected: PublishSubject<SimplePlacesListEvent> = PublishSubject.create()
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -47,7 +43,11 @@ class SimplePlacesAdapter : RecyclerView.Adapter<SimplePlacesAdapter.ViewHolder>
     inner class ViewHolder(val binding: SimplePlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener { _ ->
-                binding.place?.let { placeSelected.onNext(it) }
+                binding.place?.let { placeSelected.onNext(SimplePlacesListEvent.VisualizationRequest(it)) }
+            }
+
+            binding.onInfoBtnClickListener = View.OnClickListener { _ ->
+                binding.place?.let { placeSelected.onNext(SimplePlacesListEvent.DetailsRequest(it)) }
             }
         }
     }

@@ -1,16 +1,16 @@
 package com.example.there.aroundmenow.places.placetypes
 
 import com.example.there.aroundmenow.R
-import com.example.there.aroundmenow.base.architecture.view.ViewData
+import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UIPlaceTypeGroup
 import com.google.android.gms.maps.model.LatLng
 
 data class PlaceTypesState(
-    val userLatLng: ViewData<LatLng, Nothing>
+    val userLatLng: ViewDataState<LatLng, Nothing>
 ) {
     companion object {
-        val INITIAL = PlaceTypesState(ViewData.Idle)
+        val INITIAL = PlaceTypesState(ViewDataState.Idle)
     }
 
     object Constants {

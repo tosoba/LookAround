@@ -18,7 +18,7 @@ fun LatLng.toOverpassPOIsQueryWithRadius(
     radius: Int
 ): String = "[out:json];node[tourism=attraction]${toBoundsWithRadius(radius.toDouble()).overpassString};out%20meta;"
 
-private fun LatLng.toBoundsWithRadius(radius: Double): LatLngBounds {
+fun LatLng.toBoundsWithRadius(radius: Double): LatLngBounds {
     val distanceFromCenterToCorner = radius * Math.sqrt(2.0)
     val southwestCorner = SphericalUtil.computeOffset(this, distanceFromCenterToCorner, 225.0)
     val northeastCorner = SphericalUtil.computeOffset(this, distanceFromCenterToCorner, 45.0)

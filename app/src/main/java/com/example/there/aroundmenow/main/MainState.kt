@@ -1,12 +1,12 @@
 package com.example.there.aroundmenow.main
 
-import com.example.there.aroundmenow.base.architecture.view.ViewData
+import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.google.android.gms.maps.model.LatLng
 
 data class MainState(
-    val userLatLng: ViewData<LatLng, Nothing>
+    val userLatLng: ViewDataState<LatLng, Nothing>
 ) {
     companion object {
-        val INITIAL = MainState(ViewData.Value(LatLng(51.50354, -0.12768)))
+        val INITIAL = MainState(ViewDataState.Value(LatLng(51.50354, -0.12768)))
     }
 }

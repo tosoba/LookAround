@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.util.view
+package com.example.there.aroundmenow.util.view.viewpager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

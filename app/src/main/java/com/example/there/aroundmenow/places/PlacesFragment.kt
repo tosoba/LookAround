@@ -4,13 +4,13 @@ import android.util.Log
 import android.view.View
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
-import com.example.there.aroundmenow.base.architecture.view.ViewData
+import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentPlacesBinding
 import com.example.there.aroundmenow.places.favourites.FavouritesFragment
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import com.example.there.aroundmenow.util.ext.checkItem
-import com.example.there.aroundmenow.util.view.FragmentViewPagerAdapter
+import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapter
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_places.*
 
@@ -44,8 +44,8 @@ class PlacesFragment : RxFragment.HostUnaware.DataBound<PlacesState, PlacesActio
 
     override fun Observable<PlacesState>.observe() = subscribeWithAutoDispose {
         when (it.lastGeocodingResult) {
-            is ViewData.Value -> Log.e("ADDR", it.lastGeocodingResult.value.formattedAddress)
-            is ViewData.Error -> Log.e(this@PlacesFragment.javaClass.name, "Reverse geocoding error.")
+            is ViewDataState.Value -> Log.e("ADDR", it.lastGeocodingResult.value.formattedAddress)
+            is ViewDataState.Error -> Log.e(this@PlacesFragment.javaClass.name, "Reverse geocoding error.")
         }
     }
 

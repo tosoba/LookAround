@@ -4,9 +4,12 @@ import com.example.domain.repo.IPlaceRepository
 import com.example.domain.repo.Result
 import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
+import com.example.domain.repo.model.SimplePlace
 import com.example.domain.task.FindNearbyPOIsResult
+import com.example.domain.task.FindPlaceDetailsResult
 import com.example.domain.task.ReverseGeocodeLocationResult
 import com.example.domain.task.error.FindNearbyPOIsError
+import com.example.domain.task.error.FindPlaceDetailsError
 import com.example.domain.task.error.ReverseGeocodeLocationError
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
@@ -35,6 +38,17 @@ class PlacesRepository @Inject constructor(
             is Result.Value -> result.mapToType()
             is Result.Error -> result.error.toRepositoryResult<FindNearbyPOIsResult> {
                 result.mapTo(FindNearbyPOIsError.NoPOIsFound)
+            }
+        }
+    }
+
+    override fun findPlaceDetails(
+        simplePlace: SimplePlace
+    ): Single<FindPlaceDetailsResult> = remote.findPlaceDetails(simplePlace).map {
+        when (it) {
+            is Result.Value -> it.mapToType()
+            is Result.Error -> it.error.toRepositoryResult<FindPlaceDetailsResult> {
+                it.mapTo(FindPlaceDetailsError.PlaceDetailsNotFound)
             }
         }
     }

@@ -11,7 +11,7 @@ import com.example.there.aroundmenow.base.architecture.view.ViewObservingFragmen
 import com.example.there.aroundmenow.databinding.FragmentVisualizerBinding
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.util.ext.checkItem
-import com.example.there.aroundmenow.util.view.FragmentViewPagerAdapter
+import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapter
 import com.example.there.aroundmenow.visualizer.camera.CameraFragment
 import com.example.there.aroundmenow.visualizer.map.MapFragment
 import com.example.there.aroundmenow.visualizer.placelist.PlacesListFragment
@@ -69,7 +69,9 @@ class VisualizerFragment : ViewObservingFragment(), FragmentBindingInitializer<F
         fun with(
             arguments: Arguments
         ): VisualizerFragment = VisualizerFragment().apply {
-            this.arguments = Bundle().apply { putParcelable(ARG_PLACE, arguments) }
+            this.arguments = Bundle().apply {
+                putParcelable(ARG_PLACE, arguments)
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.there.aroundmenow.list.simpleplaces
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,21 +12,32 @@ import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.DataListFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewObservingFragment
 import com.example.there.aroundmenow.model.UISimplePlace
-import com.example.there.aroundmenow.util.ext.mainActivity
-import com.example.there.aroundmenow.visualizer.VisualizerFragment
+import com.example.there.aroundmenow.util.event.TaggedEvent
 import kotlinx.android.synthetic.main.fragment_simple_place_list.*
+import org.greenrobot.eventbus.EventBus
 
 
 class SimplePlacesListFragment : ViewObservingFragment(), DataListFragment<List<UISimplePlace>> {
 
     private val placesAdapter: SimplePlacesAdapter by lazy { SimplePlacesAdapter() }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_simple_place_list, container, false)
+    private lateinit var eventTag: String
+
+    override fun onInflate(context: Context?, attrs: AttributeSet?, savedInstanceState: Bundle?) {
+        super.onInflate(context, attrs, savedInstanceState)
+
+        val styledAttrs = context?.obtainStyledAttributes(attrs, R.styleable.SimplePlacesFragment)
+        styledAttrs?.getText(R.styleable.SimplePlacesFragment_eventTag)?.let {
+            eventTag = it.toString()
+        }
+        styledAttrs?.recycle()
     }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = inflater.inflate(R.layout.fragment_simple_place_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,11 +47,7 @@ class SimplePlacesListFragment : ViewObservingFragment(), DataListFragment<List<
 
     override fun observeViews() {
         placesAdapter.placeSelected.subscribeWithAutoDispose {
-            mainActivity?.showFragment(
-                VisualizerFragment.with(
-                    VisualizerFragment.Arguments.SinglePlace(it)
-                ), true
-            )
+            if (::eventTag.isInitialized) EventBus.getDefault().post(TaggedEvent(eventTag, it))
         }
     }
 
