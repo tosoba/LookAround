@@ -11,8 +11,8 @@
                   android:padding="3dp"
                   android:minWidth="70dp">
 
-        <safety.com.br.progressimageview.ProgressImageView
-                android:id="@+id/progress_image_view"
+        <ImageButton
+                android:id="@+id/place_type_image_button"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:scaleType="centerInside"

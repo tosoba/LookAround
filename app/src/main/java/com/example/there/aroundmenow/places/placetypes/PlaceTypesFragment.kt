@@ -2,6 +2,7 @@ package com.example.there.aroundmenow.places.placetypes
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,20 +17,29 @@ import kotlinx.android.synthetic.main.fragment_place_types.*
 class PlaceTypesFragment : RxFragment.HostUnaware.WithLayout<PlaceTypesState, PlaceTypesActions>(
     R.layout.fragment_place_types
 ) {
+    private val placeTypeGroupsAdapter: PlaceTypeGroupsAdapter by lazy {
+        PlaceTypeGroupsAdapter(PlaceTypesState.Constants.placeTypeGroups)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(place_type_groups_recycler_view) {
-            layoutManager = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            } else {
-                GridLayoutManager(context, 2, RecyclerView.VERTICAL, false)
-            }
-            adapter = PlaceTypeGroupsAdapter(PlaceTypesState.Constants.placeTypeGroups)
+            else GridLayoutManager(context, 2, RecyclerView.VERTICAL, false)
+            adapter = placeTypeGroupsAdapter
             setHasFixedSize(true)
         }
     }
 
     override fun Observable<PlaceTypesState>.observe() {
 
+    }
+
+    override fun observeViews() {
+        super.observeViews()
+        placeTypeGroupsAdapter.placeTypeSelected.subscribeWithAutoDispose {
+            Log.e("TYPE", it.label)
+        }
     }
 }

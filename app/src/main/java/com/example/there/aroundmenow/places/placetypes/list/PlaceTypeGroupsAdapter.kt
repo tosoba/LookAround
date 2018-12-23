@@ -7,13 +7,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.databinding.PlaceTypeGroupItemBinding
+import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UIPlaceTypeGroup
+import io.reactivex.subjects.PublishSubject
 
 class PlaceTypeGroupsAdapter(
     private val placeTypeGroups: List<UIPlaceTypeGroup>
 ) : RecyclerView.Adapter<PlaceTypeGroupsAdapter.ViewHolder>() {
 
     private val childrenViewPool = RecyclerView.RecycledViewPool()
+
+    val placeTypeSelected: PublishSubject<UIPlaceType> = PublishSubject.create()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
         DataBindingUtil.inflate(
@@ -47,7 +51,9 @@ class PlaceTypeGroupsAdapter(
                     RecyclerView.HORIZONTAL,
                     false
                 )
-                adapter = this@ViewHolder.adapter
+                adapter = this@ViewHolder.adapter.apply {
+                    placeTypeSelected.subscribe(this@PlaceTypeGroupsAdapter.placeTypeSelected)
+                }
                 setHasFixedSize(true)
                 setRecycledViewPool(childrenViewPool)
             }
