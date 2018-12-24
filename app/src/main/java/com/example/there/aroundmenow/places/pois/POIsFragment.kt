@@ -1,15 +1,13 @@
 package com.example.there.aroundmenow.places.pois
 
 import android.os.Bundle
-import android.util.Log
-import com.example.domain.task.error.FindPlaceDetailsError
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
-import com.example.there.aroundmenow.base.architecture.view.ViewDataSideEffect
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListEvent
 import com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListFragment
 import com.example.there.aroundmenow.main.MainState
+import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
 import com.example.there.aroundmenow.util.event.EventTags
 import com.example.there.aroundmenow.util.event.TaggedEvent
 import com.example.there.aroundmenow.util.ext.mainActivity
@@ -17,7 +15,6 @@ import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.ext.withPreviousValue
 import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
 import com.example.there.aroundmenow.visualizer.VisualizerFragment
-import com.google.android.gms.location.places.Place
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.zipWith
 import org.greenrobot.eventbus.Subscribe
@@ -66,24 +63,10 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, POIsA
     fun onMessageEvent(taggedEvent: TaggedEvent<SimplePlacesListEvent>) {
         if (taggedEvent.tag == EventTags.FromSimpleListToPOIs) {
             when (taggedEvent.event) {
-                is SimplePlacesListEvent.DetailsRequest -> {
-                    actions.findPlaceDetails(
-                        taggedEvent.event.place,
-                        object : ViewDataSideEffect<Place, FindPlaceDetailsError> {
-                            override fun onLoading() {
-                                Log.e("LOAD", "load")
-                            }
-
-                            override fun onError(error: FindPlaceDetailsError) {
-                                Log.e("ERR", "err")
-                            }
-
-                            override fun onValue(value: Place) {
-                                Log.e("VAL", value.name.toString())
-                            }
-                        }
-                    )
-                }
+                is SimplePlacesListEvent.DetailsRequest -> mainActivity?.showFragment(
+                    PlaceDetailsFragment.with(taggedEvent.event.place),
+                    true
+                )
 
                 is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.showFragment(
                     VisualizerFragment.with(VisualizerFragment.Arguments.SinglePlace(taggedEvent.event.place)),

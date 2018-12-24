@@ -10,7 +10,8 @@ import javax.inject.Inject
 class FindPlaceDetailsTask @Inject constructor(
     private val repository: IPlaceRepository
 ) : SingleTaskWithInput<SimplePlace, FindPlaceDetailsResult> {
-    override fun executeWith(input: SimplePlace): Single<FindPlaceDetailsResult> =
-        repository.findPlaceDetails(input)
 
+    override fun executeWith(
+        input: SimplePlace
+    ): Single<FindPlaceDetailsResult> = repository.findPlaceDetails(input)
 }

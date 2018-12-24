@@ -2,24 +2,32 @@ package com.example.there.aroundmenow.places.placetypes
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.there.aroundmenow.R
-import com.example.there.aroundmenow.base.architecture.view.RxFragment
+import com.example.there.aroundmenow.base.architecture.view.ViewObservingFragment
 import com.example.there.aroundmenow.places.placetypes.list.PlaceTypeGroupsAdapter
-import io.reactivex.Observable
+import com.example.there.aroundmenow.util.ext.mainActivity
+import com.example.there.aroundmenow.visualizer.VisualizerFragment
 import kotlinx.android.synthetic.main.fragment_place_types.*
 
 
-class PlaceTypesFragment : RxFragment.HostUnaware.WithLayout<PlaceTypesState, PlaceTypesActions>(
-    R.layout.fragment_place_types
-) {
+class PlaceTypesFragment : ViewObservingFragment() {
+
     private val placeTypeGroupsAdapter: PlaceTypeGroupsAdapter by lazy {
-        PlaceTypeGroupsAdapter(PlaceTypesState.Constants.placeTypeGroups)
+        PlaceTypeGroupsAdapter(placeTypeGroups)
     }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = inflater.inflate(R.layout.fragment_place_types, container, false)
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,14 +40,12 @@ class PlaceTypesFragment : RxFragment.HostUnaware.WithLayout<PlaceTypesState, Pl
         }
     }
 
-    override fun Observable<PlaceTypesState>.observe() {
-
-    }
-
     override fun observeViews() {
-        super.observeViews()
         placeTypeGroupsAdapter.placeTypeSelected.subscribeWithAutoDispose {
-            Log.e("TYPE", it.label)
+            mainActivity?.showFragment(
+                VisualizerFragment.with(VisualizerFragment.Arguments.PlaceType(it)),
+                true
+            )
         }
     }
 }

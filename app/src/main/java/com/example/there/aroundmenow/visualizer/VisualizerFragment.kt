@@ -9,6 +9,7 @@ import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.FragmentBindingInitializer
 import com.example.there.aroundmenow.base.architecture.view.ViewObservingFragment
 import com.example.there.aroundmenow.databinding.FragmentVisualizerBinding
+import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.util.ext.checkItem
 import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapter
@@ -39,7 +40,6 @@ class VisualizerFragment : ViewObservingFragment(), FragmentBindingInitializer<F
     }
 
     override fun observeViews() {
-        super.observeViews()
         visualizer_bottom_navigation_view.onItemWithIdSelected {
             visualizer_view_pager.currentItem = viewPagerItemIndexes[it]!!
         }
@@ -54,7 +54,7 @@ class VisualizerFragment : ViewObservingFragment(), FragmentBindingInitializer<F
         data class SinglePlace(val place: UISimplePlace) : Arguments()
 
         @Parcelize
-        data class NearbyPlaces(val places: List<UISimplePlace>) : Arguments()
+        data class PlaceType(val placeType: UIPlaceType) : Arguments()
     }
 
     companion object {

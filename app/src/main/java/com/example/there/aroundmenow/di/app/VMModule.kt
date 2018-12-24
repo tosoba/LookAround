@@ -3,8 +3,8 @@ package com.example.there.aroundmenow.di.app
 import androidx.lifecycle.ViewModel
 import com.example.there.aroundmenow.di.vm.ViewModelKey
 import com.example.there.aroundmenow.main.MainViewModel
+import com.example.there.aroundmenow.placedetails.PlaceDetailsViewModel
 import com.example.there.aroundmenow.places.PlacesViewModel
-import com.example.there.aroundmenow.places.placetypes.PlaceTypesViewModel
 import com.example.there.aroundmenow.places.pois.POIsViewModel
 import dagger.Binds
 import dagger.Module
@@ -30,6 +30,6 @@ abstract class VMModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(PlaceTypesViewModel::class)
-    abstract fun placeTypesViewModel(viewModel: PlaceTypesViewModel): ViewModel
+    @ViewModelKey(PlaceDetailsViewModel::class)
+    abstract fun placeDetailsViewModel(viewModel: PlaceDetailsViewModel): ViewModel
 }
