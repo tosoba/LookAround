@@ -69,7 +69,7 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, POIsA
                 )
 
                 is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.showFragment(
-                    VisualizerFragment.with(VisualizerFragment.Arguments.SinglePlace(taggedEvent.event.place)),
+                    VisualizerFragment.with(VisualizerFragment.Arguments.Places(listOf(taggedEvent.event.place))),
                     true
                 )
             }

@@ -5,10 +5,10 @@ import com.example.domain.repo.Result
 import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
 import com.example.domain.repo.model.SimplePlace
-import com.example.domain.task.FindNearbyPOIsResult
+import com.example.domain.task.FindNearbyPlacesResult
 import com.example.domain.task.FindPlaceDetailsResult
 import com.example.domain.task.ReverseGeocodeLocationResult
-import com.example.domain.task.error.FindNearbyPOIsError
+import com.example.domain.task.error.FindNearbyPlacesError
 import com.example.domain.task.error.FindPlaceDetailsError
 import com.example.domain.task.error.ReverseGeocodeLocationError
 import com.google.android.gms.maps.model.LatLng
@@ -33,11 +33,23 @@ class PlacesRepository @Inject constructor(
 
     override fun findNearbyPOIs(
         latLng: LatLng
-    ): Single<FindNearbyPOIsResult> = remote.findNearbyPOIs(latLng).map { result ->
+    ): Single<FindNearbyPlacesResult> = remote.findNearbyPOIs(latLng).map { result ->
         when (result) {
             is Result.Value -> result.mapToType()
-            is Result.Error -> result.error.toRepositoryResult<FindNearbyPOIsResult> {
-                result.mapTo(FindNearbyPOIsError.NoPOIsFound)
+            is Result.Error -> result.error.toRepositoryResult<FindNearbyPlacesResult> {
+                result.mapTo(FindNearbyPlacesError.NoPlacesFound)
+            }
+        }
+    }
+
+    override fun findNearbyPlacesOfType(
+        latLng: LatLng,
+        placeTypeQuery: String
+    ): Single<FindNearbyPlacesResult> = remote.findNearbyPlacesOfType(latLng, placeTypeQuery).map { result ->
+        when (result) {
+            is Result.Value -> result.mapToType()
+            is Result.Error -> result.error.toRepositoryResult<FindNearbyPlacesResult> {
+                result.mapTo(FindNearbyPlacesError.NoPlacesFound)
             }
         }
     }

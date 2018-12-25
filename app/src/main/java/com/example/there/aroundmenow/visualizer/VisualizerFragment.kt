@@ -2,13 +2,12 @@ package com.example.there.aroundmenow.visualizer
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
 import com.example.there.aroundmenow.R
-import com.example.there.aroundmenow.base.architecture.view.FragmentBindingInitializer
-import com.example.there.aroundmenow.base.architecture.view.ViewObservingFragment
+import com.example.there.aroundmenow.base.architecture.view.RxFragment
+import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentVisualizerBinding
+import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.util.ext.checkItem
@@ -16,11 +15,15 @@ import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapte
 import com.example.there.aroundmenow.visualizer.camera.CameraFragment
 import com.example.there.aroundmenow.visualizer.map.MapFragment
 import com.example.there.aroundmenow.visualizer.placelist.PlacesListFragment
+import io.reactivex.Observable
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_visualizer.*
 
 
-class VisualizerFragment : ViewObservingFragment(), FragmentBindingInitializer<FragmentVisualizerBinding> {
+class VisualizerFragment :
+    RxFragment.HostAware.DataBound<VisualizerState, MainState, VisualizerActions, FragmentVisualizerBinding>(
+        R.layout.fragment_visualizer
+    ) {
 
     private val viewPagerAdapter by lazy {
         FragmentViewPagerAdapter(
@@ -29,11 +32,21 @@ class VisualizerFragment : ViewObservingFragment(), FragmentBindingInitializer<F
         )
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = initializeView(R.layout.fragment_visualizer, inflater, container)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) initFromArguments()
+    }
+
+    override fun Observable<VisualizerState>.observe() = map { it.places }.subscribeWithAutoDispose {
+        when (it) {
+            is ViewDataState.Value -> Log.e("PLACES", "places updated")
+            is ViewDataState.Error -> Log.e("PLACES ERR", "Error")
+        }
+    }
+
+    override fun Observable<MainState>.observeHost() = map { it.userLatLng }.subscribeWithAutoDispose {
+        //TODO: send event to CameraFragment to update user location
+    }
 
     override fun FragmentVisualizerBinding.init() {
         pagerAdapter = viewPagerAdapter
@@ -49,9 +62,17 @@ class VisualizerFragment : ViewObservingFragment(), FragmentBindingInitializer<F
         }
     }
 
+    private fun initFromArguments() {
+        val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
+        when (args) {
+            is Arguments.Places -> actions.setPlaces(args.places)
+            is Arguments.PlaceType -> actions.findNearbyPlacesOfType(args.placeType)
+        }
+    }
+
     sealed class Arguments : Parcelable {
         @Parcelize
-        data class SinglePlace(val place: UISimplePlace) : Arguments()
+        data class Places(val places: List<UISimplePlace>) : Arguments()
 
         @Parcelize
         data class PlaceType(val placeType: UIPlaceType) : Arguments()
@@ -64,13 +85,13 @@ class VisualizerFragment : ViewObservingFragment(), FragmentBindingInitializer<F
             R.id.bottom_navigation_places_list_item to 2
         )
 
-        private const val ARG_PLACE = "ARG_PLACE"
+        private const val ARGUMENTS_KEY = "ARGUMENTS_KEY"
 
         fun with(
             arguments: Arguments
         ): VisualizerFragment = VisualizerFragment().apply {
             this.arguments = Bundle().apply {
-                putParcelable(ARG_PLACE, arguments)
+                putParcelable(ARGUMENTS_KEY, arguments)
             }
         }
     }

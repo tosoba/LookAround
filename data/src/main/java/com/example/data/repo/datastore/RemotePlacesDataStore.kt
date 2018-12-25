@@ -2,10 +2,12 @@ package com.example.data.repo.datastore
 
 import com.example.data.api.geocoding.GeocodingAPIClient
 import com.example.data.api.overpass.OverpassAPIClient
+import com.example.data.api.overpass.model.OverpassPlacesResponse
 import com.example.data.preferences.AppPreferences
 import com.example.data.util.ext.reverseGeocodingString
 import com.example.data.util.ext.toBoundsWithRadius
 import com.example.data.util.ext.toOverpassPOIsQueryWithRadius
+import com.example.data.util.ext.toOverpassQueryWithRadius
 import com.example.domain.repo.Result
 import com.example.domain.repo.datastore.DataStoreError
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
@@ -37,17 +39,30 @@ class RemotePlacesDataStore @Inject constructor(
     override fun findNearbyPOIs(
         latLng: LatLng
     ): Single<Result<List<SimplePlace>, DataStoreError>> = overpassAPIClient.getPlaces(
-        latLng.toOverpassPOIsQueryWithRadius(preferences.radius)
-    ).flatMap { response ->
-        if (response.places.isEmpty())
-            return@flatMap Single.just(Result.Error<List<SimplePlace>, DataStoreError>(DataStoreError.Empty))
-        else Single.just(response.places.filter { it.tags.name != null }).flatMap { places ->
-            if (places.isEmpty()) Single.just(Result.Error<List<SimplePlace>, DataStoreError>(DataStoreError.Invalid))
-            else Single.just(Result.Value<List<SimplePlace>, DataStoreError>(places.map {
-                SimplePlace(LatLng(it.latitude, it.longitude), it.tags.name!!)
-            }))
+        query = latLng.toOverpassPOIsQueryWithRadius(preferences.radius)
+    ).result
+
+    override fun findNearbyPlacesOfType(
+        latLng: LatLng,
+        placeTypeQuery: String
+    ): Single<Result<List<SimplePlace>, DataStoreError>> = overpassAPIClient.getPlaces(
+        query = latLng.toOverpassQueryWithRadius(
+            query = placeTypeQuery,
+            radius = preferences.radius
+        )
+    ).result
+
+    private val Single<OverpassPlacesResponse>.result: Single<Result<List<SimplePlace>, DataStoreError>>
+        get() = flatMap { response ->
+            if (response.places.isEmpty())
+                return@flatMap Single.just(Result.Error<List<SimplePlace>, DataStoreError>(DataStoreError.Empty))
+            else Single.just(response.places.filter { it.tags.name != null }).flatMap { places ->
+                if (places.isEmpty()) Single.just(Result.Error<List<SimplePlace>, DataStoreError>(DataStoreError.Invalid))
+                else Single.just(Result.Value<List<SimplePlace>, DataStoreError>(places.map {
+                    SimplePlace(LatLng(it.latitude, it.longitude), it.tags.name!!)
+                }))
+            }
         }
-    }
 
     override fun findPlaceDetails(
         simplePlace: SimplePlace

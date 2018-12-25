@@ -1,7 +1,7 @@
 package com.example.there.aroundmenow.places.pois
 
 import com.example.domain.repo.Result
-import com.example.domain.task.error.FindNearbyPOIsError
+import com.example.domain.task.error.FindNearbyPlacesError
 import com.example.domain.task.impl.FindNearbyPOIsTask
 import com.example.there.aroundmenow.base.architecture.executor.RxActionsExecutor
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
@@ -21,7 +21,7 @@ class POIsActionsExecutor @Inject constructor(
 
         findNearbyPOIsTask.executeWithInput(
             input = latLng,
-            onErrorReturn = { Result.Error(FindNearbyPOIsError.Exception(it)) }
+            onErrorReturn = { Result.Error(FindNearbyPlacesError.Exception(it)) }
         ).mapToStateThenSubscribeAndDisposeWithViewModel({ lastState, result ->
             when (result) {
                 is Result.Value -> lastState.copy(

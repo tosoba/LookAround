@@ -39,13 +39,12 @@ class PlacesActionsExecutor @Inject constructor(
                     }
                 })
             }
-            else -> {
-                mutateState {
-                    it.copy(
-                        lastGeocodingResult = ViewDataState.Error(ReverseGeocodeLocationError.UserLocationUnknown)
-                    )
-                }
+            else -> mutateState {
+                it.copy(
+                    lastGeocodingResult = ViewDataState.Error(ReverseGeocodeLocationError.UserLocationUnknown)
+                )
             }
         }
+
     }
 }

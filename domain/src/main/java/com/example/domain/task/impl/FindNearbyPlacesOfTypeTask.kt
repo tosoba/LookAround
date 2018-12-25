@@ -7,12 +7,13 @@ import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
 import javax.inject.Inject
 
-class FindNearbyPOIsTask @Inject constructor(
+class FindNearbyPlacesOfTypeTask @Inject constructor(
     private val repository: IPlaceRepository
-) : SingleTaskWithInput<LatLng, FindNearbyPlacesResult> {
+) : SingleTaskWithInput<FindNearbyPlacesOfTypeTask.Input, FindNearbyPlacesResult> {
 
     override fun executeWith(
-        input: LatLng
-    ): Single<FindNearbyPlacesResult> = repository.findNearbyPOIs(input)
-}
+        input: Input
+    ): Single<FindNearbyPlacesResult> = repository.findNearbyPlacesOfType(input.latLng, input.query)
 
+    class Input(val latLng: LatLng, val query: String)
+}

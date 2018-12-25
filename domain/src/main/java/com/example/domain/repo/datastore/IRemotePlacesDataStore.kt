@@ -9,6 +9,13 @@ import io.reactivex.Single
 
 interface IRemotePlacesDataStore {
     fun reverseGeocodeLocation(latLng: LatLng): Single<Result<GeocodingInfo, DataStoreError>>
+
     fun findNearbyPOIs(latLng: LatLng): Single<Result<List<SimplePlace>, DataStoreError>>
+
+    fun findNearbyPlacesOfType(
+        latLng: LatLng,
+        placeTypeQuery: String
+    ): Single<Result<List<SimplePlace>, DataStoreError>>
+
     fun findPlaceDetails(simplePlace: SimplePlace): Single<Result<Place, DataStoreError>>
 }

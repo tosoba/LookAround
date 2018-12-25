@@ -6,6 +6,7 @@ import com.example.there.aroundmenow.main.MainViewModel
 import com.example.there.aroundmenow.placedetails.PlaceDetailsViewModel
 import com.example.there.aroundmenow.places.PlacesViewModel
 import com.example.there.aroundmenow.places.pois.POIsViewModel
+import com.example.there.aroundmenow.visualizer.VisualizerViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -32,4 +33,9 @@ abstract class VMModule {
     @IntoMap
     @ViewModelKey(PlaceDetailsViewModel::class)
     abstract fun placeDetailsViewModel(viewModel: PlaceDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(VisualizerViewModel::class)
+    abstract fun visualizerViewModel(viewModel: VisualizerViewModel): ViewModel
 }

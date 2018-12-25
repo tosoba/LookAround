@@ -5,6 +5,7 @@ import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
 import com.example.there.aroundmenow.di.fragment.placedetails.PlaceDetailsModule
 import com.example.there.aroundmenow.di.fragment.places.POIsModule
 import com.example.there.aroundmenow.di.fragment.places.PlacesModule
+import com.example.there.aroundmenow.di.fragment.visualizer.VisualizerModule
 import com.example.there.aroundmenow.di.scope.ActivityScope
 import com.example.there.aroundmenow.di.scope.ChildFragmentScope
 import com.example.there.aroundmenow.di.scope.FragmentScope
@@ -13,6 +14,7 @@ import com.example.there.aroundmenow.main.*
 import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
 import com.example.there.aroundmenow.places.PlacesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
+import com.example.there.aroundmenow.visualizer.VisualizerFragment
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -39,6 +41,10 @@ abstract class MainModule {
     @ChildFragmentScope
     @ContributesAndroidInjector(modules = [PlaceDetailsModule::class])
     abstract fun placeDetailsFragment(): PlaceDetailsFragment
+
+    @FragmentScope
+    @ContributesAndroidInjector(modules = [VisualizerModule::class])
+    abstract fun visualizerFragment(): VisualizerFragment
 
     @Module
     companion object {
