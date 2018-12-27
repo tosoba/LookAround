@@ -85,4 +85,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.github.fcopardo.StrokedTextView-Android:StrokedTextView:v1.0.0@aar'
+    // Dexter
+    implementation 'com.karumi:dexter:5.0.0'
+
 }

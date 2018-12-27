@@ -11,6 +11,7 @@ import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.util.ext.defaultLocation
+import com.example.there.aroundmenow.util.ext.distanceTo
 import com.example.there.aroundmenow.util.ext.location
 import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.lifecycle.OrientationManagerComponent
@@ -19,6 +20,7 @@ import com.example.there.aroundmenow.visualizer.camera.CameraState.Constants.cam
 import com.example.there.aroundmenow.visualizer.camera.view.*
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.withLatestFrom
 import kotlinx.android.synthetic.main.fragment_camera.*
 import javax.inject.Inject
 
@@ -97,10 +99,11 @@ class CameraFragment : RxFragment.HostAware.WithLayout<CameraState, MainState, V
         }
     }
 
-    override fun Observable<VisualizerState>.observeParentFragment() =
-        map { it.places }.subscribeWithAutoDispose { placesState ->
-            when (placesState) {
-                is ViewDataState.Value -> with(placesState.value.map {
+    override fun Observable<VisualizerState>.observeParentFragment() = withLatestFrom(observableActivityState)
+        .map { (visualizerState, mainState) -> Pair(visualizerState.places, mainState.userLatLng) }
+        .subscribeWithAutoDispose { (placesState, userLatLngState) ->
+            when {
+                placesState is ViewDataState.Value && userLatLngState is ViewDataState.Value -> with(placesState.value.map {
                     CameraObject(
                         it,
                         cameraRenderer,
@@ -109,11 +112,18 @@ class CameraFragment : RxFragment.HostAware.WithLayout<CameraState, MainState, V
                 }) {
                     updatePoints(map { it.point })
                     updateRadarPoints(map { it.radarPoint })
+                    cameraRenderer.cameraObjects = this
 
-                    //TODO: if there's only one place (single POI) - set range equal to distance > POI's distance and hide range controls - else make range controls visible
+                    if (size == 1) {
+                        camera_controls_group?.visibility = View.GONE
+                        updateRange(elementAt(0).place.latLng.distanceTo(userLatLngState.value).toDouble() * 2)
+                    } else {
+                        camera_controls_group?.visibility = View.VISIBLE
+                    }
                 }
             }
         }
+
 
     override fun observeViews() {
         page_up_btn.clicks().subscribeWithAutoDispose { actions.pageUp() }

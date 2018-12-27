@@ -16,7 +16,7 @@ import com.example.there.aroundmenow.util.ext.withPreviousValue
 import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
 import com.example.there.aroundmenow.visualizer.VisualizerFragment
 import io.reactivex.Observable
-import io.reactivex.rxkotlin.zipWith
+import io.reactivex.rxkotlin.withLatestFrom
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -44,7 +44,7 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, Unit,
     override fun Observable<MainState>.observeActivity() {
         map { it.userLatLng }
             .withPreviousValue(ViewDataState.Idle)
-            .zipWith(observableStateHolder.observableState)
+            .withLatestFrom(observableStateHolder.observableState)
             .subscribeWithAutoDispose { (lastTwoUserLocations, state) ->
                 val (previous, latest) = lastTwoUserLocations
                 when {
@@ -69,10 +69,12 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, Unit,
                     true
                 )
 
-                is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.showFragment(
-                    VisualizerFragment.with(VisualizerFragment.Arguments.Places(listOf(taggedEvent.event.place))),
-                    true
-                )
+                is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.checkPermissionsAndThen {
+                    mainActivity?.showFragment(
+                        VisualizerFragment.with(VisualizerFragment.Arguments.Places(listOf(taggedEvent.event.place))),
+                        true
+                    )
+                }
             }
         }
     }

@@ -42,10 +42,12 @@ class PlaceTypesFragment : ViewObservingFragment() {
 
     override fun observeViews() {
         placeTypeGroupsAdapter.placeTypeSelected.subscribeWithAutoDispose {
-            mainActivity?.showFragment(
-                VisualizerFragment.with(VisualizerFragment.Arguments.PlaceType(it)),
-                true
-            )
+            mainActivity?.checkPermissionsAndThen {
+                mainActivity?.showFragment(
+                    VisualizerFragment.with(VisualizerFragment.Arguments.PlaceType(it)),
+                    true
+                )
+            }
         }
     }
 }

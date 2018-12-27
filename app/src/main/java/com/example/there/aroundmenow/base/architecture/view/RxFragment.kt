@@ -72,7 +72,7 @@ sealed class RxFragment<State : Any, Actions : Any>(
         }
 
         @Suppress("UNCHECKED_CAST")
-        private val observableActivityState: Observable<ActivityState>
+        protected val observableActivityState: Observable<ActivityState>
             get() {
                 val hostActivity = activity
                 return if (hostActivity != null && hostActivity is RxActivity<*, *>)
@@ -81,7 +81,7 @@ sealed class RxFragment<State : Any, Actions : Any>(
             }
 
         @Suppress("UNCHECKED_CAST")
-        private val observableParentFragmentState: Observable<ParentFragmentState>
+        protected val observableParentFragmentState: Observable<ParentFragmentState>
             get() {
                 val parent = parentFragment
                 return if (parent != null && parent is RxFragment<*, *>)

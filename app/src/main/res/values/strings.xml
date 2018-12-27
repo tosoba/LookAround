@@ -13,4 +13,8 @@
     <string name="map">Map</string>
     <string name="camera">Camera</string>
     <string name="favourites">Favourites</string>
+    <string name="settings">Settings</string>
+    <string name="camera_access_is_needed">Camera access is needed to visualize places.</string>
+    <string name="location_access_is_needed">Location access is needed to properly visualize places.</string>
+    <string name="all_permissions_are_needed">Both camera and location access are needed to visualize places.</string>
 </resources>

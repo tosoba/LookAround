@@ -2,10 +2,8 @@ package com.example.there.aroundmenow.visualizer
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
-import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentVisualizerBinding
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UISimplePlace
@@ -14,7 +12,6 @@ import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapte
 import com.example.there.aroundmenow.visualizer.camera.CameraFragment
 import com.example.there.aroundmenow.visualizer.map.MapFragment
 import com.example.there.aroundmenow.visualizer.placelist.PlacesListFragment
-import io.reactivex.Observable
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_visualizer.*
 
@@ -34,13 +31,6 @@ class VisualizerFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) initFromArguments()
-    }
-
-    override fun Observable<VisualizerState>.observe() = map { it.places }.subscribeWithAutoDispose {
-        when (it) {
-            is ViewDataState.Value -> Log.e("PLACES", "places updated")
-            is ViewDataState.Error -> Log.e("PLACES ERR", "Error")
-        }
     }
 
     override fun FragmentVisualizerBinding.init() {

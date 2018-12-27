@@ -12,7 +12,7 @@ class CameraActionsExecutor @Inject constructor(
     }
 
     override fun pageDown() {
-        if (lastState.page > 1) mutateState {
+        if (lastState.page > 0) mutateState {
             it.copy(page = it.page - 1)
         }
     }
