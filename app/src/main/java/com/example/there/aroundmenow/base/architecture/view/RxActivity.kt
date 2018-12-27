@@ -21,7 +21,7 @@ sealed class RxActivity<State : Any, Actions : Any>(
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
     @Inject
-    lateinit var observableStateHolderSharer: ObservableStateHolder<State>
+    lateinit var observableStateHolder: ObservableStateHolder<State>
 
     @Inject
     lateinit var actions: Actions
@@ -30,7 +30,7 @@ sealed class RxActivity<State : Any, Actions : Any>(
 
     override fun onStart() {
         super.onStart()
-        observableStateHolderSharer.observableState.observe()
+        observableStateHolder.observableState.observe()
     }
 
     abstract class Layout<State : Any, Actions : Any>(

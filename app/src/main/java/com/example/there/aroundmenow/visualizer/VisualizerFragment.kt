@@ -7,7 +7,6 @@ import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentVisualizerBinding
-import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.util.ext.checkItem
@@ -21,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_visualizer.*
 
 
 class VisualizerFragment :
-    RxFragment.HostAware.DataBound<VisualizerState, MainState, VisualizerActions, FragmentVisualizerBinding>(
+    RxFragment.HostUnaware.DataBound<VisualizerState, VisualizerActions, FragmentVisualizerBinding>(
         R.layout.fragment_visualizer
     ) {
 
@@ -42,10 +41,6 @@ class VisualizerFragment :
             is ViewDataState.Value -> Log.e("PLACES", "places updated")
             is ViewDataState.Error -> Log.e("PLACES ERR", "Error")
         }
-    }
-
-    override fun Observable<MainState>.observeHost() = map { it.userLatLng }.subscribeWithAutoDispose {
-        //TODO: send event to CameraFragment to update user location
     }
 
     override fun FragmentVisualizerBinding.init() {

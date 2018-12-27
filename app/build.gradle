@@ -43,6 +43,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('libs/appunta.jar')
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.github.safetysystemtechnology:progress-image-view-android:v1.0'
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -81,4 +83,6 @@ dependencies {
     implementation project(path: ':data')
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'com.github.clans:fab:1.6.4'
+    implementation 'com.github.fcopardo.StrokedTextView-Android:StrokedTextView:v1.0.0@aar'
 }

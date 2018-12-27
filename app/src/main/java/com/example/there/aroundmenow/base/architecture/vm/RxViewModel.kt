@@ -5,8 +5,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class RxViewModel<State>(initialState: State) : ViewModel(),
-    ObservableStateHolder<State> {
+abstract class RxViewModel<State>(initialState: State) : ViewModel(), ObservableStateHolder<State> {
 
     val state = BehaviorRelay.createDefault(initialState)!!
 

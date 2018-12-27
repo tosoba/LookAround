@@ -5,6 +5,7 @@ import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
 import com.example.there.aroundmenow.di.fragment.placedetails.PlaceDetailsModule
 import com.example.there.aroundmenow.di.fragment.places.POIsModule
 import com.example.there.aroundmenow.di.fragment.places.PlacesModule
+import com.example.there.aroundmenow.di.fragment.visualizer.CameraModule
 import com.example.there.aroundmenow.di.fragment.visualizer.VisualizerModule
 import com.example.there.aroundmenow.di.scope.ActivityScope
 import com.example.there.aroundmenow.di.scope.ChildFragmentScope
@@ -15,6 +16,7 @@ import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
 import com.example.there.aroundmenow.places.PlacesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import com.example.there.aroundmenow.visualizer.VisualizerFragment
+import com.example.there.aroundmenow.visualizer.camera.CameraFragment
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,21 +32,25 @@ abstract class MainModule {
     @Binds
     abstract fun mainObservableState(viewModel: MainViewModel): ObservableStateHolder<MainState>
 
-    @ChildFragmentScope
-    @ContributesAndroidInjector(modules = [POIsModule::class])
-    abstract fun poisFragment(): POIsFragment
-
     @FragmentScope
     @ContributesAndroidInjector(modules = [PlacesModule::class])
     abstract fun placesFragment(): PlacesFragment
 
     @ChildFragmentScope
+    @ContributesAndroidInjector(modules = [POIsModule::class])
+    abstract fun poisFragment(): POIsFragment
+
+    @FragmentScope
     @ContributesAndroidInjector(modules = [PlaceDetailsModule::class])
     abstract fun placeDetailsFragment(): PlaceDetailsFragment
 
     @FragmentScope
     @ContributesAndroidInjector(modules = [VisualizerModule::class])
     abstract fun visualizerFragment(): VisualizerFragment
+
+    @ChildFragmentScope
+    @ContributesAndroidInjector(modules = [CameraModule::class])
+    abstract fun cameraFragment(): CameraFragment
 
     @Module
     companion object {

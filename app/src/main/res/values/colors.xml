@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="fab_menu_labels_colorRipple">#66FFFFFF</color>
+    <color name="fab_menu_labels_colorPressed">#444444</color>
+    <color name="fab_menu_labels_colorNormal">#333333</color>
 </resources>

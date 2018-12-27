@@ -21,8 +21,9 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 
-class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, POIsActions>(
-    R.layout.fragment_pois
+class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, Unit, POIsActions>(
+    R.layout.fragment_pois,
+    HostAwarenessMode.ACTIVITY_ONLY
 ) {
     private val placesListFragment: SimplePlacesListFragment?
         get() = childFragmentManager.findFragmentById(R.id.pois_list_fragment) as? SimplePlacesListFragment
@@ -40,10 +41,10 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, POIsA
         }
     }
 
-    override fun Observable<MainState>.observeHost() {
+    override fun Observable<MainState>.observeActivity() {
         map { it.userLatLng }
             .withPreviousValue(ViewDataState.Idle)
-            .zipWith(observableStateHolderSharer.observableState)
+            .zipWith(observableStateHolder.observableState)
             .subscribeWithAutoDispose { (lastTwoUserLocations, state) ->
                 val (previous, latest) = lastTwoUserLocations
                 when {

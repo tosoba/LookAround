@@ -17,7 +17,7 @@ abstract class POIsModule {
     abstract fun poisActions(actionsExecutor: POIsActionsExecutor): POIsActions
 
     @Binds
-    abstract fun poisViewObservableState(viewModel: POIsViewModel): ObservableStateHolder<POIsState>
+    abstract fun poisObservableState(viewModel: POIsViewModel): ObservableStateHolder<POIsState>
 
     @Module
     companion object {
