@@ -18,6 +18,7 @@
                 android:layout_height="45dp"
                 android:scaleType="centerInside"
                 android:background="@drawable/loading_fab_background"
+                android:foreground="@drawable/round_foreground_ripple"
                 android:src="@{placeType.drawableId}"
                 android:layout_gravity="center"/>
 

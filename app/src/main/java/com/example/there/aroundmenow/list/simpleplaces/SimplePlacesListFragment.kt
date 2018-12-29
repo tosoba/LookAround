@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.there.aroundmenow.R
@@ -27,9 +29,7 @@ class SimplePlacesListFragment : ViewObservingFragment(), DataListFragment<List<
         super.onInflate(context, attrs, savedInstanceState)
 
         val styledAttrs = context?.obtainStyledAttributes(attrs, R.styleable.SimplePlacesFragment)
-        styledAttrs?.getText(R.styleable.SimplePlacesFragment_eventTag)?.let {
-            eventTag = it.toString()
-        }
+        styledAttrs?.getText(R.styleable.SimplePlacesFragment_eventTag)?.let { eventTag = it.toString() }
         styledAttrs?.recycle()
     }
 
@@ -41,8 +41,13 @@ class SimplePlacesListFragment : ViewObservingFragment(), DataListFragment<List<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        simple_places_recycler_view.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        simple_places_recycler_view.adapter = placesAdapter
+        with(simple_places_recycler_view) {
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = placesAdapter
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL).apply {
+                setDrawable(ContextCompat.getDrawable(context, R.drawable.pois_list_divider)!!)
+            })
+        }
     }
 
     override fun observeViews() {

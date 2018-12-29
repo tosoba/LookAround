@@ -9,31 +9,47 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:padding="5dp"
+            android:foreground="@drawable/foreground_ripple">
 
         <TextView android:id="@+id/simple_place_name_text_view"
-                  android:layout_width="0dp" android:layout_height="wrap_content" android:text="@{place.name}"
-                  android:textSize="16sp" android:textStyle="bold"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:text="@{place.name}"
+                  android:textSize="30sp"
+                  android:textStyle="normal"
+                  android:maxLines="2"
+                  android:ellipsize="end"
+                  android:textColor="@android:color/white"
+                  android:layout_marginRight="3dp"
                   app:layout_constraintTop_toTopOf="parent"
                   app:layout_constraintLeft_toLeftOf="parent"
-                  app:layout_constraintLeft_toRightOf="@id/simple_place_info_image_button"/>
+                  app:layout_constraintRight_toLeftOf="@id/simple_place_info_image_button"/>
 
         <TextView android:id="@+id/simple_place_distance_text_view"
-                  android:layout_width="0dp" android:layout_height="wrap_content"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
                   app:layout_constraintTop_toBottomOf="@id/simple_place_name_text_view"
                   app:layout_constraintLeft_toLeftOf="parent"
                   app:layout_constraintRight_toLeftOf="@id/simple_place_info_image_button"
-                  android:textSize="14sp" android:text="@{place.formattedDistanceFromUser}"/>
+                  app:layout_constraintLeft_toRightOf="@id/simple_place_name_text_view"
+                  android:textSize="16sp"
+                  android:textStyle="italic"
+                  android:layout_marginRight="3dp"
+                  android:textColor="@android:color/white"
+                  android:text="@{place.formattedDistanceFromUser}"/>
 
         <ImageButton android:id="@+id/simple_place_info_image_button"
-                     android:layout_width="wrap_content" android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
                      app:layout_constraintRight_toRightOf="parent"
                      app:layout_constraintTop_toTopOf="parent"
                      app:layout_constraintBottom_toBottomOf="parent"
                      android:src="@drawable/info"
-                     android:padding="3dp"
+                     android:background="@drawable/loading_fab_background"
+                     android:foreground="@drawable/round_foreground_ripple"
+                     android:padding="8dp"
                      android:layout_margin="3dp"
-                     android:background="@color/colorPrimary"
                      android:onClick="@{onInfoBtnClickListener}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

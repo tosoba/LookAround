@@ -10,11 +10,11 @@ data class CameraState(
 
     object Constants {
         val cameraRanges = sortedMapOf(
+            50 to "50 m",
             100 to "100 m",
             200 to "250 m",
             500 to "500 m",
-            1000 to "1 km",
-            2000 to "2 km"
+            1000 to "1 km"
         )
     }
 }

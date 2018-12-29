@@ -41,23 +41,21 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, Unit,
         }
     }
 
-    override fun Observable<MainState>.observeActivity() {
-        map { it.userLatLng }
-            .withPreviousValue(ViewDataState.Idle)
-            .withLatestFrom(observableStateHolder.observableState)
-            .subscribeWithAutoDispose { (lastTwoUserLocations, state) ->
-                val (previous, latest) = lastTwoUserLocations
-                when {
-                    previous is ViewDataState.Idle && latest is ViewDataState.Value -> {
-                        if (!state.pois.hasValue) actions.findPOIsNearby(latest.value)
-                    }
-                    previous is ViewDataState.Value && latest is ViewDataState.Value -> {
-                        // TODO: before running findPOIsNearby() calculate the distance between last and new location
-                        // only if greater than some value run method
-                    }
+    override fun Observable<MainState>.observeActivity() = map { it.userLatLng }
+        .withPreviousValue(ViewDataState.Idle)
+        .withLatestFrom(observableStateHolder.observableState)
+        .subscribeWithAutoDispose { (lastTwoUserLocations, state) ->
+            val (previous, latest) = lastTwoUserLocations
+            when {
+                previous is ViewDataState.Idle && latest is ViewDataState.Value -> {
+                    if (!state.pois.hasValue) actions.findPOIsNearby(latest.value)
+                }
+                previous is ViewDataState.Value && latest is ViewDataState.Value -> {
+                    // TODO: before running findPOIsNearby() calculate the distance between last and new location
+                    // only if greater than some value run method
                 }
             }
-    }
+        }
 
     @Suppress("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
