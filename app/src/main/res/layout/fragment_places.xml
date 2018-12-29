@@ -14,11 +14,12 @@
             android:layout_height="match_parent"
             tools:context="com.example.there.aroundmenow.places.PlacesFragment">
 
-        <androidx.viewpager.widget.ViewPager
+        <com.example.there.aroundmenow.util.view.viewpager.SwipeableViewPager
                 android:id="@+id/places_view_pager"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 pagerAdapter="@{pagerAdapter}"
+                app:swipeable="false"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"

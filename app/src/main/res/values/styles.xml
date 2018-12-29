@@ -11,4 +11,11 @@
 
     </style>
 
+    <style name="BlackShadowTextView">
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1.5</item>
+        <item name="android:shadowDy">1.3</item>
+        <item name="android:shadowRadius">1.6</item>
+    </style>
+
 </resources>

@@ -3,4 +3,8 @@
     <declare-styleable name="SimplePlacesFragment">
         <attr name="eventTag" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="SwipeableViewPager">
+        <attr name="swipeable" format="boolean" />
+    </declare-styleable>
 </resources>

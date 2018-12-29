@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.places.placetypes
+package com.example.there.aroundmenow.places.placetypes.list
 
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.model.UIPlaceType

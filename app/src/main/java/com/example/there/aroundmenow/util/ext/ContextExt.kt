@@ -12,3 +12,6 @@ val Context.screenDimensionsPx: Pair<Int, Int>
 fun Context.dpToPx(
     dp: Float
 ): Float = dp * (resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+
+val Context.orientation: Int
+    get() = resources.configuration.orientation
