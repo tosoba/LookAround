@@ -4,11 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -45,13 +48,10 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initStatusBar()
+        initActionBar()
 
         showPlacesFragmentIfNotAlreadyShown()
-
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.menu)
-        }
 
         supportFragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
 
@@ -140,6 +140,23 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
             ) = token.continuePermissionRequest()
         })
         .check()
+
+    private fun initStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = Color.TRANSPARENT
+        }
+    }
+
+    private fun initActionBar() {
+        setSupportActionBar(main_toolbar)
+
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.menu)
+        }
+    }
 
     private fun showPermissionsSnackbar(
         message: String

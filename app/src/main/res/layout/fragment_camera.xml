@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent"
-                                                   tools:context=".visualizer.camera.CameraFragment">
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".visualizer.camera.CameraFragment">
 
     <FrameLayout android:id="@+id/camera_layout"
                  android:layout_width="match_parent"
                  android:layout_height="match_parent"/>
 
-    <com.example.there.aroundmenow.visualizer.camera.view.CameraView android:id="@+id/camera_view"
-                                                                     android:layout_width="match_parent"
-                                                                     android:layout_height="match_parent"/>
+    <com.example.there.aroundmenow.visualizer.camera.view.CameraView
+            android:id="@+id/camera_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-    <com.example.there.aroundmenow.visualizer.camera.view.CameraRadarView android:id="@+id/radar_view"
-                                                                          android:layout_width="@dimen/radar_layout_dimension"
-                                                                          android:layout_height="@dimen/radar_layout_dimension"
-                                                                          android:layout_margin="@dimen/radar_margin"
-                                                                          android:background="@drawable/radar_background"
-                                                                          app:layout_constraintRight_toRightOf="parent"/>
+    <com.example.there.aroundmenow.visualizer.camera.view.CameraRadarView
+            android:id="@+id/radar_view"
+            android:layout_width="@dimen/radar_layout_dimension"
+            android:layout_height="@dimen/radar_layout_dimension"
+            android:layout_margin="@dimen/radar_margin"
+            android:background="@drawable/radar_background"
+            app:layout_constraintRight_toRightOf="parent"/>
 
-    <androidx.constraintlayout.widget.Group android:id="@+id/camera_controls_group"
-                                            android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                            app:constraint_referenced_ids="page_up_btn,camera_page_number_text_view,page_down_btn,fab_cam_menu"/>
+    <androidx.constraintlayout.widget.Group
+            android:id="@+id/camera_controls_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="page_up_btn,camera_page_number_text_view,page_down_btn,fab_cam_menu"/>
 
     <ImageButton android:id="@+id/page_up_btn"
                  android:layout_width="wrap_content"
@@ -35,17 +40,18 @@
                  app:layout_constraintBottom_toTopOf="@id/camera_page_number_text_view"
                  app:layout_constraintRight_toRightOf="parent"/>
 
-    <com.grizzly.views.StrokedTextView android:id="@+id/camera_page_number_text_view"
-                                       android:layout_width="wrap_content"
-                                       android:layout_height="wrap_content"
-                                       android:layout_gravity="center_horizontal"
-                                       android:padding="5dp"
-                                       android:textAlignment="center"
-                                       android:textSize="24sp"
-                                       android:textStyle="bold"
-                                       app:layout_constraintTop_toTopOf="parent"
-                                       app:layout_constraintBottom_toBottomOf="parent"
-                                       app:layout_constraintRight_toRightOf="parent"/>
+    <com.grizzly.views.StrokedTextView
+            android:id="@+id/camera_page_number_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
 
     <ImageButton android:id="@+id/page_down_btn"
                  android:layout_width="wrap_content"
@@ -57,60 +63,63 @@
                  app:layout_constraintTop_toBottomOf="@id/camera_page_number_text_view"
                  app:layout_constraintRight_toRightOf="parent"/>
 
-    <com.github.clans.fab.FloatingActionMenu android:id="@+id/fab_cam_menu"
-                                             android:layout_width="wrap_content"
-                                             android:layout_height="wrap_content"
-                                             app:menu_animationDelayPerItem="50"
-                                             app:menu_backgroundColor="@android:color/transparent"
-                                             app:menu_buttonSpacing="0dp"
-                                             app:menu_colorNormal="@color/colorPrimary"
-                                             app:menu_colorPressed="@color/colorPrimaryDark"
-                                             app:menu_colorRipple="#99FFFFFF"
-                                             app:menu_fab_label="Radius"
-                                             app:menu_fab_size="mini"
-                                             app:menu_icon="@drawable/camera"
-                                             app:menu_labels_colorNormal="@color/fab_menu_labels_colorNormal"
-                                             app:menu_labels_colorPressed="@color/fab_menu_labels_colorPressed"
-                                             app:menu_labels_colorRipple="@color/fab_menu_labels_colorRipple"
-                                             app:menu_labels_cornerRadius="3dp"
-                                             app:menu_labels_ellipsize="none"
-                                             app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
-                                             app:menu_labels_maxLines="-1"
-                                             app:menu_labels_padding="8dp"
-                                             app:menu_labels_paddingBottom="4dp"
-                                             app:menu_labels_paddingLeft="8dp"
-                                             app:menu_labels_paddingRight="8dp"
-                                             app:menu_labels_paddingTop="4dp"
-                                             app:menu_labels_position="right"
-                                             app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
-                                             app:menu_labels_showShadow="true"
-                                             app:menu_labels_singleLine="false"
-                                             app:menu_labels_textColor="#FFFFFF"
-                                             app:menu_labels_textSize="14sp"
-                                             app:menu_openDirection="down"
-                                             app:menu_shadowColor="#66000000"
-                                             app:menu_shadowRadius="4dp"
-                                             app:menu_shadowXOffset="1dp"
-                                             app:menu_shadowYOffset="3dp"
-                                             app:menu_showShadow="true">
+    <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/fab_cam_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:menu_animationDelayPerItem="50"
+            app:menu_backgroundColor="@android:color/transparent"
+            app:menu_buttonSpacing="0dp"
+            app:menu_colorNormal="@color/colorPrimary"
+            app:menu_colorPressed="@color/colorPrimaryDark"
+            app:menu_colorRipple="#99FFFFFF"
+            app:menu_fab_label="Radius"
+            app:menu_fab_size="mini"
+            app:menu_icon="@drawable/camera"
+            app:menu_labels_colorNormal="@color/fab_menu_labels_colorNormal"
+            app:menu_labels_colorPressed="@color/fab_menu_labels_colorPressed"
+            app:menu_labels_colorRipple="@color/fab_menu_labels_colorRipple"
+            app:menu_labels_cornerRadius="3dp"
+            app:menu_labels_ellipsize="none"
+            app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+            app:menu_labels_maxLines="-1"
+            app:menu_labels_padding="8dp"
+            app:menu_labels_paddingBottom="4dp"
+            app:menu_labels_paddingLeft="8dp"
+            app:menu_labels_paddingRight="8dp"
+            app:menu_labels_paddingTop="4dp"
+            app:menu_labels_position="right"
+            app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+            app:menu_labels_showShadow="true"
+            app:menu_labels_singleLine="false"
+            app:menu_labels_textColor="#FFFFFF"
+            app:menu_labels_textSize="14sp"
+            app:menu_openDirection="down"
+            app:menu_shadowColor="#66000000"
+            app:menu_shadowRadius="4dp"
+            app:menu_shadowXOffset="1dp"
+            app:menu_shadowYOffset="3dp"
+            app:menu_showShadow="true">
 
-        <com.github.clans.fab.FloatingActionButton android:id="@+id/max_distance_plus_btn"
-                                                   android:layout_width="wrap_content"
-                                                   android:layout_height="wrap_content"
-                                                   android:src="@drawable/plus"
-                                                   app:fab_colorNormal="#00FF00"
-                                                   app:fab_colorPressed="#006400"
-                                                   app:fab_colorRipple="#99FFFFFF"
-                                                   app:fab_size="mini"/>
+        <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/max_distance_plus_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/plus"
+                app:fab_colorNormal="#00FF00"
+                app:fab_colorPressed="#006400"
+                app:fab_colorRipple="#99FFFFFF"
+                app:fab_size="mini"/>
 
-        <com.github.clans.fab.FloatingActionButton android:id="@+id/max_distance_minus_btn"
-                                                   android:layout_width="wrap_content"
-                                                   android:layout_height="wrap_content"
-                                                   android:src="@drawable/minus"
-                                                   app:fab_colorNormal="#FF0000"
-                                                   app:fab_colorPressed="#8b0000"
-                                                   app:fab_colorRipple="#99FFFFFF"
-                                                   app:fab_size="mini"/>
+        <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/max_distance_minus_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/minus"
+                app:fab_colorNormal="#FF0000"
+                app:fab_colorPressed="#8b0000"
+                app:fab_colorRipple="#99FFFFFF"
+                app:fab_size="mini"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 

@@ -4,30 +4,36 @@
         <variable name="group" type="com.example.there.aroundmenow.model.UIPlaceTypeGroup"/>
     </data>
 
-    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                       xmlns:app="http://schemas.android.com/apk/res-auto"
-                                       android:layout_width="match_parent" android:layout_height="210dp"
-                                       android:layout_margin="10dp"
-                                       app:cardCornerRadius="5dp"
-                                       android:background="@drawable/bottom_dark_gradient">
+    <androidx.cardview.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent" android:layout_height="210dp"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp"
+            android:background="@drawable/bottom_dark_gradient">
 
-        <ImageView android:id="@+id/group_image_view"
-                   srcGlide="@{group.glideSrc}"
-                   android:layout_width="match_parent" android:layout_height="match_parent"
-                   android:scaleType="fitXY"/>
+        <ImageView
+                android:id="@+id/group_image_view"
+                srcGlide="@{group.glideSrc}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"/>
 
 
-        <View android:layout_width="match_parent" android:layout_height="match_parent"
+        <View android:layout_width="match_parent"
+              android:layout_height="match_parent"
               android:background="@drawable/bottom_dark_gradient"/>
 
-        <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
-                                                   android:layout_height="wrap_content"
-                                                   android:layout_gravity="bottom"
-                                                   android:id="@+id/place_types_recycler_view"/>
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:id="@+id/place_types_recycler_view"/>
 
-
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:textSize="20sp"
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="24sp"
                   android:layout_margin="10dp"
                   android:text="@{group.name}"
                   android:textColor="@android:color/white"
