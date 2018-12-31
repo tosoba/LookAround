@@ -6,27 +6,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AppPreferences @Inject constructor(context: Context) {
-
     var radius: Int by SharedPreference(context, PreferencesEntry.PlaceSearchRadius)
-
-    var cameraTopEdgePositionPx: Int by SharedPreference(
-        context,
-        PreferencesEntry.CameraTopEdgePositionPx,
-        false,
-        true
-    )
-
-    var cameraBottomEdgePositionPx: Int by SharedPreference(
-        context,
-        PreferencesEntry.CameraBottomEdgePositionPx,
-        false,
-        true
-    )
-
-    var screenHeightPx: Int by SharedPreference(
-        context,
-        PreferencesEntry.ScreenHeightPx,
-        false,
-        true
-    )
+    var cameraTopEdgePositionPx: Int by SharedPreference(context, PreferencesEntry.CameraTopEdgePositionPx)
+    var cameraBottomEdgePositionPx: Int by SharedPreference(context, PreferencesEntry.CameraBottomEdgePositionPx)
+    var screenHeightPx: Int by SharedPreference(context, PreferencesEntry.ScreenHeightPx)
 }

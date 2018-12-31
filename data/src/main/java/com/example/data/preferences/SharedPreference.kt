@@ -8,15 +8,14 @@ import kotlin.reflect.KProperty
 
 class SharedPreference<T>(
     context: Context,
-    private val entry: PreferencesEntry<T>,
-    private val mutableAfterOnceSet: Boolean = true,
-    private val throwIfUnset: Boolean = false
+    private val entry: PreferencesEntry<T>
 ) : ReadWriteProperty<Any?, T> {
 
     private val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     init {
-        if (!preferences.contains(entry.key) && entry.defaultValue != null) put(entry.defaultValue)
+        if (!preferences.contains(entry.key) && entry.options.initializeWithDefault)
+            put(entry.defaultValue)
     }
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T = with(preferences) {
@@ -34,15 +33,15 @@ class SharedPreference<T>(
         @Suppress("UNCHECKED_CAST")
         val prefValue = res as T
 
-        if (throwIfUnset && prefValue == defaultValue) throw IllegalStateException(
-            PREFERENCE_VALUE_NOT_SET_EXCEPTION_MSG
-        )
+        if (entry.options.throwIfUnset && prefValue == defaultValue)
+            throw IllegalStateException(PREFERENCE_VALUE_NOT_SET_EXCEPTION_MSG)
 
         return@with prefValue
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        if (!preferences.contains(entry.key) || (preferences.contains(entry.key) && mutableAfterOnceSet)) put(value)
+        if (!preferences.contains(entry.key) || (preferences.contains(entry.key) && entry.options.mutableAfterOnceSet))
+            put(value)
     }
 
     private fun put(value: T) = with(preferences.edit()) {

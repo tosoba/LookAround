@@ -26,7 +26,9 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, Unit,
     HostAwarenessMode.ACTIVITY_ONLY
 ) {
     private val placesListFragment: SimplePlacesListFragment?
-        get() = childFragmentManager.findFragmentById(R.id.pois_list_fragment) as? SimplePlacesListFragment
+        get() = if (isAdded)
+            childFragmentManager.findFragmentById(R.id.pois_list_fragment) as? SimplePlacesListFragment
+        else null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,12 +69,12 @@ class POIsFragment : RxFragment.HostAware.WithLayout<POIsState, MainState, Unit,
                     true
                 )
 
-                is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.checkPermissionsAndThen {
+                is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.checkPermissions(onGranted = {
                     mainActivity?.showFragment(
                         VisualizerFragment.with(VisualizerFragment.Arguments.Places(listOf(taggedEvent.event.place))),
                         true
                     )
-                }
+                })
             }
         }
     }

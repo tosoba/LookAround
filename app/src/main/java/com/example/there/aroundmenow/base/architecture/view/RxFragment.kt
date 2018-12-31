@@ -15,7 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 sealed class RxFragment<State : Any, Actions : Any>(
-    @LayoutRes protected val layoutResource: Int
+    @LayoutRes private val layoutResource: Int
 ) : ViewObservingFragment(), Injectable, StateObserver<State> {
 
     @Inject

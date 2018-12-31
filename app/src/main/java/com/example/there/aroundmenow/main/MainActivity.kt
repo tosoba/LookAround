@@ -18,7 +18,8 @@ import androidx.fragment.app.FragmentManager
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxActivity
 import com.example.there.aroundmenow.places.PlacesFragment
-import com.example.there.aroundmenow.util.ext.toggle
+import com.example.there.aroundmenow.util.AppConstants
+import com.example.there.aroundmenow.util.ext.*
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -27,8 +28,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.karumi.dexter.listener.single.PermissionListener
-import com.karumi.dexter.listener.single.SnackbarOnDeniedPermissionListener
 import dagger.android.AndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -51,13 +50,15 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
         initStatusBar()
         initActionBar()
 
-        showPlacesFragmentIfNotAlreadyShown()
-
         supportFragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
 
         drawer_navigation_view.onItemWithIdSelected { drawer_layout.closeDrawers() }
 
-        checkInitialPermissions()
+        disableScreenRotation()
+        checkPermissions(onAnyResult = {
+            enableScreenRotation()
+            showPlacesFragmentIfNotAlreadyShown()
+        })
     }
 
     override fun onResume() {
@@ -117,18 +118,21 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
 
     fun removeFragment() = supportFragmentManager.popBackStack()
 
-    //TODO: test behaviour when permissions are not granted
-    fun checkPermissionsAndThen(block: () -> Unit) = Dexter.withActivity(this)
+    fun checkPermissions(
+        onGranted: (() -> Unit)? = null,
+        onAnyResult: (() -> Unit)? = null
+    ) = Dexter.withActivity(this)
         .withPermissions(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
         .withListener(object : MultiplePermissionsListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                if (report.areAllPermissionsGranted()) block()
+                onAnyResult?.invoke()
+
+                if (report.areAllPermissionsGranted()) onGranted?.invoke()
                 else when (report.deniedPermissionResponses.size) {
                     1 -> when (report.deniedPermissionResponses.first().permissionName) {
                         Manifest.permission.CAMERA -> showPermissionsSnackbar(cameraAccessIsNeededMsg)
-                        Manifest.permission.ACCESS_FINE_LOCATION -> showPermissionsSnackbar(
-                            locationAccessIsNeededMsg
-                        )
+                        Manifest.permission.ACCESS_FINE_LOCATION ->
+                            showPermissionsSnackbar(locationAccessIsNeededMsg)
                     }
                     2 -> showPermissionsSnackbar(allPermissionsAreNeededMsg)
                 }
@@ -165,13 +169,13 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
         .setActionTextColor(ContextCompat.getColor(this, R.color.colorAccent))
         .run {
             duration = BaseTransientBottomBar.LENGTH_LONG
-            show()
+            showWithBottomMargin(dpToPx(AppConstants.BOTTOM_NAVIGATION_VIEW_HEIGHT_DP.toFloat()).toInt())
         }
 
     private fun showPlacesFragmentIfNotAlreadyShown() {
         if (currentlyShowingFragment == null) with(supportFragmentManager.beginTransaction()) {
             add(backStackLayoutId, PlacesFragment())
-            commit()
+            commitAllowingStateLoss()
         }
     }
 
@@ -183,23 +187,6 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
     private fun updateHomeAsUpIndicator() = if (supportFragmentManager.backStackEntryCount > 0)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.arrow_back)
     else supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
-
-    private fun checkInitialPermissions() = with(Dexter.withActivity(this)) {
-        withPermission(Manifest.permission.CAMERA)
-            .withListener(initialPermissionsListener(getString(R.string.camera_access_is_needed)))
-            .check()
-
-        withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-            .withListener(initialPermissionsListener(getString(R.string.location_access_is_needed)))
-            .check()
-    }
-
-    private fun initialPermissionsListener(
-        message: String
-    ): PermissionListener = SnackbarOnDeniedPermissionListener.Builder
-        .with(container, message)
-        .withOpenSettingsButton(getString(R.string.settings))
-        .build()
 
     companion object {
         private const val backStackLayoutId = R.id.container
