@@ -51,7 +51,6 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:0.4.4'
 
     implementation files('libs/RxTasks.jar')
-    implementation files('libs/google-places-api-java.jar')
 
     implementation project(path: ':domain')
 }
