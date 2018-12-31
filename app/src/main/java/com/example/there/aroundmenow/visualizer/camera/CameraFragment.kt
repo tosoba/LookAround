@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_camera.*
 import javax.inject.Inject
 
 
-class CameraFragment : RxFragment.HostAware.WithLayout<CameraState, MainState, VisualizerState, CameraActions>(
+class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, MainState, VisualizerState, CameraActions>(
     R.layout.fragment_camera,
     HostAwarenessMode.BOTH
 ), AppuntaView.Controller {

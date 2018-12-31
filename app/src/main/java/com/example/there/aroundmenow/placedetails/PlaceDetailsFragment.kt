@@ -9,7 +9,7 @@ import com.example.there.aroundmenow.model.UISimplePlace
 import io.reactivex.Observable
 
 
-class PlaceDetailsFragment : RxFragment.HostUnaware.WithLayout<PlaceDetailsState, PlaceDetailsActions>(
+class PlaceDetailsFragment : RxFragment.Stateful.HostUnaware.WithLayout<PlaceDetailsState, PlaceDetailsActions>(
     R.layout.fragment_place_details
 ) {
     private val simplePlace: UISimplePlace by lazy {

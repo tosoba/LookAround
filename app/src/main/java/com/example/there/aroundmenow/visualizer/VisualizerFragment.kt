@@ -5,31 +5,47 @@ import android.os.Parcelable
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.databinding.FragmentVisualizerBinding
+import com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListEvent
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UISimplePlace
+import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
+import com.example.there.aroundmenow.util.event.EventTags
+import com.example.there.aroundmenow.util.event.TaggedEvent
 import com.example.there.aroundmenow.util.ext.checkItem
+import com.example.there.aroundmenow.util.ext.mainActivity
+import com.example.there.aroundmenow.util.ext.plusAssign
+import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
 import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapter
 import com.example.there.aroundmenow.visualizer.camera.CameraFragment
 import com.example.there.aroundmenow.visualizer.map.MapFragment
+import com.example.there.aroundmenow.visualizer.map.MapZoomToPlaceEvent
 import com.example.there.aroundmenow.visualizer.placelist.PlacesListFragment
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_visualizer.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 class VisualizerFragment :
-    RxFragment.HostUnaware.DataBound<VisualizerState, VisualizerActions, FragmentVisualizerBinding>(
+    RxFragment.Stateful.HostUnaware.DataBound<VisualizerState, VisualizerActions, FragmentVisualizerBinding>(
         R.layout.fragment_visualizer
     ) {
 
     private val viewPagerAdapter by lazy {
         FragmentViewPagerAdapter(
             manager = childFragmentManager,
-            fragments = arrayOf(CameraFragment(), MapFragment(), PlacesListFragment())
+            fragments = arrayOf(
+                CameraFragment(),
+                MapFragment(),
+                PlacesListFragment()
+            )
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle += EventBusComponent(this)
         if (savedInstanceState == null) initFromArguments()
     }
 
@@ -47,12 +63,34 @@ class VisualizerFragment :
         }
     }
 
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPlacesListEvent(taggedEvent: TaggedEvent<SimplePlacesListEvent>) {
+        if (taggedEvent.tag == EventTags.FromSimpleListToVisualizer) {
+            when (taggedEvent.event) {
+                is SimplePlacesListEvent.DetailsRequest -> mainActivity?.showFragment(
+                    PlaceDetailsFragment.with(taggedEvent.event.place),
+                    true
+                )
+
+                is SimplePlacesListEvent.VisualizationRequest -> {
+                    showMapFragment()
+                    EventBus.getDefault().post(MapZoomToPlaceEvent(taggedEvent.event.place))
+                }
+            }
+        }
+    }
+
     private fun initFromArguments() {
         val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
         when (args) {
             is Arguments.Places -> actions.setPlaces(args.places)
             is Arguments.PlaceType -> actions.findNearbyPlacesOfType(args.placeType)
         }
+    }
+
+    private fun showMapFragment() {
+        visualizer_view_pager.currentItem = viewPagerItemIndexes[R.id.bottom_navigation_map_item]!!
     }
 
     sealed class Arguments : Parcelable {

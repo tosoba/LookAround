@@ -15,7 +15,7 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_places.*
 
 
-class PlacesFragment : RxFragment.HostUnaware.DataBound<PlacesState, PlacesActions, FragmentPlacesBinding>(
+class PlacesFragment : RxFragment.Stateful.HostUnaware.DataBound<PlacesState, PlacesActions, FragmentPlacesBinding>(
     R.layout.fragment_places
 ) {
     private val viewPagerAdapter by lazy {

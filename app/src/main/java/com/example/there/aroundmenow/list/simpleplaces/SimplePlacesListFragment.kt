@@ -25,6 +25,13 @@ class SimplePlacesListFragment : ViewObservingFragment(), DataListFragment<List<
 
     private lateinit var eventTag: String
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            if (it.containsKey(ARG_EVENT_TAG)) eventTag = it.getString(ARG_EVENT_TAG)!!
+        }
+    }
+
     override fun onInflate(context: Context?, attrs: AttributeSet?, savedInstanceState: Bundle?) {
         super.onInflate(context, attrs, savedInstanceState)
 
@@ -73,5 +80,13 @@ class SimplePlacesListFragment : ViewObservingFragment(), DataListFragment<List<
     override fun onLoading() {
         simple_places_loading_progress_bar?.visibility = View.VISIBLE
         no_simple_places_found_text_view?.visibility = View.GONE
+    }
+
+    companion object {
+        private const val ARG_EVENT_TAG = "ARG_EVENT_TAG"
+
+        fun with(eventTag: String): SimplePlacesListFragment = SimplePlacesListFragment().apply {
+            arguments = Bundle().apply { putString(ARG_EVENT_TAG, eventTag) }
+        }
     }
 }

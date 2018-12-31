@@ -77,7 +77,7 @@ internal val placeTypeGroups: List<UIPlaceTypeGroup> = listOf(
     ),
     UIPlaceTypeGroup(
         "Pray", listOf(
-            UIPlaceType("[building=church]", "Church", R.drawable.marketplace),
+            UIPlaceType("[building=church]", "Church", R.drawable.church),
             UIPlaceType("[shop=mosque]", "Mosque", R.drawable.convenience_store),
             UIPlaceType("[shop=synagogue]", "Synagogue", R.drawable.general_store)
         ),
