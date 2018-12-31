@@ -45,6 +45,11 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation files('libs/appunta.jar')
 
+    implementation('se.walkercrou:google-places-api-java:2.1.2') {
+        exclude module: 'httpclient'
+    }
+    implementation 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.github.safetysystemtechnology:progress-image-view-android:v1.0'
     implementation 'androidx.appcompat:appcompat:1.0.2'
