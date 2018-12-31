@@ -31,6 +31,9 @@
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/transparent_background"
+                app:itemIconTint="@drawable/bottom_navigation_icon_tint"
+                app:itemTextColor="@drawable/bottom_navigation_icon_tint"
                 app:menu="@menu/visualizer_bottom_navigation"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
