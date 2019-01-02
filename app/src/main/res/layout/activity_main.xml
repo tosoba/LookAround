@@ -21,7 +21,7 @@
                 app:layout_constraintTop_toBottomOf="@id/main_toolbar"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:context=".main.MainActivity"
-                android:background="#181818"/>
+                android:background="@color/dark_gray_background"/>
 
         <androidx.appcompat.widget.Toolbar
                 android:id="@+id/main_toolbar"

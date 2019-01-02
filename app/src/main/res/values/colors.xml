@@ -8,4 +8,7 @@
     <color name="fab_menu_labels_colorRipple">#66FFFFFF</color>
     <color name="fab_menu_labels_colorPressed">#444444</color>
     <color name="fab_menu_labels_colorNormal">#333333</color>
+
+    <color name="dark_gray_background">#181818</color>
+    <color name="dark_gray_card_background">#373737</color>
 </resources>

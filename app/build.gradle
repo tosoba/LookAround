@@ -89,4 +89,8 @@ dependencies {
     implementation 'com.karumi:dexter:5.0.0'
 
     implementation 'com.yarolegovich:discrete-scrollview:1.4.9'
+
+    implementation 'com.ss.bannerslider:bannerslider:2.0.0'
+
+    implementation 'com.facebook.shimmer:shimmer:0.3.0'
 }
