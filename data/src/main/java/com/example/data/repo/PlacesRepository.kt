@@ -7,9 +7,11 @@ import com.example.domain.repo.datastore.IRemotePlacesDataStore
 import com.example.domain.repo.model.SimplePlace
 import com.example.domain.task.FindNearbyPlacesResult
 import com.example.domain.task.FindPlaceDetailsResult
+import com.example.domain.task.FindPlacePhotosResult
 import com.example.domain.task.ReverseGeocodeLocationResult
 import com.example.domain.task.error.FindNearbyPlacesError
 import com.example.domain.task.error.FindPlaceDetailsError
+import com.example.domain.task.error.FindPlacePhotosError
 import com.example.domain.task.error.ReverseGeocodeLocationError
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
@@ -61,6 +63,17 @@ class PlacesRepository @Inject constructor(
             is Result.Value -> it.mapToType()
             is Result.Error -> it.error.toRepositoryResult<FindPlaceDetailsResult> {
                 it.mapTo(FindPlaceDetailsError.PlaceDetailsNotFound)
+            }
+        }
+    }
+
+    override fun findPlacePhotos(
+        id: String
+    ): Single<FindPlacePhotosResult> = remote.findPlacePhotos(id).map {
+        when (it) {
+            is Result.Value -> it.mapToType()
+            is Result.Error -> it.error.toRepositoryResult<FindPlacePhotosResult> {
+                it.mapTo(FindPlacePhotosError.NoPhotosFound)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.data.repo.datastore
 
+import android.graphics.Bitmap
 import com.example.data.api.geocoding.GeocodingAPIClient
 import com.example.data.api.overpass.OverpassAPIClient
 import com.example.data.api.overpass.model.OverpassPlacesResponse
@@ -17,6 +18,7 @@ import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
 import io.ashdavies.rx.rxtasks.toSingle
+import io.reactivex.Observable
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -77,5 +79,16 @@ class RemotePlacesDataStore @Inject constructor(
             if (it.count == 0) Result.Error<Place, DataStoreError>(DataStoreError.Empty)
             else Result.Value<Place, DataStoreError>(it.get(0))
         }
+    }
+
+    override fun findPlacePhotos(
+        id: String
+    ): Single<Result<List<Bitmap>, DataStoreError>> = geoDataClient.getPlacePhotos(id).toSingle().flatMap { response ->
+        if (response.photoMetadata.count == 0)
+            Single.just(Result.Error<List<Bitmap>, DataStoreError>(DataStoreError.Empty))
+        else Observable.fromIterable(response.photoMetadata.take(5))
+            .flatMap { geoDataClient.getPhoto(it).toSingle().toObservable() }
+            .toList()
+            .map { photoResponses -> Result.Value<List<Bitmap>, DataStoreError>(photoResponses.map { it.bitmap }) }
     }
 }

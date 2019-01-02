@@ -22,9 +22,17 @@ class PlaceDetailsFragment : RxFragment.Stateful.HostUnaware.WithLayout<PlaceDet
         if (savedInstanceState == null) actions.findPlaceDetails(simplePlace)
     }
 
-    override fun Observable<PlaceDetailsState>.observe() = map { it.place }.subscribeWithAutoDispose {
-        when (it) {
-            is ViewDataState.Value -> Log.e("PLACE", it.value.name.toString())
+    override fun Observable<PlaceDetailsState>.observe() {
+        map { it.place }.distinctUntilChanged().subscribeWithAutoDispose {
+            when (it) {
+                is ViewDataState.Value -> Log.e("PLACE", it.value.name.toString())
+            }
+        }
+
+        map { it.photos }.distinctUntilChanged().subscribeWithAutoDispose {
+            when (it) {
+                is ViewDataState.Value -> Log.e("PHOTOS", it.value.size.toString())
+            }
         }
     }
 

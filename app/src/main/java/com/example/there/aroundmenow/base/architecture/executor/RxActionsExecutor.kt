@@ -252,10 +252,8 @@ sealed class RxActionsExecutor<State, VM : RxViewModel<State>>(
 
     protected fun <TaskReturn> Single<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,
-        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
-        sideEffect: ((TaskReturn) -> Unit)? = null
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
-        .apply { sideEffect?.let { doOnSuccess(it) } }
         .zipWith(Single.just(viewModel.state.value))
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
         .subscribe(viewModel.state, onError)
@@ -263,10 +261,8 @@ sealed class RxActionsExecutor<State, VM : RxViewModel<State>>(
 
     protected fun <TaskReturn> Flowable<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,
-        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
-        sideEffect: ((TaskReturn) -> Unit)? = null
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer
     ) = observeOn(AndroidSchedulers.mainThread())
-        .apply { sideEffect?.let { doOnNext(it) } }
         .withLatestFrom(Flowable.just(viewModel.state.value))
         .map { (ret, state) -> mapTaskReturnToState(state, ret) }
         .subscribe(viewModel.state, onError)

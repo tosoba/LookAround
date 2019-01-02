@@ -1,5 +1,6 @@
 package com.example.domain.repo.datastore
 
+import android.graphics.Bitmap
 import com.example.domain.repo.Result
 import com.example.domain.repo.model.GeocodingInfo
 import com.example.domain.repo.model.SimplePlace
@@ -18,4 +19,6 @@ interface IRemotePlacesDataStore {
     ): Single<Result<List<SimplePlace>, DataStoreError>>
 
     fun findPlaceDetails(simplePlace: SimplePlace): Single<Result<Place, DataStoreError>>
+
+    fun findPlacePhotos(id: String): Single<Result<List<Bitmap>, DataStoreError>>
 }
