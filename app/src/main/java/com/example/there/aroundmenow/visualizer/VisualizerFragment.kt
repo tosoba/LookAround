@@ -17,8 +17,8 @@ import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
 import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapter
 import com.example.there.aroundmenow.visualizer.camera.CameraFragment
-import com.example.there.aroundmenow.visualizer.map.MapFragment
 import com.example.there.aroundmenow.visualizer.map.MapZoomToPlaceEvent
+import com.example.there.aroundmenow.visualizer.map.VisualizerMapFragment
 import com.example.there.aroundmenow.visualizer.placelist.PlacesListFragment
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_visualizer.*
@@ -37,7 +37,7 @@ class VisualizerFragment :
             manager = childFragmentManager,
             fragments = arrayOf(
                 CameraFragment(),
-                MapFragment(),
+                VisualizerMapFragment(),
                 PlacesListFragment()
             )
         )

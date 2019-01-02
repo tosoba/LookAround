@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.example.domain.repo.model.SimplePlace
 import com.example.there.aroundmenow.util.ext.distanceTo
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -15,6 +16,9 @@ data class UISimplePlace(
 
     val domain: SimplePlace
         get() = SimplePlace(latLng, name)
+
+    val markerOptions: MarkerOptions
+        get() = MarkerOptions().position(latLng).title(name).snippet(formattedDistanceFromUser)
 
     companion object {
         fun fromDomainWithUserLatLng(

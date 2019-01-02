@@ -17,6 +17,8 @@ class PlaceDetailsActionsExecutor @Inject constructor(
 ) : RxActionsExecutor.HostUnaware<PlaceDetailsState, PlaceDetailsViewModel>(viewModel), PlaceDetailsActions {
 
     override fun findPlaceDetails(place: UISimplePlace) {
+        mutateState { it.copy(place = ViewDataState.Loading) }
+
         findPlaceDetailsTask.executeWithInput(
             input = place.domain,
             onErrorReturn = { Result.Error(FindPlaceDetailsError.Exception(it)) }
@@ -33,6 +35,8 @@ class PlaceDetailsActionsExecutor @Inject constructor(
     }
 
     override fun findPlacePhotos(id: String) {
+        mutateState { it.copy(place = ViewDataState.Loading) }
+
         findPlacePhotosTask.executeWithInput(
             input = id,
             onErrorReturn = { Result.Error(FindPlacePhotosError.Exception(it)) }

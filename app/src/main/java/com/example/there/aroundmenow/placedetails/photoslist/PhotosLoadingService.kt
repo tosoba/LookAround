@@ -1,4 +1,4 @@
-package com.example.there.aroundmenow.placedetails.list
+package com.example.there.aroundmenow.placedetails.photoslist
 
 import android.graphics.Bitmap
 import android.widget.ImageView

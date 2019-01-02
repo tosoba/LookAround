@@ -3,6 +3,7 @@
     <data>
         <variable name="place" type="com.google.android.gms.location.places.Place"/>
         <variable name="distanceFromUser" type="String"/>
+        <variable name="pagerAdapter" type="androidx.fragment.app.FragmentPagerAdapter"/>
     </data>
 
     <androidx.cardview.widget.CardView
@@ -17,6 +18,7 @@
             app:cardBackgroundColor="@color/dark_gray_card_background"
             app:cardElevation="10dp"
             app:cardCornerRadius="10dp"
+            android:outlineAmbientShadowColor="@color/colorAccent"
             tools:context=".placedetails.PlaceDetailsFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -94,13 +96,33 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/place_details_center_guideline"
-                    app:layout_constraintGuide_percent=".5"
+                    app:layout_constraintGuide_percent=".4"
                     android:orientation="horizontal"/>
+
+            <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/place_details_tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimaryDark"
+                    app:tabTextColor="@color/colorPrimaryLight"
+                    app:tabSelectedTextColor="@color/colorAccent"
+                    app:tabMode="fixed"
+                    app:tabGravity="fill"
+                    app:layout_constraintTop_toTopOf="@id/place_details_center_guideline"/>
+
+            <com.example.there.aroundmenow.util.view.viewpager.SwipeableViewPager
+                    android:id="@+id/place_details_view_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:swipeable="false"
+                    pagerAdapter="@{pagerAdapter}"
+                    app:layout_constraintTop_toBottomOf="@id/place_details_tab_layout"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
             <ProgressBar android:id="@+id/place_details_loading_progress_bar"
                          android:layout_width="wrap_content" android:layout_height="wrap_content"
                          android:visibility="gone"
-                         app:layout_constraintTop_toTopOf="parent"
+                         app:layout_constraintTop_toTopOf="@id/place_details_view_pager"
                          app:layout_constraintLeft_toLeftOf="parent"
                          app:layout_constraintBottom_toBottomOf="parent"
                          app:layout_constraintRight_toRightOf="parent"/>

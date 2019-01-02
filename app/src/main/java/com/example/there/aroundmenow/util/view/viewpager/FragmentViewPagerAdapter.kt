@@ -4,9 +4,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
-class FragmentViewPagerAdapter(
+open class FragmentViewPagerAdapter(
     manager: FragmentManager,
-    private val fragments: Array<Fragment>
+    protected val fragments: Array<Fragment>
 ) : FragmentPagerAdapter(manager) {
 
     override fun getItem(position: Int): Fragment = fragments[position]

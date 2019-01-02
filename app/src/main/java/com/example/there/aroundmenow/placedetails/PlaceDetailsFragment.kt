@@ -7,8 +7,11 @@ import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentPlaceDetailsBinding
 import com.example.there.aroundmenow.model.UISimplePlace
-import com.example.there.aroundmenow.placedetails.list.PhotosLoadingService
-import com.example.there.aroundmenow.placedetails.list.PhotosSliderAdapter
+import com.example.there.aroundmenow.placedetails.info.PlaceInfoFragment
+import com.example.there.aroundmenow.placedetails.map.PlaceDetailsMapFragment
+import com.example.there.aroundmenow.placedetails.photoslist.PhotosLoadingService
+import com.example.there.aroundmenow.placedetails.photoslist.PhotosSliderAdapter
+import com.example.there.aroundmenow.util.view.viewpager.FragmentTitledViewPagerAdapter
 import com.facebook.shimmer.Shimmer
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_place_details.*
@@ -28,6 +31,15 @@ class PlaceDetailsFragment :
 
     private val photosLoadingService: PhotosLoadingService by lazy { PhotosLoadingService() }
 
+    private val viewPagerAdapter: FragmentTitledViewPagerAdapter by lazy {
+        FragmentTitledViewPagerAdapter(
+            childFragmentManager, arrayOf(
+                PlaceInfoFragment() to "Info",
+                PlaceDetailsMapFragment.with(simplePlace) to "Map"
+            )
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,7 +48,9 @@ class PlaceDetailsFragment :
 
     override fun FragmentPlaceDetailsBinding.init() {
         binding = this
-        binding?.distanceFromUser = simplePlace.formattedDistanceFromUser
+        distanceFromUser = simplePlace.formattedDistanceFromUser
+        pagerAdapter = viewPagerAdapter
+        placeDetailsTabLayout.setupWithViewPager(placeDetailsViewPager)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

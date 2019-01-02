@@ -1,6 +1,13 @@
 package com.example.there.aroundmenow.util.ext
 
+import com.example.there.aroundmenow.model.UISimplePlace
 import com.google.android.gms.location.places.Place
+import com.google.android.gms.maps.model.LatLngBounds
+
+val List<UISimplePlace>.latLngBounds: LatLngBounds
+    get() = LatLngBounds.builder().also { builder ->
+        forEach { builder.include(it.latLng) }
+    }.build()
 
 val Place.placeTypesNames: List<String>
     get() = placeTypes.asSequence().map {
