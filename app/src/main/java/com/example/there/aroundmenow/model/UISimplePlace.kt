@@ -1,8 +1,9 @@
 package com.example.there.aroundmenow.model
 
 import android.os.Parcelable
+import com.example.data.util.ext.formattedDistanceTo
 import com.example.domain.repo.model.SimplePlace
-import com.example.there.aroundmenow.util.ext.distanceTo
+import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.parcel.Parcelize
@@ -27,7 +28,16 @@ data class UISimplePlace(
         ): UISimplePlace = UISimplePlace(
             name = domainPlace.name,
             latLng = domainPlace.latLng,
-            formattedDistanceFromUser = "${userLatLng.distanceTo(domainPlace.latLng)} meters away"
+            formattedDistanceFromUser = domainPlace.latLng.formattedDistanceTo(userLatLng)
+        )
+
+        fun fromGooglePlaceWithUserLatLng(
+            place: Place,
+            userLatLng: LatLng
+        ): UISimplePlace = UISimplePlace(
+            name = place.name.toString(),
+            latLng = place.latLng,
+            formattedDistanceFromUser = place.latLng.formattedDistanceTo(userLatLng)
         )
     }
 }

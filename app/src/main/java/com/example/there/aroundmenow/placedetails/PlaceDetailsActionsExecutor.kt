@@ -8,6 +8,7 @@ import com.example.domain.task.impl.FindPlacePhotosTask
 import com.example.there.aroundmenow.base.architecture.executor.RxActionsExecutor
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.model.UISimplePlace
+import com.google.android.gms.location.places.Place
 import javax.inject.Inject
 
 class PlaceDetailsActionsExecutor @Inject constructor(
@@ -50,5 +51,9 @@ class PlaceDetailsActionsExecutor @Inject constructor(
                 )
             }
         })
+    }
+
+    override fun setPlace(place: Place) {
+        mutateState { it.copy(place = ViewDataState.Value(place)) }
     }
 }

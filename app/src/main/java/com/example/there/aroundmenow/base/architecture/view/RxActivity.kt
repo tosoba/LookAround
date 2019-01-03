@@ -13,9 +13,7 @@ import javax.inject.Inject
 
 sealed class RxActivity<State : Any, Actions : Any>(
     @LayoutRes protected val layoutResource: Int
-) : ViewObservingActivity(),
-    ViewObserver, HasSupportFragmentInjector,
-    StateObserver<State> {
+) : ViewObservingActivity(), ViewObserver, HasSupportFragmentInjector, StateObserver<State> {
 
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>

@@ -1,6 +1,8 @@
 package com.example.there.aroundmenow.placedetails
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
@@ -13,7 +15,9 @@ import com.example.there.aroundmenow.placedetails.photoslist.PhotosLoadingServic
 import com.example.there.aroundmenow.placedetails.photoslist.PhotosSliderAdapter
 import com.example.there.aroundmenow.util.view.viewpager.FragmentTitledViewPagerAdapter
 import com.facebook.shimmer.Shimmer
+import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import io.reactivex.Observable
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_place_details.*
 import ss.com.bannerslider.Slider
 
@@ -24,7 +28,11 @@ class PlaceDetailsFragment :
     ) {
 
     private val simplePlace: UISimplePlace by lazy {
-        arguments!!.getParcelable<UISimplePlace>(ARG_PLACE)
+        val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
+        when (args) {
+            is Arguments.PlaceAutocompleteIntent -> args.place
+            is Arguments.SimplePlace -> args.place
+        }
     }
 
     private var binding: FragmentPlaceDetailsBinding? = null
@@ -43,13 +51,13 @@ class PlaceDetailsFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState == null) actions.findPlaceDetails(simplePlace)
+        if (savedInstanceState == null) initFromArguments()
     }
 
     override fun FragmentPlaceDetailsBinding.init() {
         binding = this
-        distanceFromUser = simplePlace.formattedDistanceFromUser
         pagerAdapter = viewPagerAdapter
+        distanceFromUser = simplePlace.formattedDistanceFromUser
         placeDetailsTabLayout.setupWithViewPager(placeDetailsViewPager)
     }
 
@@ -107,11 +115,27 @@ class PlaceDetailsFragment :
         }
     }
 
-    companion object {
-        private const val ARG_PLACE = "ARG_PLACE"
+    private fun initFromArguments() {
+        val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
+        when (args) {
+            is Arguments.SimplePlace -> actions.findPlaceDetails(args.place)
+            is Arguments.PlaceAutocompleteIntent -> actions.setPlace(PlaceAutocomplete.getPlace(activity, args.intent))
+        }
+    }
 
-        fun with(place: UISimplePlace): PlaceDetailsFragment = PlaceDetailsFragment().apply {
-            arguments = Bundle().apply { putParcelable(ARG_PLACE, place) }
+    sealed class Arguments : Parcelable {
+        @Parcelize
+        class SimplePlace(val place: UISimplePlace) : Arguments()
+
+        @Parcelize
+        class PlaceAutocompleteIntent(val intent: Intent, val place: UISimplePlace) : Arguments()
+    }
+
+    companion object {
+        private const val ARGUMENTS_KEY = "ARGUMENTS_KEY"
+
+        fun with(arguments: Arguments): PlaceDetailsFragment = PlaceDetailsFragment().apply {
+            this.arguments = Bundle().apply { putParcelable(ARGUMENTS_KEY, arguments) }
         }
     }
 }

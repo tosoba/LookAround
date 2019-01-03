@@ -69,7 +69,7 @@ class VisualizerFragment :
         if (taggedEvent.tag == EventTags.FromSimpleListToVisualizer) {
             when (taggedEvent.event) {
                 is SimplePlacesListEvent.DetailsRequest -> mainActivity?.showFragment(
-                    PlaceDetailsFragment.with(taggedEvent.event.place),
+                    PlaceDetailsFragment.with(PlaceDetailsFragment.Arguments.SimplePlace(taggedEvent.event.place)),
                     true
                 )
 

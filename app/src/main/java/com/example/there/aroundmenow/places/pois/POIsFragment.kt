@@ -65,7 +65,7 @@ class POIsFragment : RxFragment.Stateful.HostAware.WithLayout<POIsState, MainSta
         if (taggedEvent.tag == EventTags.FromSimpleListToPOIs) {
             when (taggedEvent.event) {
                 is SimplePlacesListEvent.DetailsRequest -> mainActivity?.showFragment(
-                    PlaceDetailsFragment.with(taggedEvent.event.place),
+                    PlaceDetailsFragment.with(PlaceDetailsFragment.Arguments.SimplePlace(taggedEvent.event.place)),
                     true
                 )
 

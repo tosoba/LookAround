@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable name="place" type="com.google.android.gms.location.places.Place"/>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+                  android:orientation="vertical"
+                  android:layout_margin="5dp"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:foreground="@drawable/foreground_ripple"
+                android:id="@+id/autocomplete_result_visualize_button"
+                android:text="@string/show_on_camera"
+                android:drawableLeft="@drawable/camera"/>
+
+        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:foreground="@drawable/foreground_ripple"
+                android:id="@+id/autocomplete_result_details_button"
+                android:text="@string/show_details"
+                android:drawableLeft="@drawable/details"/>
+
+    </LinearLayout>
+</layout>

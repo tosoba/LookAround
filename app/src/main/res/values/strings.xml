@@ -21,4 +21,6 @@
     <string name="address">Address</string>
     <string name="phone_number">Phone number</string>
     <string name="website">Website</string>
+    <string name="show_on_camera">Show on camera</string>
+    <string name="show_details">Show details</string>
 </resources>

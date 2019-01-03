@@ -37,7 +37,7 @@
                   android:textStyle="italic"
                   android:layout_marginRight="3dp"
                   android:textColor="@android:color/white"
-                  android:text="@{place.formattedDistanceFromUser}"/>
+                  android:text="@{place.formattedDistanceFromUser ?? ``}"/>
 
         <ImageButton android:id="@+id/simple_place_info_image_button"
                      android:layout_width="wrap_content"

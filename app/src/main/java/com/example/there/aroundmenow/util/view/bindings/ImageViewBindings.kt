@@ -17,9 +17,11 @@ class GlideImageBinding(
 )
 
 @BindingAdapter("srcGlide")
-fun bindSrcGlide(imageView: ImageView, binding: GlideImageBinding) {
-    Glide.with(imageView)
-        .applyDefaultRequestOptions(binding.options)
-        .load(binding.drawableId)
-        .into(imageView)
+fun bindSrcGlide(imageView: ImageView, binding: GlideImageBinding?) {
+    binding?.let {
+        Glide.with(imageView)
+            .applyDefaultRequestOptions(it.options)
+            .load(it.drawableId)
+            .into(imageView)
+    }
 }

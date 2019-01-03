@@ -12,15 +12,24 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxActivity
+import com.example.there.aroundmenow.base.architecture.view.ViewDataState
+import com.example.there.aroundmenow.databinding.PlaceAutocompleteResultDialogBinding
+import com.example.there.aroundmenow.model.UISimplePlace
+import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
 import com.example.there.aroundmenow.places.PlacesFragment
 import com.example.there.aroundmenow.util.AppConstants
 import com.example.there.aroundmenow.util.ext.*
+import com.example.there.aroundmenow.visualizer.VisualizerFragment
+import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
@@ -29,6 +38,9 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.android.AndroidInjector
+import io.reactivex.Observable
+import io.reactivex.rxkotlin.withLatestFrom
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -44,6 +56,11 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
     private val locationAccessIsNeededMsg: String by lazy { getString(R.string.location_access_is_needed) }
     private val cameraAccessIsNeededMsg: String by lazy { getString(R.string.camera_access_is_needed) }
     private val allPermissionsAreNeededMsg: String by lazy { getString(R.string.all_permissions_are_needed) }
+
+    private val autocompletePlaceDetailsRequest: PublishSubject<Intent> = PublishSubject.create()
+    private val autocompleteVisualizeRequest: PublishSubject<Place> = PublishSubject.create()
+
+    private var lastBottomSheetDialog: BottomSheetDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,14 +106,62 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE) {
             when (resultCode) {
-                Activity.RESULT_OK -> {
-                }
-                PlaceAutocomplete.RESULT_ERROR -> {
-                }
-                Activity.RESULT_CANCELED -> {
-                }
+                Activity.RESULT_OK -> showAutocompleteResultDialog(intent = data!!)
+
+                PlaceAutocomplete.RESULT_ERROR -> Toast.makeText(
+                    this,
+                    "Place Autocomplete error.",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
+    }
+
+    override fun Observable<MainState>.observe() {
+        autocompleteVisualizeRequest.withLatestFrom(this)
+            .subscribeWithAutoDispose { (place, mainState) ->
+                if (mainState.userLatLng is ViewDataState.Value) showFragment(
+                    VisualizerFragment.with(
+                        VisualizerFragment.Arguments.Places(
+                            listOf(
+                                UISimplePlace.fromGooglePlaceWithUserLatLng(
+                                    place,
+                                    mainState.userLatLng.value
+                                )
+                            )
+                        )
+                    ), true
+                )
+                else Toast.makeText(
+                    this@MainActivity,
+                    "Cannot show the place on camera - location unavailable.",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                lastBottomSheetDialog?.dismiss()
+            }
+
+        autocompletePlaceDetailsRequest.withLatestFrom(this)
+            .subscribeWithAutoDispose { (intent, mainState) ->
+                if (mainState.userLatLng is ViewDataState.Value) showFragment(
+                    PlaceDetailsFragment.with(
+                        PlaceDetailsFragment.Arguments.PlaceAutocompleteIntent(
+                            intent,
+                            UISimplePlace.fromGooglePlaceWithUserLatLng(
+                                PlaceAutocomplete.getPlace(this@MainActivity, intent),
+                                mainState.userLatLng.value
+                            )
+                        )
+                    ), true
+                )
+                else Toast.makeText(
+                    this@MainActivity,
+                    "Cannot show place details - location unavailable.",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                lastBottomSheetDialog?.dismiss()
+            }
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
@@ -187,6 +252,26 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
     private fun updateHomeAsUpIndicator() = if (supportFragmentManager.backStackEntryCount > 0)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.arrow_back)
     else supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
+
+    private fun showAutocompleteResultDialog(intent: Intent) {
+        lastBottomSheetDialog = BottomSheetDialog(this).apply {
+            setContentView(
+                DataBindingUtil.inflate<PlaceAutocompleteResultDialogBinding>(
+                    layoutInflater,
+                    R.layout.place_autocomplete_result_dialog,
+                    null,
+                    false
+                ).apply {
+                    this.place = place
+                    autocompleteResultVisualizeButton.setOnClickListener {
+                        autocompleteVisualizeRequest.onNext(PlaceAutocomplete.getPlace(this@MainActivity, intent))
+                    }
+                    autocompleteResultDetailsButton.setOnClickListener { autocompletePlaceDetailsRequest.onNext(intent) }
+                }.root
+            )
+            show()
+        }
+    }
 
     companion object {
         private const val backStackLayoutId = R.id.container
