@@ -70,7 +70,7 @@ class PlaceDetailsFragment :
                 is ViewDataState.Value -> {
                     place_details_loading_progress_bar?.visibility = View.GONE
                     binding?.place = it.place.value
-                    if (!it.photos.hasValue) actions.findPlacePhotos(it.place.value.id)
+                    if (it.photos is ViewDataState.Idle) actions.findPlacePhotos(it.place.value.id)
                 }
                 is ViewDataState.Error -> {
                     place_details_loading_progress_bar?.visibility = View.GONE

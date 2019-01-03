@@ -6,8 +6,9 @@
 
     <com.google.android.material.chip.Chip
             xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/place_info_type_chip"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:textColor="@android:color/white"
             android:layout_margin="5dp"
             android:text="@{name}"/>
 </layout>

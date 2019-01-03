@@ -35,7 +35,7 @@ class PlaceDetailsActionsExecutor @Inject constructor(
     }
 
     override fun findPlacePhotos(id: String) {
-        mutateState { it.copy(place = ViewDataState.Loading) }
+        mutateState { it.copy(photos = ViewDataState.Loading) }
 
         findPlacePhotosTask.executeWithInput(
             input = id,

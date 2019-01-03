@@ -72,9 +72,10 @@
                   app:layout_constraintRight_toRightOf="@id/place_photos_slider"/>
 
             <TextView android:id="@+id/place_details_name_text_view"
-                      android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:layout_width="0dp" android:layout_height="wrap_content"
                       app:layout_constraintTop_toTopOf="parent"
                       app:layout_constraintLeft_toLeftOf="parent"
+                      app:layout_constraintRight_toRightOf="@id/place_photos_slider"
                       android:layout_marginTop="10dp"
                       android:layout_marginLeft="5dp"
                       android:textSize="24sp"
@@ -83,9 +84,10 @@
                       android:ellipsize="end"
                       android:text="@{place.name}"/>
 
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                       app:layout_constraintTop_toBottomOf="@id/place_details_name_text_view"
                       app:layout_constraintLeft_toLeftOf="parent"
+                      app:layout_constraintRight_toRightOf="@id/place_photos_slider"
                       android:textStyle="italic"
                       android:textSize="14sp"
                       android:textColor="@android:color/white"

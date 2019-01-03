@@ -1,14 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:layout_margin="5dp"
-             tools:context=".placedetails.info.PlaceInfoFragment">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="place" type="com.google.android.gms.location.places.Place"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/place_info_types_recycler_view"
+        <import type="android.view.View"/>
+    </data>
+
+    <FrameLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            tools:context=".placedetails.info.PlaceInfoFragment">
 
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/place_info_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        <com.github.clans.fab.FloatingActionMenu
+                android:id="@+id/place_info_fab_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                app:menu_labels_position="left"
+                app:menu_openDirection="up"
+                app:menu_animationDelayPerItem="50"
+                app:menu_backgroundColor="@android:color/transparent"
+                app:menu_buttonSpacing="0dp"
+                app:menu_colorNormal="@color/colorPrimary"
+                app:menu_colorPressed="@color/colorPrimaryDark"
+                app:menu_colorRipple="#99FFFFFF"
+                app:menu_fab_label="Options"
+                app:menu_fab_size="mini"
+                app:menu_icon="@drawable/more"
+                app:menu_labels_colorNormal="@color/fab_menu_labels_colorNormal"
+                app:menu_labels_colorPressed="@color/fab_menu_labels_colorPressed"
+                app:menu_labels_colorRipple="@color/fab_menu_labels_colorRipple"
+                app:menu_labels_cornerRadius="3dp"
+                app:menu_labels_ellipsize="none"
+                app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+                app:menu_labels_maxLines="-1"
+                app:menu_labels_padding="8dp"
+                app:menu_labels_paddingBottom="4dp"
+                app:menu_labels_paddingLeft="8dp"
+                app:menu_labels_paddingRight="8dp"
+                app:menu_labels_paddingTop="4dp"
+                app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+                app:menu_labels_showShadow="true"
+                app:menu_labels_singleLine="false"
+                app:menu_labels_textColor="#FFFFFF"
+                app:menu_labels_textSize="14sp"
+                app:menu_shadowColor="#66000000"
+                app:menu_shadowRadius="4dp"
+                app:menu_shadowXOffset="1dp"
+                app:menu_shadowYOffset="3dp"
+                app:menu_showShadow="true"
+                app:layout_constraintTop_toTopOf="@id/camera_toolbar_guideline">
+
+            <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/place_info_website_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/website"
+                    app:fab_colorNormal="@color/colorPrimaryLight"
+                    app:fab_colorPressed="@color/colorPrimary"
+                    app:fab_colorRipple="#99FFFFFF"
+                    app:fab_label="@string/website"
+                    android:visibility="@{place.websiteUri != null ? View.VISIBLE : View.GONE}"
+                    app:fab_size="mini"/>
+
+            <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/place_info_google_maps_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/map_white"
+                    app:fab_colorNormal="@color/colorPrimaryLight"
+                    app:fab_colorPressed="@color/colorPrimary"
+                    app:fab_colorRipple="#99FFFFFF"
+                    app:fab_label="@string/website"
+                    app:fab_size="mini"/>
+
+        </com.github.clans.fab.FloatingActionMenu>
+
+    </FrameLayout>
+
+</layout>

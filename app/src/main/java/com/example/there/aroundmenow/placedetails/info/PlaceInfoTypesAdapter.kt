@@ -29,5 +29,9 @@ class PlaceInfoTypesAdapter(
         holder.binding.name = placeTypesNames[position]
     }
 
-    class ViewHolder(val binding: PlaceInfoTypeItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: PlaceInfoTypeItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.placeInfoTypeChip.setChipBackgroundColorResource(R.color.colorPrimary)
+        }
+    }
 }
