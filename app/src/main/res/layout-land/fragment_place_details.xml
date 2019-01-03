@@ -95,6 +95,13 @@
                       android:layout_marginLeft="5dp"
                       android:text="@{distanceFromUser}"/>
 
+            <RatingBar android:layout_width="wrap_content" android:layout_height="wrap_content"
+                       android:rating="@{place.rating}"
+                       style="@style/Base.Widget.AppCompat.RatingBar.Small"
+                       app:layout_constraintBottom_toBottomOf="@id/place_photos_slider"
+                       app:layout_constraintRight_toRightOf="@id/place_photos_slider"
+                       android:layout_margin="5dp"/>
+
             <androidx.constraintlayout.widget.Guideline
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

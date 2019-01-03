@@ -78,7 +78,7 @@
                     app:fab_colorNormal="@color/colorPrimaryLight"
                     app:fab_colorPressed="@color/colorPrimary"
                     app:fab_colorRipple="#99FFFFFF"
-                    app:fab_label="@string/website"
+                    app:fab_label="@string/map"
                     app:fab_size="mini"/>
 
         </com.github.clans.fab.FloatingActionMenu>

@@ -87,6 +87,7 @@ class PlaceDetailsFragment :
                 is ViewDataState.Value -> {
                     no_place_photos_found_image_view?.visibility = View.GONE
                     place_details_shimmer_layout?.stopShimmer()
+                    place_details_shimmer_layout?.visibility = View.GONE
                     photosLoadingService.photos = it.value
                     place_photos_slider?.setAdapter(PhotosSliderAdapter(it.value))
                     place_photos_slider?.setLoopSlides(true)
@@ -95,10 +96,12 @@ class PlaceDetailsFragment :
                 is ViewDataState.Error -> {
                     no_place_photos_found_image_view?.visibility = View.VISIBLE
                     place_details_shimmer_layout?.stopShimmer()
+                    place_details_shimmer_layout?.visibility = View.GONE
                 }
                 is ViewDataState.Loading -> {
                     no_place_photos_found_image_view?.visibility = View.GONE
                     place_details_shimmer_layout?.startShimmer()
+                    place_details_shimmer_layout?.visibility = View.VISIBLE
                 }
             }
         }
