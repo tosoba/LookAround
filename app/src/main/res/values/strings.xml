@@ -28,4 +28,5 @@
         connection.
     </string>
     <string name="loading_places_failed">Unable to load requested nearby places.</string>
+    <string name="more">More</string>
 </resources>
