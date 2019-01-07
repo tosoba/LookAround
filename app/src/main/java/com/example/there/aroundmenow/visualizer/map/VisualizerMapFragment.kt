@@ -4,23 +4,20 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import com.androidmapsextensions.*
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
-import com.example.there.aroundmenow.util.ext.dpToPx
-import com.example.there.aroundmenow.util.ext.latLngBounds
-import com.example.there.aroundmenow.util.ext.mainActivity
-import com.example.there.aroundmenow.util.ext.plusAssign
+import com.example.there.aroundmenow.util.ext.*
 import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
-import com.example.there.aroundmenow.util.view.map.GoogleMapRxInitializer
 import com.example.there.aroundmenow.util.view.map.GoogleMapWrapperLayout
+import com.example.there.aroundmenow.util.view.map.MapClusterOptionsProvider
 import com.example.there.aroundmenow.util.view.map.OnInfoWindowElementTouchListener
 import com.example.there.aroundmenow.visualizer.VisualizerState
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.subjects.PublishSubject
@@ -34,16 +31,24 @@ class VisualizerMapFragment :
     RxFragment.Stateful.HostAware.WithLayout<VisualizerMapState, Unit, VisualizerState, VisualizerMapActions>(
         R.layout.fragment_visualizer_map,
         HostAwarenessMode.PARENT_FRAGMENT_ONLY
-    ), GoogleMapRxInitializer {
+    ), OnMapReadyCallback {
 
-    override lateinit var map: GoogleMap
+    private lateinit var map: GoogleMap
 
-    override val googleMapFragment: SupportMapFragment?
+    private val googleMapFragment: SupportMapFragment?
         get() = if (isAdded)
             childFragmentManager.findFragmentById(R.id.visualizer_google_map_fragment) as? SupportMapFragment
         else null
 
-    override val mapInitialized: PublishSubject<Unit> = PublishSubject.create()
+    private val mapInitialized: PublishSubject<Unit> = PublishSubject.create()
+
+    private val declusterifiedMarkers = ArrayList<Marker>()
+
+    private val clusteringSettings: ClusteringSettings by lazy {
+        ClusteringSettings()
+            .clusterOptionsProvider(MapClusterOptionsProvider(resources))
+            .addMarkersDynamically(true)
+    }
 
     private val markerInfoWindow: ViewGroup by lazy {
         layoutInflater.inflate(R.layout.map_marker_info_window, null) as ViewGroup
@@ -55,7 +60,8 @@ class VisualizerMapFragment :
             ContextCompat.getDrawable(context!!, R.drawable.map_marker_button_background)!!,
             ContextCompat.getDrawable(context!!, R.drawable.map_marker_button_background_pressed)!!
         ) {
-            override fun onClickConfirmed(v: View, marker: Marker) = actions.markerSelected(marker)
+            override fun onClickConfirmed(v: View, marker: Marker) =
+                actions.markerSelected(marker)
         }
     }
 
@@ -63,7 +69,7 @@ class VisualizerMapFragment :
         object : GoogleMap.InfoWindowAdapter {
             override fun getInfoContents(marker: Marker): View? = null
 
-            override fun getInfoWindow(marker: Marker): View? = markerInfoWindow.apply {
+            override fun getInfoWindow(marker: Marker): View = markerInfoWindow.apply {
                 marker_info_window_title_text_view.text = marker.title
                 marker_info_window_snippet_text_view.text = marker.snippet
                 onInfoWindowBtnClickedListener.marker = marker
@@ -75,12 +81,20 @@ class VisualizerMapFragment :
 
     private val onMarkerClickListener: GoogleMap.OnMarkerClickListener by lazy {
         GoogleMap.OnMarkerClickListener { marker ->
-            val projection = map.projection
-            val markerPoint = projection.toScreenLocation(marker.position)
-            markerPoint.offset(0, resources.getDimensionPixelSize(R.dimen.map_dy))
-            val newLatLng = projection.fromScreenLocation(markerPoint)
-            map.moveCamera(CameraUpdateFactory.newLatLng(newLatLng))
-            marker.showInfoWindow()
+            if (marker.isCluster) {
+                val builder = LatLngBounds.builder()
+                marker.markers.forEach { builder.include(it.position) }
+                val bounds = builder.build()
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                declusterify(marker)
+            } else {
+                val projection = map.projection
+                val markerPoint = projection.toScreenLocation(marker.position)
+                markerPoint.offset(0, resources.getDimensionPixelSize(R.dimen.map_dy))
+                val newLatLng = projection.fromScreenLocation(markerPoint)
+                map.moveCamera(CameraUpdateFactory.newLatLng(newLatLng))
+                marker.showInfoWindow()
+            }
             true
         }
     }
@@ -92,19 +106,29 @@ class VisualizerMapFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializeMapFragment()
+        googleMapFragment?.getExtendedMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        super.onMapReady(googleMap)
+        map = googleMap
+        with(googleMap) {
+            setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    googleMapFragment?.context, R.raw.map_style
+                )
+            )
+            mapInitialized.onNext(Unit)
 
-        visualizer_map_wrapper_layout?.init(
-            googleMap,
-            context!!.dpToPx(GoogleMapWrapperLayout.DEFAULT_BOTTOM_OFFSET_DP.toFloat()).toInt()
-        )
-        googleMap.setInfoWindowAdapter(infoWindowAdapter)
-        googleMap.setOnMarkerClickListener(onMarkerClickListener)
-        googleMap.setOnInfoWindowCloseListener { actions.markerInfoWindowDismissed() }
+            setClustering(clusteringSettings)
+
+            visualizer_map_wrapper_layout?.init(
+                this,
+                context!!.dpToPx(GoogleMapWrapperLayout.DEFAULT_BOTTOM_OFFSET_DP.toFloat()).toInt()
+            )
+            setInfoWindowAdapter(infoWindowAdapter)
+            setOnMarkerClickListener(onMarkerClickListener)
+            setOnInfoWindowCloseListener { actions.markerInfoWindowDismissed() }
+        }
     }
 
     override fun Observable<VisualizerMapState>.observe() = map { it.selectedMarker }
@@ -127,7 +151,7 @@ class VisualizerMapFragment :
         .distinctUntilChanged()
         .subscribeWithAutoDispose { placesState ->
             if (placesState is ViewDataState.Value && this@VisualizerMapFragment::map.isInitialized) {
-                placesState.value.forEach { place -> map.addMarker(place.markerOptions) }
+                placesState.value.forEach { place -> map.addMarker(place.extendedMarkerOptions) }
                 map.moveCamera(
                     CameraUpdateFactory.newLatLngBounds(
                         placesState.value.latLngBounds,
@@ -142,5 +166,17 @@ class VisualizerMapFragment :
     fun onZoomToPlaceEvent(event: MapZoomToPlaceEvent) {
         if (::map.isInitialized) map.animateCamera(CameraUpdateFactory.newLatLngZoom(event.place.latLng, 16f))
     }
-}
 
+    private fun declusterify(cluster: Marker) {
+        clusterifyMarkers()
+        declusterifiedMarkers.addAll(cluster.markers)
+        declusterifiedMarkers.forEach { it.tryResetClusterGroup() }
+    }
+
+    private fun clusterifyMarkers() {
+        if (declusterifiedMarkers.isNotEmpty()) {
+            declusterifiedMarkers.forEach { it.tryResetClusterGroup() }
+            declusterifiedMarkers.clear()
+        }
+    }
+}

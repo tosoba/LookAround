@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         tools:context=".visualizer.map.VisualizerMapFragment">
 
-    <fragment android:name="com.google.android.gms.maps.SupportMapFragment"
+    <fragment android:name="com.androidmapsextensions.SupportMapFragment"
               android:id="@+id/visualizer_google_map_fragment"
               android:layout_width="match_parent"
               android:layout_height="match_parent"/>

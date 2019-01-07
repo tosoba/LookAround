@@ -21,6 +21,12 @@ data class UISimplePlace(
     val markerOptions: MarkerOptions
         get() = MarkerOptions().position(latLng).title(name).snippet(formattedDistanceFromUser)
 
+    val extendedMarkerOptions: com.androidmapsextensions.MarkerOptions
+        get() = com.androidmapsextensions.MarkerOptions()
+            .position(latLng)
+            .title(name)
+            .snippet(formattedDistanceFromUser)
+
     companion object {
         fun fromDomainWithUserLatLng(
             domainPlace: SimplePlace,

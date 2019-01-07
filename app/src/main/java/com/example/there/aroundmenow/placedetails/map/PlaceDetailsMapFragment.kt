@@ -8,21 +8,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.model.UISimplePlace
-import com.example.there.aroundmenow.util.view.map.GoogleMapInitializer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MapStyleOptions
 
 
-class PlaceDetailsMapFragment : Fragment(), GoogleMapInitializer {
+class PlaceDetailsMapFragment : Fragment(), OnMapReadyCallback {
 
     private val simplePlace: UISimplePlace by lazy {
         arguments!!.getParcelable<UISimplePlace>(ARG_SIMPLE_PLACE)
     }
 
-    override lateinit var map: GoogleMap
+    private lateinit var map: GoogleMap
 
-    override val googleMapFragment: SupportMapFragment?
+    private val googleMapFragment: SupportMapFragment?
         get() = if (isAdded)
             childFragmentManager.findFragmentById(R.id.place_details_google_map_fragment) as? SupportMapFragment
         else null
@@ -35,13 +36,18 @@ class PlaceDetailsMapFragment : Fragment(), GoogleMapInitializer {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializeMapFragment()
+        googleMapFragment?.getMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        super.onMapReady(googleMap)
-        map.addMarker(simplePlace.markerOptions)
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(simplePlace.latLng, 14f))
+        map = googleMap
+        googleMap.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                googleMapFragment?.context, R.raw.map_style
+            )
+        )
+        googleMap.addMarker(simplePlace.markerOptions)
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(simplePlace.latLng, 14f))
     }
 
     companion object {

@@ -1,8 +1,8 @@
 package com.example.there.aroundmenow.visualizer.map
 
+import com.androidmapsextensions.Marker
 import com.example.there.aroundmenow.base.architecture.executor.RxActionsExecutor
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
-import com.google.android.gms.maps.model.Marker
 import javax.inject.Inject
 
 class VisualizerMapActionsExecutor @Inject constructor(

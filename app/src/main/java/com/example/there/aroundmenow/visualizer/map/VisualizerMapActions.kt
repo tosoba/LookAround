@@ -1,6 +1,7 @@
 package com.example.there.aroundmenow.visualizer.map
 
-import com.google.android.gms.maps.model.Marker
+import com.androidmapsextensions.Marker
+
 
 interface VisualizerMapActions {
     fun markerSelected(marker: Marker)

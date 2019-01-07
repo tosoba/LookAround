@@ -6,7 +6,7 @@ import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
-import com.google.android.gms.maps.model.Marker
+import com.androidmapsextensions.Marker
 
 
 abstract class OnInfoWindowElementTouchListener(
