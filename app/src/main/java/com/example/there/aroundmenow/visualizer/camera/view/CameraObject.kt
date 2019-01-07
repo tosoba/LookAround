@@ -9,7 +9,8 @@ class CameraObject(
     renderer: CameraRenderer,
     private val cameraParams: CameraParams
 ) {
-    val point: SimplePoint = SimplePoint(CameraUtils.objectId, place.latLng.location, renderer)
+    val point: SimplePoint =
+        SimplePoint(CameraUtils.objectId, place.latLng.location, renderer).apply { name = place.name }
     val radarPoint: SimplePoint = SimplePoint(CameraUtils.objectId, place.latLng.location, CameraUtils.radarRenderer)
 
     var yAxisPosition: Float? = null

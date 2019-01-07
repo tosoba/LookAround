@@ -1,6 +1,8 @@
 package com.example.there.aroundmenow.visualizer.camera
 
+import com.example.there.appuntalib.point.Point
 import com.example.there.aroundmenow.base.architecture.executor.RxActionsExecutor
+import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import javax.inject.Inject
 
 class CameraActionsExecutor @Inject constructor(
@@ -27,5 +29,13 @@ class CameraActionsExecutor @Inject constructor(
         if (lastState.rangeIndex > 0) mutateState {
             it.copy(rangeIndex = it.rangeIndex - 1)
         }
+    }
+
+    override fun pointPressed(point: Point) = mutateState {
+        it.copy(lastPressedPoint = ViewDataState.Value(point))
+    }
+
+    override fun cameraObjectDialogDismissed() = mutateState {
+        it.copy(lastPressedPoint = ViewDataState.Idle)
     }
 }

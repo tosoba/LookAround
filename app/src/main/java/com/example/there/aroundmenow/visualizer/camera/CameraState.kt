@@ -1,11 +1,15 @@
 package com.example.there.aroundmenow.visualizer.camera
 
+import com.example.there.appuntalib.point.Point
+import com.example.there.aroundmenow.base.architecture.view.ViewDataState
+
 data class CameraState(
     val page: Int,
-    val rangeIndex: Int
+    val rangeIndex: Int,
+    val lastPressedPoint: ViewDataState<Point, Nothing>
 ) {
     companion object {
-        val INITIAL = CameraState(0, 2)
+        val INITIAL = CameraState(0, 2, ViewDataState.Idle)
     }
 
     object Constants {

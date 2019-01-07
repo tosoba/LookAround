@@ -6,24 +6,34 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                  android:background="@drawable/bottom_sheet_dialog_background"
                   android:orientation="vertical"
-                  android:layout_margin="5dp"
+                  android:padding="10dp"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+        <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:foreground="@drawable/foreground_ripple"
                 android:id="@+id/autocomplete_result_visualize_button"
                 android:text="@string/show_on_camera"
+                android:textColor="@android:color/white"
+                android:background="@drawable/button_background"
+                android:padding="10dp"
+                android:layout_marginBottom="5dp"
                 android:drawableLeft="@drawable/camera"/>
 
-        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+        <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:foreground="@drawable/foreground_ripple"
                 android:id="@+id/autocomplete_result_details_button"
                 android:text="@string/show_details"
+                android:textColor="@android:color/white"
+                android:background="@drawable/button_background"
+                android:padding="10dp"
                 android:drawableLeft="@drawable/details"/>
 
     </LinearLayout>

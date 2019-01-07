@@ -91,7 +91,7 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
 
     private fun List<CameraObject>.findByPoint(
         point: Point
-    ): CameraObject? = firstOrNull { it.point == point }
+    ): CameraObject? = firstOrNull { it.point.name == point.name }
 
     private fun List<CameraObject>.getTakenYAxisPositionsForCameraObject(
         cameraObject: CameraObject
@@ -101,7 +101,7 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
         userLatLng?.let { latLng ->
             val bearingThis = PointsUtil.calculateBearing(latLng.location, cameraObject.place.latLng.location)
             forEach {
-                if (it == cameraObject || it.yAxisPosition == null) return@forEach
+                if (it.point.name == cameraObject.point.name || it.yAxisPosition == null) return@forEach
                 val bearingCurrent = PointsUtil.calculateBearing(latLng.location, it.place.latLng.location)
                 if (Math.abs(bearingCurrent - bearingThis) < 45.0) takenYs.add(it.yAxisPosition!!)
             }

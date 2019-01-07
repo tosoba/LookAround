@@ -2,6 +2,7 @@ package com.example.there.aroundmenow.visualizer.camera
 
 import android.os.Bundle
 import android.view.View
+import androidx.databinding.DataBindingUtil
 import com.example.data.preferences.AppPreferences
 import com.example.there.appuntalib.orientation.OrientationManager
 import com.example.there.appuntalib.point.Point
@@ -9,15 +10,16 @@ import com.example.there.appuntalib.ui.CameraView
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
+import com.example.there.aroundmenow.databinding.CameraObjectClickedDialogBinding
 import com.example.there.aroundmenow.main.MainState
-import com.example.there.aroundmenow.util.ext.defaultLocation
-import com.example.there.aroundmenow.util.ext.distanceTo
-import com.example.there.aroundmenow.util.ext.location
-import com.example.there.aroundmenow.util.ext.plusAssign
+import com.example.there.aroundmenow.model.UISimplePlace
+import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
+import com.example.there.aroundmenow.util.ext.*
 import com.example.there.aroundmenow.util.lifecycle.OrientationManagerComponent
 import com.example.there.aroundmenow.visualizer.VisualizerState
 import com.example.there.aroundmenow.visualizer.camera.CameraState.Constants.cameraRanges
 import com.example.there.aroundmenow.visualizer.camera.view.*
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.withLatestFrom
@@ -38,6 +40,8 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
 
     @Inject
     lateinit var appPreferences: AppPreferences
+
+    private var lastBottomSheetDialog: BottomSheetDialog? = null
 
     private val cameraParams: CameraParams by lazy {
         CameraParams(
@@ -88,6 +92,17 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
             max_distance_minus_btn?.isEnabled = it > 0
             max_distance_plus_btn?.isEnabled = it < cameraRanges.size - 1
         }
+
+        map { it.lastPressedPoint }
+            .distinctUntilChanged()
+            .withLatestFrom(observableParentFragmentState.map { it.places })
+            .subscribeWithAutoDispose { (lastPressedPointState, placesState) ->
+                if (lastPressedPointState is ViewDataState.Value && placesState is ViewDataState.Value) {
+                    placesState.value.find { it.name == lastPressedPointState.value.name }?.let {
+                        showCameraObjectClickedDialog(it)
+                    }
+                }
+            }
     }
 
     override fun Observable<MainState>.observeActivity() = map { it.userLatLng }.subscribeWithAutoDispose {
@@ -142,6 +157,7 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
     private fun initCameraView() = with(camera_view) {
         setPoints(ArrayList<Point>())
         setPosition(defaultLocation)
+        setOnPointPressedListener { actions.pointPressed(it) }
     }
 
     private fun initRadarView() = with(radar_view) {
@@ -158,5 +174,32 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
         })
 
         camera_layout?.addView(cameraView)
+    }
+
+    private fun showCameraObjectClickedDialog(place: UISimplePlace) {
+        context?.let {
+            lastBottomSheetDialog = BottomSheetDialog(it).apply {
+                setContentView(
+                    DataBindingUtil.inflate<CameraObjectClickedDialogBinding>(
+                        layoutInflater,
+                        R.layout.camera_object_clicked_dialog, null, false
+                    ).apply {
+                        this.place = place
+                        cameraObjectShowDetailsBtn.setOnClickListener { _ ->
+                            lastBottomSheetDialog?.dismiss()
+                            mainActivity?.showFragment(
+                                PlaceDetailsFragment.with(
+                                    PlaceDetailsFragment.Arguments.SimplePlace(place)
+                                ),
+                                true
+                            )
+                        }
+                    }.root
+                )
+                setOnDismissListener { _ -> actions.cameraObjectDialogDismissed() }
+                show()
+            }
+        }
+
     }
 }
