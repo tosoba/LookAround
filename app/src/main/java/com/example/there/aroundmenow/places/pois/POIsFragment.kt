@@ -16,10 +16,10 @@ import com.example.there.aroundmenow.util.ext.withPreviousValue
 import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
 import com.example.there.aroundmenow.visualizer.VisualizerFragment
 import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.withLatestFrom
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-
 
 class POIsFragment : RxFragment.Stateful.HostAware.WithLayout<POIsState, MainState, Unit, POIsActions>(
     R.layout.fragment_pois,
@@ -38,26 +38,34 @@ class POIsFragment : RxFragment.Stateful.HostAware.WithLayout<POIsState, MainSta
     override fun Observable<POIsState>.observe() = subscribeWithAutoDispose { state ->
         when (state.pois) {
             is ViewDataState.Value -> placesListFragment?.onValue(state.pois.value)
-            is ViewDataState.Error -> placesListFragment?.onError()
+            is ViewDataState.Error -> placesListFragment?.onError(getString(R.string.loading_pois_failed))
             is ViewDataState.Loading -> placesListFragment?.onLoading()
         }
     }
 
-    override fun Observable<MainState>.observeActivity() = map { it.userLatLng }
-        .withPreviousValue(ViewDataState.Idle)
-        .withLatestFrom(observableStateHolder.observableState)
-        .subscribeWithAutoDispose { (lastTwoUserLocations, state) ->
-            val (previous, latest) = lastTwoUserLocations
-            when {
-                previous is ViewDataState.Idle && latest is ViewDataState.Value -> {
-                    if (!state.pois.hasValue) actions.findPOIsNearby(latest.value)
-                }
-                previous is ViewDataState.Value && latest is ViewDataState.Value -> {
-                    // TODO: before running findPOIsNearby() calculate the distance between last and new location
-                    // only if greater than some value run method
-                }
-            }
+    override fun Observable<MainState>.observeActivity() = Observable.combineLatest(
+        map { it.userLatLng }.withPreviousValue(ViewDataState.Idle),
+        map { it.connectedToInternet }.filter { it.hasValue }.map { it as ViewDataState.Value },
+        BiFunction<LastTwoLatLngsState, ViewDataState.Value<Boolean>, PairOfLastTwoLatLngsAndConnectivityState> { latLngs, connected ->
+            Pair(latLngs, connected)
         }
+    ).withLatestFrom(observableStateHolder.observableState).subscribeWithAutoDispose { (mainState, state) ->
+        val (lastTwoUserLocations, connected) = mainState
+        val (previous, latest) = lastTwoUserLocations
+        if (state.pois.hasValue) {
+            // TODO: before running findPOIsNearby() calculate the distance between last and new location
+            // only if greater than some value run method
+        } else {
+            if (connected.value) {
+                if (latest is ViewDataState.Value) {
+                    actions.findPOIsNearby(latest.value)
+                } else {
+                    // TODO: onNoLocation()
+                }
+            } else onNotConnected()
+
+        }
+    }
 
     @Suppress("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -77,5 +85,9 @@ class POIsFragment : RxFragment.Stateful.HostAware.WithLayout<POIsState, MainSta
                 })
             }
         }
+    }
+
+    private fun onNotConnected() {
+        placesListFragment?.onError(getString(R.string.unable_to_load_pois_no_internet_connection))
     }
 }

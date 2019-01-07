@@ -15,6 +15,8 @@ import com.example.there.aroundmenow.base.architecture.view.DataListFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewObservingFragment
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.util.event.TaggedEvent
+import com.example.there.aroundmenow.util.ext.hide
+import com.example.there.aroundmenow.util.ext.show
 import kotlinx.android.synthetic.main.fragment_simple_place_list.*
 import org.greenrobot.eventbus.EventBus
 
@@ -64,22 +66,27 @@ class SimplePlacesListFragment : ViewObservingFragment(), DataListFragment<List<
     }
 
     override fun onValue(value: List<UISimplePlace>) {
-        simple_places_loading_progress_bar?.visibility = View.GONE
+        simple_places_loading_progress_bar?.hide()
+        simple_places_error_text_view?.hide()
         if (value.isEmpty()) {
-            no_simple_places_found_text_view?.visibility = View.VISIBLE
+            no_simple_places_found_text_view?.show()
         } else {
-            no_simple_places_found_text_view?.visibility = View.GONE
+            no_simple_places_found_text_view?.hide()
             placesAdapter.places = value
         }
     }
 
-    override fun onError() {
-        simple_places_loading_progress_bar?.visibility = View.GONE
+    override fun onError(message: String) {
+        simple_places_loading_progress_bar?.hide()
+        no_simple_places_found_text_view?.hide()
+        simple_places_error_text_view?.show()
+        simple_places_error_text_view?.text = message
     }
 
     override fun onLoading() {
-        simple_places_loading_progress_bar?.visibility = View.VISIBLE
-        no_simple_places_found_text_view?.visibility = View.GONE
+        simple_places_loading_progress_bar?.show()
+        no_simple_places_found_text_view?.hide()
+        simple_places_error_text_view?.hide()
     }
 
     companion object {

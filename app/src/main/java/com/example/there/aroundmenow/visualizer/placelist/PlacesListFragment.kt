@@ -20,7 +20,7 @@ class PlacesListFragment : RxFragment.Stateless.HostAware.WithLayout<Unit, Visua
     override fun Observable<VisualizerState>.observeParentFragment() = subscribeWithAutoDispose { state ->
         when (state.places) {
             is ViewDataState.Value -> placesListFragment?.onValue(state.places.value)
-            is ViewDataState.Error -> placesListFragment?.onError()
+            is ViewDataState.Error -> placesListFragment?.onError(getString(R.string.loading_places_failed))
             is ViewDataState.Loading -> placesListFragment?.onLoading()
         }
     }

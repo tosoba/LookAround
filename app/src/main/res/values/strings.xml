@@ -23,4 +23,9 @@
     <string name="website">Website</string>
     <string name="show_on_camera">Show on camera</string>
     <string name="show_details">Show details</string>
+    <string name="loading_pois_failed">Loading nearby places of interest failed.</string>
+    <string name="unable_to_load_pois_no_internet_connection">Unable to load nearby places - no internet
+        connection.
+    </string>
+    <string name="loading_places_failed">Unable to load requested nearby places.</string>
 </resources>

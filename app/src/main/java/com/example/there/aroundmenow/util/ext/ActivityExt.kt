@@ -5,6 +5,10 @@ import android.content.pm.ActivityInfo
 import android.view.Surface
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.example.there.aroundmenow.base.architecture.view.ViewObservingActivity
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 fun Activity.registerFragmentLifecycleCallbacks(
@@ -25,3 +29,9 @@ fun Activity.disableScreenRotation() {
 fun Activity.enableScreenRotation() {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 }
+
+fun ViewObservingActivity.observeInternetConnectivity(onNext: (Boolean) -> Unit) = ReactiveNetwork
+    .observeInternetConnectivity()
+    .subscribeOn(Schedulers.io())
+    .observeOn(AndroidSchedulers.mainThread())
+    .subscribeWithAutoDispose(onNext)
