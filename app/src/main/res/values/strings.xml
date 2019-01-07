@@ -17,7 +17,7 @@
     <string name="camera_access_is_needed">Camera access is needed to visualize places.</string>
     <string name="location_access_is_needed">Location access is needed to properly visualize places.</string>
     <string name="all_permissions_are_needed">Both camera and location access are needed to visualize places.</string>
-    <string name="loading_photos">Loading photos...</string>
+    <string name="loading_photos">Loading photos…</string>
     <string name="address">Address</string>
     <string name="phone_number">Phone number</string>
     <string name="website">Website</string>

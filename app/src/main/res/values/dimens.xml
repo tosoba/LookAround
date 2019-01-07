@@ -5,4 +5,6 @@
 
     <dimen name="radar_margin">10dp</dimen>
     <dimen name="radar_layout_dimension">96dp</dimen>
+
+    <dimen name="map_dy">-100dp</dimen>
 </resources>
