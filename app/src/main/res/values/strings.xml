@@ -38,6 +38,9 @@
     </string>
     <string name="no_nearby_places_of_requested_type_found">Unable to find nearby places of requested type.</string>
 
-    <string name="loading_places_failed">Unable to load requested nearby places.</string>
+    <string name="unable_to_load_place_details">Unable to load details of selected place - no internet
+        connection.
+    </string>
+
     <string name="more">More</string>
 </resources>

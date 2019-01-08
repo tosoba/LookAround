@@ -41,7 +41,6 @@ class PlaceInfoFragment : RxFragment.Stateless.HostAware.DataBound<Unit, PlaceDe
                 place_info_recycler_view?.adapter = PlaceInfoAdapter(placeState.value)
                 binding.place = placeState.value
 
-                //TODO: set onClick listeners of fab buttons in options
                 place_info_website_fab?.setOnClickListener { _ ->
                     placeState.value.websiteUri?.let { openPlaceWebsite(it) }
                 }

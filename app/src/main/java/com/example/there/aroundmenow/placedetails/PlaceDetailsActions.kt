@@ -7,4 +7,7 @@ interface PlaceDetailsActions {
     fun findPlaceDetails(place: UISimplePlace)
     fun findPlacePhotos(id: String)
     fun setPlace(place: Place)
+
+    fun onNoInternetConnectionWhenLoadingPhotos()
+    fun onNoInternetConnectionWhenLoadingPlaceDetails()
 }

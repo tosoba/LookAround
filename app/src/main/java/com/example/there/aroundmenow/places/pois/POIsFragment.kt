@@ -12,6 +12,7 @@ import com.example.there.aroundmenow.util.event.EventTags
 import com.example.there.aroundmenow.util.event.TaggedEvent
 import com.example.there.aroundmenow.util.ext.mainActivity
 import com.example.there.aroundmenow.util.ext.plusAssign
+import com.example.there.aroundmenow.util.ext.valuesOnly
 import com.example.there.aroundmenow.util.ext.withPreviousValue
 import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
 import com.example.there.aroundmenow.visualizer.VisualizerFragment
@@ -45,7 +46,7 @@ class POIsFragment : RxFragment.Stateful.HostAware.WithLayout<POIsState, MainSta
 
     override fun Observable<MainState>.observeActivity() = Observable.combineLatest(
         map { it.userLatLng }.withPreviousValue(ViewDataState.Idle),
-        map { it.connectedToInternet }.filter { it.hasValue }.map { it as ViewDataState.Value },
+        map { it.connectedToInternet }.valuesOnly(),
         BiFunction<LastTwoLatLngsState, ViewDataState.Value<Boolean>, PairOfLastTwoLatLngsAndConnectivityState> { latLngs, connected ->
             Pair(latLngs, connected)
         }

@@ -14,11 +14,6 @@ sealed class ViewDataState<out V, out E> {
         get() = this is ViewDataState.Value<*>
 }
 
-sealed class ViewLoadingState {
-    object Idle : ViewLoadingState()
-    object Loading : ViewLoadingState()
-}
-
 interface ViewDataSideEffect<V, E> {
     fun onValue(value: V) = Unit
     fun onError(error: E) = Unit

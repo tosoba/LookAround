@@ -1,30 +1,41 @@
 package com.example.there.aroundmenow.placedetails
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
+import com.example.domain.task.error.FindPlaceDetailsError
+import com.example.domain.task.error.FindPlacePhotosError
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentPlaceDetailsBinding
+import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.placedetails.info.PlaceInfoFragment
 import com.example.there.aroundmenow.placedetails.map.PlaceDetailsMapFragment
 import com.example.there.aroundmenow.placedetails.photoslist.PhotosLoadingService
 import com.example.there.aroundmenow.placedetails.photoslist.PhotosSliderAdapter
+import com.example.there.aroundmenow.util.ext.hide
+import com.example.there.aroundmenow.util.ext.show
+import com.example.there.aroundmenow.util.ext.valuesOnly
 import com.example.there.aroundmenow.util.view.viewpager.FragmentTitledViewPagerAdapter
 import com.facebook.shimmer.Shimmer
+import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.withLatestFrom
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_place_details.*
 import ss.com.bannerslider.Slider
 
 
 class PlaceDetailsFragment :
-    RxFragment.Stateful.HostUnaware.DataBound<PlaceDetailsState, PlaceDetailsActions, FragmentPlaceDetailsBinding>(
-        R.layout.fragment_place_details
+    RxFragment.Stateful.HostAware.DataBound<PlaceDetailsState, MainState, Unit, PlaceDetailsActions, FragmentPlaceDetailsBinding>(
+        R.layout.fragment_place_details,
+        HostAwarenessMode.ACTIVITY_ONLY
     ) {
 
     private val simplePlace: UISimplePlace by lazy {
@@ -58,6 +69,7 @@ class PlaceDetailsFragment :
         binding = this
         pagerAdapter = viewPagerAdapter
         distanceFromUser = simplePlace.formattedDistanceFromUser
+        placeDetailsNameTextView.text = simplePlace.name
         placeDetailsTabLayout.setupWithViewPager(placeDetailsViewPager)
     }
 
@@ -72,20 +84,55 @@ class PlaceDetailsFragment :
         super.onPause()
     }
 
-    override fun Observable<PlaceDetailsState>.observe() {
-        subscribeWithAutoDispose {
-            when (it.place) {
-                is ViewDataState.Value -> {
-                    place_details_loading_progress_bar?.visibility = View.GONE
-                    binding?.place = it.place.value
-                    if (it.photos is ViewDataState.Idle) actions.findPlacePhotos(it.place.value.id)
+    override fun Observable<MainState>.observeActivity() {
+        val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
+        if (args is Arguments.SimplePlace) map { it.connectedToInternet }
+            .valuesOnly()
+            .withLatestFrom(observableStateHolder.observableState.map { it.place })
+            .subscribeWithAutoDispose { (connected, placeState) ->
+                if (!placeState.hasValue) {
+                    if (connected.value) actions.findPlaceDetails(args.place)
+                    else actions.onNoInternetConnectionWhenLoadingPlaceDetails()
                 }
-                is ViewDataState.Error -> {
-                    place_details_loading_progress_bar?.visibility = View.GONE
-                    // TODO: show dialog with msg: "Place details not found" and button to go back
+            }
+    }
+
+    override fun Observable<PlaceDetailsState>.observe() {
+        Observable.combineLatest(
+            map { it.place },
+            observableActivityState.map { it.connectedToInternet }.valuesOnly(),
+            BiFunction<ViewDataState<Place, FindPlaceDetailsError>, ViewDataState.Value<Boolean>, Pair<ViewDataState<Place, FindPlaceDetailsError>, ViewDataState.Value<Boolean>>> { placeState, connected ->
+                Pair(placeState, connected)
+            }
+        ).withLatestFrom(map { it.photos }).subscribeWithAutoDispose { (placeAndConnectionState, photosState) ->
+            val (placeState, connected) = placeAndConnectionState
+            when (placeState) {
+                is ViewDataState.Value -> {
+                    place_details_error_card_view?.hide()
+                    place_details_loading_progress_bar?.hide()
+                    binding?.place = placeState.value
+                    if (photosState.shouldLoadPhotos) {
+                        if (connected.value) actions.findPlacePhotos(placeState.value.id)
+                        else actions.onNoInternetConnectionWhenLoadingPhotos()
+                    }
                 }
                 is ViewDataState.Loading -> {
-                    place_details_loading_progress_bar?.visibility = View.VISIBLE
+                    place_details_error_card_view?.hide()
+                    place_details_loading_progress_bar?.show()
+                }
+                is ViewDataState.Error -> {
+                    place_details_loading_progress_bar?.hide()
+                    when (placeState.error) {
+                        is FindPlaceDetailsError.PlaceDetailsNotFound -> {
+                            //TODO: show dialog with msg: "Place details not found" and button to go back - or don't hide the cardview and show button to go back on it
+                            place_details_error_card_view?.hide()
+                        }
+                        is FindPlaceDetailsError.NoInternetConnection -> {
+                            place_details_error_card_view?.show()
+                            place_details_error_text_view?.text = getString(R.string.unable_to_load_place_details)
+                            onPlacePhotosLoadingError()
+                        }
+                    }
                 }
             }
         }
@@ -93,23 +140,19 @@ class PlaceDetailsFragment :
         map { it.photos }.distinctUntilChanged().subscribeWithAutoDispose {
             when (it) {
                 is ViewDataState.Value -> {
-                    no_place_photos_found_image_view?.visibility = View.GONE
+                    no_place_photos_found_image_view?.hide()
                     place_details_shimmer_layout?.stopShimmer()
-                    place_details_shimmer_layout?.visibility = View.GONE
+                    place_details_shimmer_layout?.hide()
                     photosLoadingService.photos = it.value
                     place_photos_slider?.setAdapter(PhotosSliderAdapter(it.value))
                     place_photos_slider?.setLoopSlides(true)
                     place_photos_slider?.setInterval(5000)
                 }
-                is ViewDataState.Error -> {
-                    no_place_photos_found_image_view?.visibility = View.VISIBLE
-                    place_details_shimmer_layout?.stopShimmer()
-                    place_details_shimmer_layout?.visibility = View.GONE
-                }
+                is ViewDataState.Error -> onPlacePhotosLoadingError()
                 is ViewDataState.Loading -> {
-                    no_place_photos_found_image_view?.visibility = View.GONE
+                    no_place_photos_found_image_view?.hide()
+                    place_details_shimmer_layout?.show()
                     place_details_shimmer_layout?.startShimmer()
-                    place_details_shimmer_layout?.visibility = View.VISIBLE
                 }
             }
         }
@@ -122,6 +165,15 @@ class PlaceDetailsFragment :
             is Arguments.PlaceAutocompleteIntent -> actions.setPlace(PlaceAutocomplete.getPlace(activity, args.intent))
         }
     }
+
+    private fun onPlacePhotosLoadingError() {
+        no_place_photos_found_image_view?.show()
+        place_details_shimmer_layout?.stopShimmer()
+        place_details_shimmer_layout?.hide()
+    }
+
+    private val ViewDataState<List<Bitmap>, FindPlacePhotosError>.shouldLoadPhotos: Boolean
+        get() = this is ViewDataState.Idle || (this is ViewDataState.Error && error is FindPlacePhotosError.NoInternetConnection)
 
     sealed class Arguments : Parcelable {
         @Parcelize

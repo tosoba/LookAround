@@ -53,7 +53,13 @@ class PlaceDetailsActionsExecutor @Inject constructor(
         })
     }
 
-    override fun setPlace(place: Place) {
-        mutateState { it.copy(place = ViewDataState.Value(place)) }
+    override fun setPlace(place: Place) = mutateState { it.copy(place = ViewDataState.Value(place)) }
+
+    override fun onNoInternetConnectionWhenLoadingPhotos() = mutateState {
+        it.copy(photos = ViewDataState.Error(FindPlacePhotosError.NoInternetConnection))
+    }
+
+    override fun onNoInternetConnectionWhenLoadingPlaceDetails() = mutateState {
+        it.copy(place = ViewDataState.Error(FindPlaceDetailsError.NoInternetConnection))
     }
 }
