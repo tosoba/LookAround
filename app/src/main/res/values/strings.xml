@@ -5,7 +5,7 @@
     <string name="search_places">Search places…</string>
     <string name="about">About</string>
     <string name="google_maps_key">AIzaSyBeKbXbGWzymX-tlL5GKMC9qD5Hirr7JqI</string>
-    <string name="no_places_of_interest_found_around_you_yet">No places of interest found around you yet.</string>
+    <string name="no_places_of_interest_found_around_you">No places of interest found around you.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -24,9 +24,20 @@
     <string name="show_on_camera">Show on camera</string>
     <string name="show_details">Show details</string>
     <string name="loading_pois_failed">Loading nearby places of interest failed.</string>
-    <string name="unable_to_load_pois_no_internet_connection">Unable to load nearby places - no internet
+
+    <string name="unable_to_load_pois_no_internet_connection">Unable to load nearby points of interest - no internet
         connection.
     </string>
+    <string name="unable_to_load_pois_no_location">Unable to load nearby points of interest - location unavailable.
+    </string>
+
+    <string name="unable_to_load_nearby_places_no_internet_connection">Unable to load nearby places - no internet
+        connection.
+    </string>
+    <string name="unable_to_load_nearby_places_no_location">Unable to load nearby places - location unavailable.
+    </string>
+    <string name="no_nearby_places_of_requested_type_found">Unable to find nearby places of requested type.</string>
+
     <string name="loading_places_failed">Unable to load requested nearby places.</string>
     <string name="more">More</string>
 </resources>

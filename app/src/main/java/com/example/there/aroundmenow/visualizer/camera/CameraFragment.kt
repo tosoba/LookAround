@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.example.data.preferences.AppPreferences
+import com.example.domain.task.error.FindNearbyPlacesError
 import com.example.there.appuntalib.orientation.OrientationManager
 import com.example.there.appuntalib.point.Point
 import com.example.there.appuntalib.ui.CameraView
@@ -119,22 +120,29 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
         .subscribeWithAutoDispose { (placesState, userLatLngState) ->
             when {
                 placesState is ViewDataState.Value && userLatLngState is ViewDataState.Value -> with(placesState.value.map {
-                    CameraObject(
-                        it,
-                        cameraRenderer,
-                        cameraParams
-                    )
+                    CameraObject(it, cameraRenderer, cameraParams)
                 }) {
+                    camera_error_card_view?.hide()
                     updatePoints(map { it.point })
                     updateRadarPoints(map { it.radarPoint })
                     cameraRenderer.cameraObjects = this
 
                     if (size == 1) {
-                        camera_controls_group?.visibility = View.GONE
+                        camera_controls_group?.hide()
                         updateRange(elementAt(0).place.latLng.distanceTo(userLatLngState.value).toDouble() * 2)
-                    } else {
-                        camera_controls_group?.visibility = View.VISIBLE
+                    } else camera_controls_group?.show()
+                }
+                placesState is ViewDataState.Error -> {
+                    when (placesState.error) {
+                        is FindNearbyPlacesError.NoInternetConnection ->
+                            camera_error_text_view?.text =
+                                    getString(R.string.unable_to_load_nearby_places_no_internet_connection)
+                        is FindNearbyPlacesError.UserLocationUnknown ->
+                            camera_error_text_view?.text = getString(R.string.unable_to_load_nearby_places_no_location)
+                        is FindNearbyPlacesError.NoPlacesFound ->
+                            camera_error_text_view?.text = getString(R.string.no_nearby_places_of_requested_type_found)
                     }
+                    camera_error_card_view?.show()
                 }
             }
         }

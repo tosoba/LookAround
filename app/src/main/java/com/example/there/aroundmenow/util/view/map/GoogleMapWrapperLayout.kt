@@ -4,12 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.widget.RelativeLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.androidmapsextensions.GoogleMap
 import com.androidmapsextensions.Marker
 
 
-class GoogleMapWrapperLayout : RelativeLayout {
+class GoogleMapWrapperLayout : ConstraintLayout {
     /**
      * Reference to a GoogleMap object
      */

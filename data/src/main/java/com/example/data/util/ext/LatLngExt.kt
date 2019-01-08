@@ -33,4 +33,6 @@ fun LatLng.toBoundsWithRadius(radius: Double): LatLngBounds {
 private val LatLngBounds.overpassString: String
     get() = "(${southwest.latitude},${southwest.longitude},${northeast.latitude},${northeast.longitude})"
 
-fun LatLng.formattedDistanceTo(other: LatLng): String = "${location.distanceTo(other.location)} meters away"
+fun LatLng.formattedDistanceTo(
+    other: LatLng
+): String = "${String.format("%.2f", location.distanceTo(other.location))} m away"

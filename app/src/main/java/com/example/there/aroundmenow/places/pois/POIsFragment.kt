@@ -49,21 +49,19 @@ class POIsFragment : RxFragment.Stateful.HostAware.WithLayout<POIsState, MainSta
         BiFunction<LastTwoLatLngsState, ViewDataState.Value<Boolean>, PairOfLastTwoLatLngsAndConnectivityState> { latLngs, connected ->
             Pair(latLngs, connected)
         }
-    ).withLatestFrom(observableStateHolder.observableState).subscribeWithAutoDispose { (mainState, state) ->
+    ).withLatestFrom(observableStateHolder.observableState.map {
+        it.pois
+    }).subscribeWithAutoDispose { (mainState, pois) ->
         val (lastTwoUserLocations, connected) = mainState
         val (previous, latest) = lastTwoUserLocations
-        if (state.pois.hasValue) {
+        if (pois.hasValue) {
             // TODO: before running findPOIsNearby() calculate the distance between last and new location
             // only if greater than some value run method
         } else {
             if (connected.value) {
-                if (latest is ViewDataState.Value) {
-                    actions.findPOIsNearby(latest.value)
-                } else {
-                    // TODO: onNoLocation()
-                }
+                if (latest is ViewDataState.Value) actions.findPOIsNearby(latest.value)
+                else onUserLatLngUnavailable()
             } else onNotConnected()
-
         }
     }
 
@@ -89,5 +87,9 @@ class POIsFragment : RxFragment.Stateful.HostAware.WithLayout<POIsState, MainSta
 
     private fun onNotConnected() {
         placesListFragment?.onError(getString(R.string.unable_to_load_pois_no_internet_connection))
+    }
+
+    private fun onUserLatLngUnavailable() {
+        placesListFragment?.onError(getString(R.string.unable_to_load_pois_no_location))
     }
 }

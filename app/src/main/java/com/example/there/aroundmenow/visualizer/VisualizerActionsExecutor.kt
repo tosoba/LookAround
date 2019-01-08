@@ -56,9 +56,15 @@ class VisualizerActionsExecutor @Inject constructor(
         }
     }
 
-    override fun setPlaces(places: List<UISimplePlace>) {
-        mutateState {
-            it.copy(places = ViewDataState.Value(places))
-        }
+    override fun setPlaces(places: List<UISimplePlace>) = mutateState {
+        it.copy(places = ViewDataState.Value(places))
+    }
+
+    override fun onNoInternetConnection() = mutateState {
+        it.copy(places = ViewDataState.Error(FindNearbyPlacesError.NoInternetConnection))
+    }
+
+    override fun onUserLatLngUnavailable() = mutateState {
+        it.copy(places = ViewDataState.Error(FindNearbyPlacesError.UserLocationUnknown))
     }
 }

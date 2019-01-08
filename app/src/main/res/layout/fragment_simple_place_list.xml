@@ -20,7 +20,7 @@
               android:textSize="20sp"
               android:textAlignment="center"
               android:textColor="@android:color/white"
-              android:text="@string/no_places_of_interest_found_around_you_yet"
+              android:text="@string/no_places_of_interest_found_around_you"
               android:visibility="gone"/>
 
     <TextView android:id="@+id/simple_places_error_text_view"

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.androidmapsextensions.*
+import com.example.domain.task.error.FindNearbyPlacesError
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
@@ -150,14 +151,31 @@ class VisualizerMapFragment :
         .delaySubscription(mapInitialized)
         .distinctUntilChanged()
         .subscribeWithAutoDispose { placesState ->
-            if (placesState is ViewDataState.Value && this@VisualizerMapFragment::map.isInitialized) {
-                placesState.value.forEach { place -> map.addMarker(place.extendedMarkerOptions) }
-                map.moveCamera(
-                    CameraUpdateFactory.newLatLngBounds(
-                        placesState.value.latLngBounds,
-                        context?.dpToPx(10f)?.toInt() ?: 25
+            when (placesState) {
+                is ViewDataState.Value -> {
+                    visualizer_map_error_card_view?.hide()
+                    placesState.value.forEach { place -> map.addMarker(place.extendedMarkerOptions) }
+                    map.moveCamera(
+                        CameraUpdateFactory.newLatLngBounds(
+                            placesState.value.latLngBounds,
+                            context?.dpToPx(10f)?.toInt() ?: 25
+                        )
                     )
-                )
+                }
+                is ViewDataState.Error -> {
+                    when (placesState.error) {
+                        is FindNearbyPlacesError.NoInternetConnection ->
+                            visualizer_map_error_text_view?.text =
+                                    getString(R.string.unable_to_load_nearby_places_no_internet_connection)
+                        is FindNearbyPlacesError.UserLocationUnknown ->
+                            visualizer_map_error_text_view?.text =
+                                    getString(R.string.unable_to_load_nearby_places_no_location)
+                        is FindNearbyPlacesError.NoPlacesFound ->
+                            visualizer_map_error_text_view?.text =
+                                    getString(R.string.no_nearby_places_of_requested_type_found)
+                    }
+                    visualizer_map_error_card_view?.show()
+                }
             }
         }
 

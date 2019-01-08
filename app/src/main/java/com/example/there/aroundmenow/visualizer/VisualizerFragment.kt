@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.os.Parcelable
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
+import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentVisualizerBinding
 import com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListEvent
+import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
@@ -20,6 +22,10 @@ import com.example.there.aroundmenow.visualizer.camera.CameraFragment
 import com.example.there.aroundmenow.visualizer.map.MapZoomToPlaceEvent
 import com.example.there.aroundmenow.visualizer.map.VisualizerMapFragment
 import com.example.there.aroundmenow.visualizer.placelist.PlacesListFragment
+import com.google.android.gms.maps.model.LatLng
+import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.withLatestFrom
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_visualizer.*
 import org.greenrobot.eventbus.EventBus
@@ -28,8 +34,9 @@ import org.greenrobot.eventbus.ThreadMode
 
 
 class VisualizerFragment :
-    RxFragment.Stateful.HostUnaware.DataBound<VisualizerState, VisualizerActions, FragmentVisualizerBinding>(
-        R.layout.fragment_visualizer
+    RxFragment.Stateful.HostAware.DataBound<VisualizerState, MainState, Unit, VisualizerActions, FragmentVisualizerBinding>(
+        R.layout.fragment_visualizer,
+        HostAwarenessMode.ACTIVITY_ONLY
     ) {
 
     private val viewPagerAdapter by lazy {
@@ -51,6 +58,30 @@ class VisualizerFragment :
 
     override fun FragmentVisualizerBinding.init() {
         pagerAdapter = viewPagerAdapter
+    }
+
+    override fun Observable<MainState>.observeActivity() {
+        val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
+        if (args is VisualizerFragment.Arguments.PlaceType) {
+            Observable.combineLatest(
+                map { it.userLatLng },
+                map { it.connectedToInternet }.filter { it.hasValue }.map { it as ViewDataState.Value },
+                BiFunction<ViewDataState<LatLng, Nothing>, ViewDataState.Value<Boolean>, Pair<ViewDataState<LatLng, Nothing>, ViewDataState.Value<Boolean>>> { userLatLngState, connected ->
+                    Pair(userLatLngState, connected)
+                }
+            ).withLatestFrom(observableStateHolder.observableState.map {
+                it.places
+            }).subscribeWithAutoDispose { (mainState, places) ->
+                if (!places.hasValue) {
+                    val (userLatLng, connected) = mainState
+                    if (connected.value) {
+                        if (userLatLng is ViewDataState.Value)
+                            actions.findNearbyPlacesOfType(args.placeType)
+                        else actions.onUserLatLngUnavailable()
+                    } else actions.onNoInternetConnection()
+                }
+            }
+        }
     }
 
     override fun observeViews() {
@@ -83,10 +114,7 @@ class VisualizerFragment :
 
     private fun initFromArguments() {
         val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
-        when (args) {
-            is Arguments.Places -> actions.setPlaces(args.places)
-            is Arguments.PlaceType -> actions.findNearbyPlacesOfType(args.placeType)
-        }
+        if (args is Arguments.Places) actions.setPlaces(args.places)
     }
 
     private fun showMapFragment() {
