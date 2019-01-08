@@ -4,16 +4,13 @@ import com.example.domain.repo.IPlaceRepository
 import com.example.domain.repo.Result
 import com.example.domain.repo.datastore.ILocalPlacesDataStore
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
+import com.example.domain.repo.model.SavedPlace
 import com.example.domain.repo.model.SimplePlace
-import com.example.domain.task.FindNearbyPlacesResult
-import com.example.domain.task.FindPlaceDetailsResult
-import com.example.domain.task.FindPlacePhotosResult
-import com.example.domain.task.ReverseGeocodeLocationResult
-import com.example.domain.task.error.FindNearbyPlacesError
-import com.example.domain.task.error.FindPlaceDetailsError
-import com.example.domain.task.error.FindPlacePhotosError
-import com.example.domain.task.error.ReverseGeocodeLocationError
+import com.example.domain.task.*
+import com.example.domain.task.error.*
 import com.google.android.gms.maps.model.LatLng
+import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -76,5 +73,11 @@ class PlacesRepository @Inject constructor(
                 it.mapTo(FindPlacePhotosError.NoPhotosFound)
             }
         }
+    }
+
+    override fun addPlaceToFavourites(savedPlace: SavedPlace): Completable = local.addPlaceToFavourites(savedPlace)
+
+    override fun getFavouritePlaces(): Flowable<GetFavouritePlacesResult> = local.getFavouritePlaces().map {
+        Result.Value<List<SavedPlace>, GetFavouritePlacesError>(it)
     }
 }

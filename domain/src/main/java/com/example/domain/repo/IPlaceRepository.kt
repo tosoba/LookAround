@@ -1,11 +1,11 @@
 package com.example.domain.repo
 
+import com.example.domain.repo.model.SavedPlace
 import com.example.domain.repo.model.SimplePlace
-import com.example.domain.task.FindNearbyPlacesResult
-import com.example.domain.task.FindPlaceDetailsResult
-import com.example.domain.task.FindPlacePhotosResult
-import com.example.domain.task.ReverseGeocodeLocationResult
+import com.example.domain.task.*
 import com.google.android.gms.maps.model.LatLng
+import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 
 interface IPlaceRepository {
@@ -21,4 +21,8 @@ interface IPlaceRepository {
     fun findPlaceDetails(simplePlace: SimplePlace): Single<FindPlaceDetailsResult>
 
     fun findPlacePhotos(id: String): Single<FindPlacePhotosResult>
+
+    fun addPlaceToFavourites(savedPlace: SavedPlace): Completable
+
+    fun getFavouritePlaces(): Flowable<GetFavouritePlacesResult>
 }

@@ -13,13 +13,16 @@ import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentPlaceDetailsBinding
 import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.model.UISimplePlace
+import com.example.there.aroundmenow.placedetails.info.AddPlaceToFavouritesEvent
 import com.example.there.aroundmenow.placedetails.info.PlaceInfoFragment
 import com.example.there.aroundmenow.placedetails.map.PlaceDetailsMapFragment
 import com.example.there.aroundmenow.placedetails.photoslist.PhotosLoadingService
 import com.example.there.aroundmenow.placedetails.photoslist.PhotosSliderAdapter
 import com.example.there.aroundmenow.util.ext.hide
+import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.ext.show
 import com.example.there.aroundmenow.util.ext.valuesOnly
+import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
 import com.example.there.aroundmenow.util.view.viewpager.FragmentTitledViewPagerAdapter
 import com.facebook.shimmer.Shimmer
 import com.google.android.gms.location.places.Place
@@ -29,6 +32,8 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.withLatestFrom
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_place_details.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import ss.com.bannerslider.Slider
 
 
@@ -61,6 +66,8 @@ class PlaceDetailsFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        lifecycle += EventBusComponent(this)
 
         if (savedInstanceState == null) initFromArguments()
     }
@@ -158,12 +165,16 @@ class PlaceDetailsFragment :
         }
     }
 
+    @Suppress("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onAddPlaceToFavouritesEvent(event: AddPlaceToFavouritesEvent) {
+        actions.addPlaceToFavourites(event.place)
+    }
+
     private fun initFromArguments() {
         val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
-        when (args) {
-            is Arguments.SimplePlace -> actions.findPlaceDetails(args.place)
-            is Arguments.PlaceAutocompleteIntent -> actions.setPlace(PlaceAutocomplete.getPlace(activity, args.intent))
-        }
+        if (args is Arguments.PlaceAutocompleteIntent)
+            actions.setPlace(PlaceAutocomplete.getPlace(activity, args.intent))
     }
 
     private fun onPlacePhotosLoadingError() {

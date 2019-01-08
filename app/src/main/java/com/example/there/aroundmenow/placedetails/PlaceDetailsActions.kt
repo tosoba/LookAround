@@ -10,4 +10,6 @@ interface PlaceDetailsActions {
 
     fun onNoInternetConnectionWhenLoadingPhotos()
     fun onNoInternetConnectionWhenLoadingPlaceDetails()
+
+    fun addPlaceToFavourites(place: Place)
 }

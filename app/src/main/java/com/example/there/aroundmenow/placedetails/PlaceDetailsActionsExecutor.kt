@@ -3,18 +3,22 @@ package com.example.there.aroundmenow.placedetails
 import com.example.domain.repo.Result
 import com.example.domain.task.error.FindPlaceDetailsError
 import com.example.domain.task.error.FindPlacePhotosError
+import com.example.domain.task.impl.AddPlaceToFavouritesTask
 import com.example.domain.task.impl.FindPlaceDetailsTask
 import com.example.domain.task.impl.FindPlacePhotosTask
 import com.example.there.aroundmenow.base.architecture.executor.RxActionsExecutor
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.model.UISimplePlace
+import com.example.there.aroundmenow.util.ext.savedPlace
 import com.google.android.gms.location.places.Place
 import javax.inject.Inject
+
 
 class PlaceDetailsActionsExecutor @Inject constructor(
     viewModel: PlaceDetailsViewModel,
     private val findPlaceDetailsTask: FindPlaceDetailsTask,
-    private val findPlacePhotosTask: FindPlacePhotosTask
+    private val findPlacePhotosTask: FindPlacePhotosTask,
+    private val addPlaceToFavouritesTask: AddPlaceToFavouritesTask
 ) : RxActionsExecutor.HostUnaware<PlaceDetailsState, PlaceDetailsViewModel>(viewModel), PlaceDetailsActions {
 
     override fun findPlaceDetails(place: UISimplePlace) {
@@ -61,5 +65,9 @@ class PlaceDetailsActionsExecutor @Inject constructor(
 
     override fun onNoInternetConnectionWhenLoadingPlaceDetails() = mutateState {
         it.copy(place = ViewDataState.Error(FindPlaceDetailsError.NoInternetConnection))
+    }
+
+    override fun addPlaceToFavourites(place: Place) {
+        addPlaceToFavouritesTask.executeWithInput(input = place.savedPlace).subscribeAndDisposeWithViewModel()
     }
 }

@@ -5,6 +5,7 @@ import com.example.there.aroundmenow.di.vm.ViewModelKey
 import com.example.there.aroundmenow.main.MainViewModel
 import com.example.there.aroundmenow.placedetails.PlaceDetailsViewModel
 import com.example.there.aroundmenow.places.PlacesViewModel
+import com.example.there.aroundmenow.places.favourites.FavouritesViewModel
 import com.example.there.aroundmenow.places.pois.POIsViewModel
 import com.example.there.aroundmenow.visualizer.VisualizerViewModel
 import com.example.there.aroundmenow.visualizer.camera.CameraViewModel
@@ -50,4 +51,9 @@ abstract class VMModule {
     @IntoMap
     @ViewModelKey(VisualizerMapViewModel::class)
     abstract fun visualizerMapViewModel(viewModel: VisualizerMapViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FavouritesViewModel::class)
+    abstract fun favouritesViewModel(viewModel: FavouritesViewModel): ViewModel
 }

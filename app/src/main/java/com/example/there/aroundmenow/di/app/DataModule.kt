@@ -1,6 +1,9 @@
 package com.example.there.aroundmenow.di.app
 
 import android.content.Context
+import androidx.room.Room
+import com.example.data.db.AppDb
+import com.example.data.db.dao.FavouritePlacesDao
 import com.example.data.repo.PlacesRepository
 import com.example.data.repo.datastore.LocalPlacesDataStore
 import com.example.data.repo.datastore.RemotePlacesDataStore
@@ -12,6 +15,7 @@ import com.google.android.gms.location.places.Places
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 abstract class DataModule {
@@ -31,5 +35,15 @@ abstract class DataModule {
         @Provides
         @JvmStatic
         fun googlePlacesClient(context: Context): GeoDataClient = Places.getGeoDataClient(context)
+
+        @Provides
+        @Singleton
+        @JvmStatic
+        fun appDb(context: Context): AppDb = Room.databaseBuilder(context, AppDb::class.java, "AppDb.db").build()
+
+        @Provides
+        @Singleton
+        @JvmStatic
+        fun favouritePlacesDao(appDb: AppDb): FavouritePlacesDao = appDb.favouritePlacesDao()
     }
 }

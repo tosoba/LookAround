@@ -16,6 +16,7 @@ import com.example.there.aroundmenow.placedetails.PlaceDetailsState
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_place_info.*
+import org.greenrobot.eventbus.EventBus
 
 
 class PlaceInfoFragment : RxFragment.Stateless.HostAware.DataBound<Unit, PlaceDetailsState, FragmentPlaceInfoBinding>(
@@ -46,6 +47,10 @@ class PlaceInfoFragment : RxFragment.Stateless.HostAware.DataBound<Unit, PlaceDe
                 }
 
                 place_info_google_maps_fab?.setOnClickListener { launchGoogleMaps(placeState.value.latLng) }
+
+                place_info_add_to_favourites_fab?.setOnClickListener {
+                    EventBus.getDefault().post(AddPlaceToFavouritesEvent(placeState.value))
+                }
             }
         }
 

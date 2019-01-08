@@ -3,6 +3,7 @@ package com.example.there.aroundmenow.di.activity.main
 import androidx.lifecycle.ViewModelProviders
 import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
 import com.example.there.aroundmenow.di.fragment.placedetails.PlaceDetailsModule
+import com.example.there.aroundmenow.di.fragment.places.FavouritesModule
 import com.example.there.aroundmenow.di.fragment.places.POIsModule
 import com.example.there.aroundmenow.di.fragment.places.PlacesModule
 import com.example.there.aroundmenow.di.fragment.visualizer.CameraModule
@@ -15,6 +16,7 @@ import com.example.there.aroundmenow.di.vm.ViewModelFactory
 import com.example.there.aroundmenow.main.*
 import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
 import com.example.there.aroundmenow.places.PlacesFragment
+import com.example.there.aroundmenow.places.favourites.FavouritesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import com.example.there.aroundmenow.visualizer.VisualizerFragment
 import com.example.there.aroundmenow.visualizer.camera.CameraFragment
@@ -58,6 +60,9 @@ abstract class MainModule {
     @ContributesAndroidInjector(modules = [VisualizerMapModule::class])
     abstract fun visualizerMapFragment(): VisualizerMapFragment
 
+    @ChildFragmentScope
+    @ContributesAndroidInjector(modules = [FavouritesModule::class])
+    abstract fun favouritesFragment(): FavouritesFragment
 
     @Module
     companion object {

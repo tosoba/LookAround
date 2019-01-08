@@ -216,28 +216,36 @@ sealed class RxActionsExecutor<State, VM : RxViewModel<State>>(
         .doOnErrorAndComplete(onError)
 
     protected fun <TaskReturn> ObservableTask<TaskReturn>.execute(
+        onErrorReturn: (Throwable) -> TaskReturn,
         options: RxRetryOptions = RxRetryOptions.NoRetry,
         scheduler: Scheduler = Schedulers.io()
     ): Observable<TaskReturn> = result.subscribeOn(scheduler)
         .retryWith(options)
+        .onErrorReturn(onErrorReturn)
 
     protected fun <TaskReturn> SingleTask<TaskReturn>.execute(
+        onErrorReturn: (Throwable) -> TaskReturn,
         options: RxRetryOptions = RxRetryOptions.NoRetry,
         scheduler: Scheduler = Schedulers.io()
     ): Single<TaskReturn> = result.subscribeOn(scheduler)
         .retryWith(options)
+        .onErrorReturn(onErrorReturn)
 
     protected fun <TaskReturn> FlowableTask<TaskReturn>.execute(
+        onErrorReturn: (Throwable) -> TaskReturn,
         options: RxRetryOptions = RxRetryOptions.NoRetry,
         scheduler: Scheduler = Schedulers.io()
     ): Flowable<TaskReturn> = result.subscribeOn(scheduler)
         .retryWith(options)
+        .onErrorReturn(onErrorReturn)
 
     protected fun CompletableTask.execute(
+        onError: Consumer<Throwable> = RxHandlers.Exception.loggingConsumer,
         options: RxRetryOptions = RxRetryOptions.NoRetry,
         scheduler: Scheduler = Schedulers.io()
     ): Completable = result.subscribeOn(scheduler)
         .retryWith(options)
+        .doOnErrorAndComplete(onError)
 
     protected fun <TaskReturn> Observable<TaskReturn>.mapToStateThenSubscribeAndDisposeWithViewModel(
         mapTaskReturnToState: (State, TaskReturn) -> State,
