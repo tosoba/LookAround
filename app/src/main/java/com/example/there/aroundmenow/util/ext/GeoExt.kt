@@ -15,3 +15,6 @@ fun locationFromLatLng(lat: Double, lng: Double) = Location("").also {
     it.latitude = lat
     it.longitude = lng
 }
+
+val Location.latLng: LatLng
+    get() = LatLng(latitude, longitude)

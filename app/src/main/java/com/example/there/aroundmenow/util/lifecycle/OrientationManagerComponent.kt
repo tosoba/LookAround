@@ -11,9 +11,11 @@ class OrientationManagerComponent(
     private val activity: Activity
 ) : LifecycleObserver {
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() = orientationManager.startSensor(activity)
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() = orientationManager.stopSensor()
 }

@@ -11,6 +11,7 @@ class UiDisposablesComponent : LifecycleObserver {
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
+    @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() = clear()
 

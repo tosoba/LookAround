@@ -26,10 +26,10 @@ import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
 import com.example.there.aroundmenow.places.PlacesFragment
 import com.example.there.aroundmenow.util.AppConstants
 import com.example.there.aroundmenow.util.ext.*
+import com.example.there.aroundmenow.util.lifecycle.RxLocationComponent
 import com.example.there.aroundmenow.visualizer.VisualizerFragment
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -63,23 +63,35 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
 
     private var lastBottomSheetDialog: BottomSheetDialog? = null
 
+    private val rxLocationComponent: RxLocationComponent by lazy {
+        RxLocationComponent(
+            this,
+            ::showGooglePlayServicesSnackbar,
+            actions::setUserLatLng,
+            ::showLocationDisabledSnackbar
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initStatusBar()
         initActionBar()
 
         observeInternetConnectivity { actions.setConnectedToInternet(it) }
-        actions.setUserLatLng(LatLng(51.50354, -0.12768))
+        lifecycle += rxLocationComponent
 
         supportFragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
 
         drawer_navigation_view.onItemWithIdSelected { drawer_layout.closeDrawers() }
 
         disableScreenRotation()
-        checkPermissions(onAnyResult = {
-            enableScreenRotation()
-            showPlacesFragmentIfNotAlreadyShown()
-        })
+        checkPermissions(
+            onAnyResult = {
+                enableScreenRotation()
+                showPlacesFragmentIfNotAlreadyShown()
+            },
+            onGranted = rxLocationComponent::tryStartUpdates
+        )
     }
 
     override fun onResume() {
@@ -108,8 +120,8 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE) {
-            when (resultCode) {
+        when (requestCode) {
+            PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE -> when (resultCode) {
                 Activity.RESULT_OK -> showAutocompleteResultDialog(intent = data!!)
 
                 PlaceAutocomplete.RESULT_ERROR -> Toast.makeText(
@@ -118,6 +130,8 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
                     Toast.LENGTH_LONG
                 ).show()
             }
+
+            LOCATION_SETTINGS_REQUEST_CODE -> rxLocationComponent.tryStartUpdates()
         }
     }
 
@@ -202,8 +216,7 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
                 else when (report.deniedPermissionResponses.size) {
                     1 -> when (report.deniedPermissionResponses.first().permissionName) {
                         Manifest.permission.CAMERA -> showPermissionsSnackbar(cameraAccessIsNeededMsg)
-                        Manifest.permission.ACCESS_FINE_LOCATION ->
-                            showPermissionsSnackbar(locationAccessIsNeededMsg)
+                        Manifest.permission.ACCESS_FINE_LOCATION -> showPermissionsSnackbar(locationAccessIsNeededMsg)
                     }
                     2 -> showPermissionsSnackbar(allPermissionsAreNeededMsg)
                 }
@@ -279,9 +292,32 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
         }
     }
 
+
+    private fun showGooglePlayServicesSnackbar() = Snackbar.make(
+        findViewById(R.id.container),
+        "Google Play Services unavailable. Features requiring device location will not work.",
+        Snackbar.LENGTH_LONG
+    ).run {
+        duration = BaseTransientBottomBar.LENGTH_INDEFINITE
+        showWithBottomMargin(dpToPx(AppConstants.BOTTOM_NAVIGATION_VIEW_HEIGHT_DP.toFloat()).toInt())
+    }
+
+    private fun showLocationDisabledSnackbar() = Snackbar.make(
+        findViewById(R.id.container), "Location disabled.", Snackbar.LENGTH_INDEFINITE
+    ).setAction(getString(R.string.settings)) {
+        startActivityForResult(
+            Intent(Settings.ACTION_SETTINGS),
+            LOCATION_SETTINGS_REQUEST_CODE
+        )
+    }.setActionTextColor(ContextCompat.getColor(this, R.color.colorAccent)).run {
+        duration = BaseTransientBottomBar.LENGTH_LONG
+        showWithBottomMargin(dpToPx(AppConstants.BOTTOM_NAVIGATION_VIEW_HEIGHT_DP.toFloat()).toInt())
+    }
+
     companion object {
         private const val backStackLayoutId = R.id.container
 
         private const val PLACE_AUTOCOMPLETE_ACTIVITY_REQUEST_CODE = 100
+        private const val LOCATION_SETTINGS_REQUEST_CODE = 200
     }
 }

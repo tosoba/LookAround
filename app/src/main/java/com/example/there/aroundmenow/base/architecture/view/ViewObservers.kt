@@ -14,6 +14,7 @@ import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 
 interface ViewObserver {
@@ -25,6 +26,10 @@ interface ViewObserver {
     }
 
     fun <T> Observable<T>.subscribeWithAutoDispose(
+        onNext: (T) -> Unit
+    ) = subscribe(onNext).disposeOnDestroy()
+
+    fun <T> Single<T>.subscribeWithAutoDispose(
         onNext: (T) -> Unit
     ) = subscribe(onNext).disposeOnDestroy()
 
