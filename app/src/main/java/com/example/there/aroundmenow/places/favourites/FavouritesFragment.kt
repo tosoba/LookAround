@@ -16,6 +16,7 @@ import com.example.there.aroundmenow.util.ext.mainActivity
 import com.example.there.aroundmenow.util.ext.plusAssign
 import com.example.there.aroundmenow.util.ext.valuesOnly
 import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
+import com.example.there.aroundmenow.visualizer.VisualizerFragment
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -72,9 +73,15 @@ class FavouritesFragment :
                                 )
                             ), true
                         )
-                        is SimplePlacesListEvent.VisualizationRequest -> {
-                            //TODO: go to visualizer with saved place only if userLatLng is available
-                        }
+                        is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.checkPermissions(onGranted = {
+                            mainActivity?.showFragment(
+                                VisualizerFragment.with(
+                                    VisualizerFragment.Arguments.Places(
+                                        listOf(listEvent.value.place)
+                                    )
+                                ), true
+                            )
+                        })
                     }
                 }
                 actions.onListEventHandled()

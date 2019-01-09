@@ -106,4 +106,6 @@ dependencies {
     // optional - RxJava support for Room
     implementation "androidx.room:room-rxjava2:$room_version"
 
+    implementation 'com.patloew.rxlocation:rxlocation:1.0.5'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 }

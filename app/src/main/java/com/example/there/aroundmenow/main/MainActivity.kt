@@ -124,18 +124,20 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
     override fun Observable<MainState>.observe() {
         autocompleteVisualizeRequest.withLatestFrom(this)
             .subscribeWithAutoDispose { (place, mainState) ->
-                if (mainState.userLatLng is ViewDataState.Value) showFragment(
-                    VisualizerFragment.with(
-                        VisualizerFragment.Arguments.Places(
-                            listOf(
-                                UISimplePlace.fromGooglePlaceWithUserLatLng(
-                                    place,
-                                    mainState.userLatLng.value
+                if (mainState.userLatLng is ViewDataState.Value) checkPermissions(onGranted = {
+                    showFragment(
+                        VisualizerFragment.with(
+                            VisualizerFragment.Arguments.Places(
+                                listOf(
+                                    UISimplePlace.fromGooglePlaceWithUserLatLng(
+                                        place,
+                                        mainState.userLatLng.value
+                                    )
                                 )
                             )
-                        )
-                    ), true
-                )
+                        ), true
+                    )
+                })
                 else Toast.makeText(
                     this@MainActivity,
                     "Cannot show the place on camera - location unavailable.",

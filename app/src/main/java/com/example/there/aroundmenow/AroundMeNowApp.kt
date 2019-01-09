@@ -7,10 +7,12 @@ import com.example.there.aroundmenow.di.AppInjector
 import com.example.there.aroundmenow.util.AppConstants
 import com.example.there.aroundmenow.util.ext.dpToPx
 import com.example.there.aroundmenow.util.ext.screenDimensionsPx
+import com.example.there.aroundmenow.util.rx.RxHandlers
 import com.example.there.aroundmenow.visualizer.camera.view.CameraObjectDialogConstants
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
+import io.reactivex.plugins.RxJavaPlugins
 import javax.inject.Inject
 
 class AroundMeNowApp : Application(), HasActivityInjector {
@@ -29,6 +31,8 @@ class AroundMeNowApp : Application(), HasActivityInjector {
         AppInjector.init(this)
 
         initCameraPreferences()
+
+        initAppRxErrorHandler()
     }
 
     private fun initCameraPreferences() = with(appPreferences) {
@@ -40,5 +44,9 @@ class AroundMeNowApp : Application(), HasActivityInjector {
                     R.dimen.radar_margin
                 )).toInt()
         screenHeightPx = screenHeight
+    }
+
+    private fun initAppRxErrorHandler() {
+        RxJavaPlugins.setErrorHandler(RxHandlers.Exception.loggingConsumer)
     }
 }
