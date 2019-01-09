@@ -139,6 +139,7 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
         autocompleteVisualizeRequest.withLatestFrom(this)
             .subscribeWithAutoDispose { (place, mainState) ->
                 if (mainState.userLatLng is ViewDataState.Value) checkPermissions(onGranted = {
+                    startLocationUpdatesIfNotStartedYet()
                     showFragment(
                         VisualizerFragment.with(
                             VisualizerFragment.Arguments.Places(
@@ -228,6 +229,8 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
             ) = token.continuePermissionRequest()
         })
         .check()
+
+    fun startLocationUpdatesIfNotStartedYet() = rxLocationComponent.tryStartUpdates()
 
     private fun initStatusBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

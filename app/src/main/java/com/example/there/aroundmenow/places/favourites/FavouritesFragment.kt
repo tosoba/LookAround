@@ -6,6 +6,7 @@ import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListEvent
 import com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListFragment
+import com.example.there.aroundmenow.main.LocationUnavailableError
 import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.model.UIPlace
 import com.example.there.aroundmenow.model.UISimplePlace
@@ -49,7 +50,7 @@ class FavouritesFragment :
         Observable.combineLatest(
             map { it.places }.valuesOnly().distinctUntilChanged(),
             observableActivityState.map { it.userLatLng },
-            BiFunction<ViewDataState.Value<List<UIPlace>>, ViewDataState<LatLng, Nothing>, Pair<ViewDataState.Value<List<UIPlace>>, ViewDataState<LatLng, Nothing>>> { savedPlaces, userLatLngState ->
+            BiFunction<ViewDataState.Value<List<UIPlace>>, ViewDataState<LatLng, LocationUnavailableError>, Pair<ViewDataState.Value<List<UIPlace>>, ViewDataState<LatLng, LocationUnavailableError>>> { savedPlaces, userLatLngState ->
                 Pair(savedPlaces, userLatLngState)
             }
         ).subscribeWithAutoDispose { (savedPlaces, userLatLngState) ->
@@ -74,6 +75,7 @@ class FavouritesFragment :
                             ), true
                         )
                         is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.checkPermissions(onGranted = {
+                            mainActivity?.startLocationUpdatesIfNotStartedYet()
                             mainActivity?.showFragment(
                                 VisualizerFragment.with(
                                     VisualizerFragment.Arguments.Places(

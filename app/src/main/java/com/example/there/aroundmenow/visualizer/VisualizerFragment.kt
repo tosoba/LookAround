@@ -7,6 +7,7 @@ import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentVisualizerBinding
 import com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListEvent
+import com.example.there.aroundmenow.main.LocationUnavailableError
 import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UISimplePlace
@@ -66,7 +67,7 @@ class VisualizerFragment :
             Observable.combineLatest(
                 map { it.userLatLng },
                 map { it.connectedToInternet }.filter { it.hasValue }.map { it as ViewDataState.Value },
-                BiFunction<ViewDataState<LatLng, Nothing>, ViewDataState.Value<Boolean>, Pair<ViewDataState<LatLng, Nothing>, ViewDataState.Value<Boolean>>> { userLatLngState, connected ->
+                BiFunction<ViewDataState<LatLng, LocationUnavailableError>, ViewDataState.Value<Boolean>, Pair<ViewDataState<LatLng, LocationUnavailableError>, ViewDataState.Value<Boolean>>> { userLatLngState, connected ->
                     Pair(userLatLngState, connected)
                 }
             ).withLatestFrom(observableStateHolder.observableState.map {

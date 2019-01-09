@@ -1,22 +1,26 @@
 package com.example.there.aroundmenow.util.lifecycle
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.example.there.aroundmenow.base.architecture.view.ViewObservingActivity
+import com.example.there.aroundmenow.util.ext.isLocationAvailable
 import com.example.there.aroundmenow.util.ext.latLng
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.model.LatLng
 import com.patloew.rxlocation.RxLocation
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class RxLocationComponent(
-    private val activity: Activity,
+    private val activity: ViewObservingActivity,
     private val onGooglePlayServicesUnavailable: () -> Unit,
     private val onLocationChange: (LatLng) -> Unit,
     private val onLocationDisabled: () -> Unit
@@ -35,6 +39,7 @@ class RxLocationComponent(
     }
 
     private var updatesStarted: Boolean = false
+    private var observingLocationSettingsStarted: Boolean = false
 
     @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -63,7 +68,25 @@ class RxLocationComponent(
                     updatesStarted = false
                 })
                 updatesStarted = true
-            } else onLocationDisabled()
+            } else {
+                updatesStarted = false
+                onLocationDisabled()
+            }
+
+            if (!observingLocationSettingsStarted) observeLocationSettings()
         }
+    }
+
+    private fun observeLocationSettings() {
+        observingLocationSettingsStarted = true
+        disposables += Observable.interval(5, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.io())
+            .startWith(0)
+            .map { activity.isLocationAvailable }
+            .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (it) tryStartUpdates()
+            }
     }
 }

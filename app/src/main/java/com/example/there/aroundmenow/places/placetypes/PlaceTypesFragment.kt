@@ -34,6 +34,7 @@ class PlaceTypesFragment : ViewObservingFragment() {
 
     override fun observeViews() = groupsAdapterVertical.placeTypeSelected.subscribeWithAutoDispose {
         mainActivity?.checkPermissions(onGranted = {
+            mainActivity?.startLocationUpdatesIfNotStartedYet()
             mainActivity?.showFragment(
                 VisualizerFragment.with(VisualizerFragment.Arguments.PlaceType(it)), true
             )

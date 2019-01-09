@@ -77,6 +77,7 @@ class POIsFragment : RxFragment.Stateful.HostAware.WithLayout<POIsState, MainSta
                 )
 
                 is SimplePlacesListEvent.VisualizationRequest -> mainActivity?.checkPermissions(onGranted = {
+                    mainActivity?.startLocationUpdatesIfNotStartedYet()
                     mainActivity?.showFragment(
                         VisualizerFragment.with(VisualizerFragment.Arguments.Places(listOf(taggedEvent.event.place))),
                         true

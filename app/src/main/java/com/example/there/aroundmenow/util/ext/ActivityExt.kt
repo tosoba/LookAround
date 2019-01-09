@@ -2,6 +2,7 @@ package com.example.there.aroundmenow.util.ext
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
+import android.provider.Settings
 import android.view.Surface
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -35,3 +36,10 @@ fun ViewObservingActivity.observeInternetConnectivity(onNext: (Boolean) -> Unit)
     .subscribeOn(Schedulers.io())
     .observeOn(AndroidSchedulers.mainThread())
     .subscribeWithAutoDispose(onNext)
+
+val Activity.isLocationAvailable: Boolean
+    get() {
+        val locationProviders =
+            Settings.Secure.getString(contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
+        return !(locationProviders == null || locationProviders == "")
+    }
