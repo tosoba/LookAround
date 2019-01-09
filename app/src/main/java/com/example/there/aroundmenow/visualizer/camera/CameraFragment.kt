@@ -106,6 +106,7 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
             }
     }
 
+    //TODO: update camera objects (userLatLngBearing) if lat lng change is large enough
     override fun Observable<MainState>.observeActivity() = map { it.userLatLng }.subscribeWithAutoDispose {
         when (it) {
             is ViewDataState.Value -> {

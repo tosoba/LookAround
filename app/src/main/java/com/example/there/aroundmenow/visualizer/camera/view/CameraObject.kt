@@ -19,19 +19,15 @@ class CameraObject(
             else {
                 field = value
                 yAxisPositionOnPage = value
-                var y = value
-                while (y + CameraObjectDialogConstants.HEIGHT / 2 > cameraParams.cameraBottomEdgePositionPx) {
-                    y -= (cameraParams.screenHeightPx - cameraParams.cameraTopEdgePositionPx)
-                    ++pageNumber
-                }
             }
         }
 
     var yAxisPositionOnPage: Float? = null
-        private set
-        get() = if (field == null) null
-        else field!! - pageNumber * (cameraParams.screenHeightPx - cameraParams.cameraTopEdgePositionPx)
+        private set(value) {
+            field = value!! - pageNumber * (cameraParams.screenHeightPx - cameraParams.cameraTopEdgePositionPx)
+        }
 
     var pageNumber = 0
-        private set
+
+    var userLatLngBearing: Double? = null
 }

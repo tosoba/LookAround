@@ -18,7 +18,10 @@ data class CameraState(
             100 to "100 m",
             200 to "250 m",
             500 to "500 m",
-            1000 to "1 km"
+            1000 to "1 km",
+            2000 to "2 km",
+            5000 to "5 km",
+            10000 to "10 km"
         )
     }
 }

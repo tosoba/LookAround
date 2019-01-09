@@ -35,19 +35,27 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
 
     var userLatLng: LatLng? = null
 
+    // TODO: try to divide the screen into a grid - first calculate the number of rows based on screen height, toolbar height, dialog height etc. (probably in Application class) - round it down and store it in settings
+    // there will be for example 8 columns (360 / 45) on each page (or a different number depending on what works :p)
+    // assign cameraObject to a column based on its userLatLngBearing
+    // look for an empty cell in that column starting with page 0
+    // assign cameraObject to cell
+    // store the information which "cells" are taken in a map or smth
+
+    // this will HOPEFULLY help to avoid running loops for every cameraObject (like in getTakenYAxisPositionsForCameraObject)
     override fun drawPoint(point: Point, canvas: Canvas, orientation: Orientation) {
         val camObject = cameraObjects.findByPoint(point)
         val lastUserLatLng = userLatLng
 
         if (camObject != null && lastUserLatLng != null) {
-            if (camObject.yAxisPosition != null) {
-                point.y = camObject.yAxisPositionOnPage!!
-            } else {
-                camObject.yAxisPosition = findNextYAxisPosition(
-                    takenYAxisPositions = cameraObjects.getTakenYAxisPositionsForCameraObject(camObject)
+            if (camObject.yAxisPosition == null) {
+                val (yPosition, pageNumber) = findNextYAxisPosition(
+                    cameraObjects.getTakenYAxisPositionsForCameraObject(camObject)
                 )
-                point.y = camObject.yAxisPositionOnPage!!
+                camObject.yAxisPosition = yPosition
+                camObject.pageNumber = pageNumber
             }
+            point.y = camObject.yAxisPositionOnPage!!
 
             if (currentPage == camObject.pageNumber) {
                 val background = drawBackground(canvas, point)
@@ -95,22 +103,19 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
 
     private fun List<CameraObject>.getTakenYAxisPositionsForCameraObject(
         cameraObject: CameraObject
-    ): List<Float> {
-        val takenYs = ArrayList<Float>()
+    ): List<Float> = userLatLng?.let { latLng ->
+        if (cameraObject.userLatLngBearing == null) cameraObject.userLatLngBearing = PointsUtil.calculateBearing(
+            latLng.location,
+            cameraObject.place.latLng.location
+        )
 
-        userLatLng?.let { latLng ->
-            val bearingThis = PointsUtil.calculateBearing(latLng.location, cameraObject.place.latLng.location)
-            forEach {
-                if (it.point.name == cameraObject.point.name || it.yAxisPosition == null) return@forEach
-                val bearingCurrent = PointsUtil.calculateBearing(latLng.location, it.place.latLng.location)
-                if (Math.abs(bearingCurrent - bearingThis) < 45.0) takenYs.add(it.yAxisPosition!!)
-            }
-        }
+        return filter {
+            it.point.name != cameraObject.point.name && it.yAxisPosition != null && it.userLatLngBearing != null
+                    && Math.abs(it.userLatLngBearing!! - cameraObject.userLatLngBearing!!) < 45.0
+        }.map { co -> co.yAxisPosition!! }
+    } ?: emptyList()
 
-        return takenYs
-    }
-
-    private fun findNextYAxisPosition(takenYAxisPositions: List<Float>): Float {
+    private fun findNextYAxisPosition(takenYAxisPositions: List<Float>): Pair<Float, Int> {
         var y = cameraParams.cameraTopEdgePositionPx.toFloat()
         var pageNumber = 0
 
@@ -122,7 +127,7 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
             }
         }
 
-        return y
+        return Pair(y, pageNumber)
     }
 
     private fun drawBackground(canvas: Canvas, point: Point): RectF = RectF(
