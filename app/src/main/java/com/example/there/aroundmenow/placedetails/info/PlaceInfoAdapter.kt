@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.there.aroundmenow.R
+import com.example.there.aroundmenow.model.UIPlace
 import com.example.there.aroundmenow.util.ext.placeTypesNames
-import com.google.android.gms.location.places.Place
 import kotlinx.android.synthetic.main.place_info_attribute.view.*
 import kotlinx.android.synthetic.main.place_info_types_list_item.view.*
 
-class PlaceInfoAdapter(val place: Place) : RecyclerView.Adapter<PlaceInfoAdapter.ViewHolder>() {
+class PlaceInfoAdapter(val place: UIPlace) : RecyclerView.Adapter<PlaceInfoAdapter.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int = if (position == 0)
         PLACE_TYPES_LIST_VIEW_TYPE

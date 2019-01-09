@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <data>
-        <variable name="place" type="com.google.android.gms.location.places.Place"/>
+        <variable name="place" type="com.example.there.aroundmenow.model.UIPlace"/>
         <variable name="distanceFromUser" type="String"/>
         <variable name="pagerAdapter" type="androidx.fragment.app.FragmentPagerAdapter"/>
     </data>

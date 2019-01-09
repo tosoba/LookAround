@@ -6,6 +6,7 @@ data class SavedPlace(
     val id: String,
     val name: String,
     val latLng: LatLng,
+    val address: String?,
     val phoneNumber: String?,
     val websiteUri: String?,
     val rating: Float,

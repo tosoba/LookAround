@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <variable name="place" type="com.google.android.gms.location.places.Place"/>
+        <variable name="place" type="com.example.there.aroundmenow.model.UIPlace"/>
 
         <import type="android.view.View"/>
     </data>

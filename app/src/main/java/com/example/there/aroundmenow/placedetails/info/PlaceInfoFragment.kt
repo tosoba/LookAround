@@ -53,7 +53,8 @@ class PlaceInfoFragment : RxFragment.Stateless.HostAware.DataBound<Unit, PlaceDe
             }
         }
 
-    private fun openPlaceWebsite(uri: Uri) = try {
+    private fun openPlaceWebsite(uriString: String) = try {
+        val uri = Uri.parse(uriString)
         startActivity(Intent(Intent.ACTION_VIEW, uri))
     } catch (exception: Exception) {
         Toast.makeText(context, "Failed to open place website.", Toast.LENGTH_LONG).show()
@@ -61,8 +62,8 @@ class PlaceInfoFragment : RxFragment.Stateless.HostAware.DataBound<Unit, PlaceDe
 
     private fun launchGoogleMaps(latLng: LatLng) {
         try {
-            val gmmIntentUri = Uri.parse("geo:${latLng.latitude},${latLng.longitude}")
-            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            val intentUri = Uri.parse("geo:${latLng.latitude},${latLng.longitude}")
+            val mapIntent = Intent(Intent.ACTION_VIEW, intentUri)
             mapIntent.setPackage("com.google.android.apps.maps")
             if (activity?.packageManager != null && mapIntent.resolveActivity(activity!!.packageManager) != null)
                 startActivity(mapIntent)

@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
+import android.widget.Toast
+import com.example.data.util.ext.formattedDistanceTo
 import com.example.domain.task.error.FindPlaceDetailsError
 import com.example.domain.task.error.FindPlacePhotosError
 import com.example.there.aroundmenow.R
@@ -12,20 +14,17 @@ import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentPlaceDetailsBinding
 import com.example.there.aroundmenow.main.MainState
+import com.example.there.aroundmenow.model.UIPlace
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.placedetails.info.AddPlaceToFavouritesEvent
 import com.example.there.aroundmenow.placedetails.info.PlaceInfoFragment
 import com.example.there.aroundmenow.placedetails.map.PlaceDetailsMapFragment
 import com.example.there.aroundmenow.placedetails.photoslist.PhotosLoadingService
 import com.example.there.aroundmenow.placedetails.photoslist.PhotosSliderAdapter
-import com.example.there.aroundmenow.util.ext.hide
-import com.example.there.aroundmenow.util.ext.plusAssign
-import com.example.there.aroundmenow.util.ext.show
-import com.example.there.aroundmenow.util.ext.valuesOnly
+import com.example.there.aroundmenow.util.ext.*
 import com.example.there.aroundmenow.util.lifecycle.EventBusComponent
 import com.example.there.aroundmenow.util.view.viewpager.FragmentTitledViewPagerAdapter
 import com.facebook.shimmer.Shimmer
-import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -48,6 +47,7 @@ class PlaceDetailsFragment :
         when (args) {
             is Arguments.PlaceAutocompleteIntent -> args.place
             is Arguments.SimplePlace -> args.place
+            is Arguments.PlaceDetails -> args.place
         }
     }
 
@@ -93,6 +93,7 @@ class PlaceDetailsFragment :
 
     override fun Observable<MainState>.observeActivity() {
         val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
+
         if (args is Arguments.SimplePlace) map { it.connectedToInternet }
             .valuesOnly()
             .withLatestFrom(observableStateHolder.observableState.map { it.place })
@@ -102,13 +103,20 @@ class PlaceDetailsFragment :
                     else actions.onNoInternetConnectionWhenLoadingPlaceDetails()
                 }
             }
+
+        //TODO: see if this works after actual location updates are implemented
+        map { it.userLatLng }.valuesOnly().subscribeWithAutoDispose { userLatLng ->
+            binding?.let {
+                it.distanceFromUser = userLatLng.value.formattedDistanceTo(simplePlace.latLng)
+            }
+        }
     }
 
     override fun Observable<PlaceDetailsState>.observe() {
         Observable.combineLatest(
             map { it.place },
             observableActivityState.map { it.connectedToInternet }.valuesOnly(),
-            BiFunction<ViewDataState<Place, FindPlaceDetailsError>, ViewDataState.Value<Boolean>, Pair<ViewDataState<Place, FindPlaceDetailsError>, ViewDataState.Value<Boolean>>> { placeState, connected ->
+            BiFunction<ViewDataState<UIPlace, FindPlaceDetailsError>, ViewDataState.Value<Boolean>, Pair<ViewDataState<UIPlace, FindPlaceDetailsError>, ViewDataState.Value<Boolean>>> { placeState, connected ->
                 Pair(placeState, connected)
             }
         ).withLatestFrom(map { it.photos }).subscribeWithAutoDispose { (placeAndConnectionState, photosState) ->
@@ -168,13 +176,19 @@ class PlaceDetailsFragment :
     @Suppress("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onAddPlaceToFavouritesEvent(event: AddPlaceToFavouritesEvent) {
-        actions.addPlaceToFavourites(event.place)
+        actions.addPlaceToFavourites(event.place) {
+            Toast.makeText(context, "${event.place.name} added to favourites.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initFromArguments() {
         val args = arguments!!.getParcelable<Arguments>(ARGUMENTS_KEY)
-        if (args is Arguments.PlaceAutocompleteIntent)
-            actions.setPlace(PlaceAutocomplete.getPlace(activity, args.intent))
+        when (args) {
+            is Arguments.PlaceAutocompleteIntent -> actions.setPlace(
+                PlaceAutocomplete.getPlace(activity, args.intent).ui
+            )
+            is Arguments.PlaceDetails -> actions.setPlace(args.placeDetails)
+        }
     }
 
     private fun onPlacePhotosLoadingError() {
@@ -189,6 +203,9 @@ class PlaceDetailsFragment :
     sealed class Arguments : Parcelable {
         @Parcelize
         class SimplePlace(val place: UISimplePlace) : Arguments()
+
+        @Parcelize
+        class PlaceDetails(val placeDetails: UIPlace, val place: UISimplePlace) : Arguments()
 
         @Parcelize
         class PlaceAutocompleteIntent(val intent: Intent, val place: UISimplePlace) : Arguments()

@@ -6,6 +6,7 @@ import com.example.domain.task.impl.GetFavouritePlacesTask
 import com.example.there.aroundmenow.base.architecture.executor.RxActionsExecutor
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListEvent
+import com.example.there.aroundmenow.model.UIPlace
 import javax.inject.Inject
 
 class FavouritesActionsExecutor @Inject constructor(
@@ -18,7 +19,9 @@ class FavouritesActionsExecutor @Inject constructor(
             onErrorReturn = { Result.Error(GetFavouritePlacesError(it)) }
         ).mapToStateThenSubscribeAndDisposeWithViewModel({ lastState, result ->
             when (result) {
-                is Result.Value -> lastState.copy(places = ViewDataState.Value(result.value))
+                is Result.Value -> lastState.copy(places = ViewDataState.Value(result.value.map {
+                    UIPlace.fromDomain(it)
+                }))
                 is Result.Error -> lastState.copy(places = ViewDataState.Error(result.error))
             }
         })

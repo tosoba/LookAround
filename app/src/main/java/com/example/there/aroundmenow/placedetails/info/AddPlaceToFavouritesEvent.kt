@@ -1,5 +1,5 @@
 package com.example.there.aroundmenow.placedetails.info
 
-import com.google.android.gms.location.places.Place
+import com.example.there.aroundmenow.model.UIPlace
 
-class AddPlaceToFavouritesEvent(val place: Place)
+class AddPlaceToFavouritesEvent(val place: UIPlace)

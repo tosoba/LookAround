@@ -1,6 +1,7 @@
 package com.example.there.aroundmenow.util.ext
 
 import com.example.domain.repo.model.SavedPlace
+import com.example.there.aroundmenow.model.UIPlace
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLngBounds
@@ -11,9 +12,30 @@ val List<UISimplePlace>.latLngBounds: LatLngBounds
     }.build()
 
 val Place.savedPlace: SavedPlace
-    get() = SavedPlace(id, name.toString(), latLng, phoneNumber?.toString(), websiteUri?.toString(), rating, placeTypes)
+    get() = SavedPlace(
+        id,
+        name.toString(),
+        latLng,
+        address?.toString(),
+        phoneNumber?.toString(),
+        websiteUri?.toString(),
+        rating,
+        placeTypes
+    )
 
-val Place.placeTypesNames: List<String>
+val Place.ui: UIPlace
+    get() = UIPlace(
+        id,
+        name.toString(),
+        latLng,
+        address?.toString(),
+        phoneNumber?.toString(),
+        websiteUri?.toString(),
+        rating,
+        placeTypes
+    )
+
+val UIPlace.placeTypesNames: List<String>
     get() = placeTypes.asSequence().map {
         when (it) {
             0 -> "Other"

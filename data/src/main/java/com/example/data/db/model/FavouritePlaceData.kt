@@ -11,13 +11,14 @@ data class FavouritePlaceData(
     val name: String,
     val lat: Double,
     val lng: Double,
+    val address: String?,
     val phoneNumber: String?,
     val websiteUri: String?,
     val rating: Float,
     val placeTypes: List<Int>
 ) {
     val domain: SavedPlace
-        get() = SavedPlace(id, name, LatLng(lat, lng), phoneNumber, websiteUri, rating, placeTypes)
+        get() = SavedPlace(id, name, LatLng(lat, lng), address, phoneNumber, websiteUri, rating, placeTypes)
 
     companion object {
         fun fromDomain(savedPlace: SavedPlace): FavouritePlaceData = FavouritePlaceData(
@@ -25,6 +26,7 @@ data class FavouritePlaceData(
             name = savedPlace.name,
             lat = savedPlace.latLng.latitude,
             lng = savedPlace.latLng.longitude,
+            address = savedPlace.address,
             phoneNumber = savedPlace.phoneNumber,
             websiteUri = savedPlace.websiteUri,
             rating = savedPlace.rating,

@@ -2,7 +2,6 @@ package com.example.there.aroundmenow.model
 
 import android.os.Parcelable
 import com.example.data.util.ext.formattedDistanceTo
-import com.example.domain.repo.model.SavedPlace
 import com.example.domain.repo.model.SimplePlace
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
@@ -47,19 +46,19 @@ data class UISimplePlace(
             formattedDistanceFromUser = place.latLng.formattedDistanceTo(userLatLng)
         )
 
-        fun fromSavedPlace(savedPlace: SavedPlace): UISimplePlace = UISimplePlace(
-            name = savedPlace.name,
-            latLng = savedPlace.latLng,
+        fun fromUIPlace(place: UIPlace): UISimplePlace = UISimplePlace(
+            name = place.name,
+            latLng = place.latLng,
             formattedDistanceFromUser = ""
         )
 
-        fun fromSavedPlaceWithUserLatLng(
-            savedPlace: SavedPlace,
+        fun fromUIPlaceWithUserLatLng(
+            place: UIPlace,
             userLatLng: LatLng
         ): UISimplePlace = UISimplePlace(
-            name = savedPlace.name,
-            latLng = savedPlace.latLng,
-            formattedDistanceFromUser = savedPlace.latLng.formattedDistanceTo(userLatLng)
+            name = place.name,
+            latLng = place.latLng,
+            formattedDistanceFromUser = place.latLng.formattedDistanceTo(userLatLng)
         )
     }
 }
