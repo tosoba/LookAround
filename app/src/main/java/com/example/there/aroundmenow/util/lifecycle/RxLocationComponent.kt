@@ -1,10 +1,10 @@
 package com.example.there.aroundmenow.util.lifecycle
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import com.example.there.aroundmenow.base.architecture.view.ViewObservingActivity
 import com.example.there.aroundmenow.util.ext.isLocationAvailable
 import com.example.there.aroundmenow.util.ext.latLng
 import com.google.android.gms.common.ConnectionResult
@@ -15,18 +15,21 @@ import com.patloew.rxlocation.RxLocation
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class RxLocationComponent(
-    private val activity: ViewObservingActivity,
+    private val activity: Activity,
     private val onGooglePlayServicesUnavailable: () -> Unit,
     private val onLocationChange: (LatLng) -> Unit,
     private val onLocationDisabled: () -> Unit
 ) : LifecycleObserver {
 
     private val disposables = CompositeDisposable()
+
+    private var updatesDisposable: Disposable? = null
 
     private val rxLocation: RxLocation by lazy {
         RxLocation(activity).apply { setDefaultTimeout(15, TimeUnit.SECONDS) }
@@ -62,7 +65,8 @@ class RxLocationComponent(
     private fun startUpdates() {
         disposables += rxLocation.settings().checkAndHandleResolution(locationRequest).subscribe { success ->
             if (success) {
-                disposables += rxLocation.location().updates(locationRequest).subscribe({
+                updatesDisposable?.dispose()
+                updatesDisposable = rxLocation.location().updates(locationRequest).subscribe({
                     onLocationChange(it.latLng)
                 }, {
                     updatesStarted = false

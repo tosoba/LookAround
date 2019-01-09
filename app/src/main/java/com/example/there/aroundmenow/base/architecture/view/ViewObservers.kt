@@ -1,7 +1,6 @@
 package com.example.there.aroundmenow.base.architecture.view
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -52,9 +51,11 @@ interface ViewObserver {
     ) = pageSelected.subscribeWithAutoDispose(onNext)
 }
 
-abstract class ViewObservingActivity : AppCompatActivity(), ViewObserver {
+abstract class ViewObservingActivity(
+    disposalMode: UiDisposablesComponent.DisposalMode = UiDisposablesComponent.DisposalMode.ON_DESTROY
+) : AppCompatActivity(), ViewObserver {
 
-    override val uiDisposables = UiDisposablesComponent()
+    override val uiDisposables = UiDisposablesComponent(disposalMode)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,17 +64,19 @@ abstract class ViewObservingActivity : AppCompatActivity(), ViewObserver {
     }
 }
 
-abstract class ViewObservingFragment : Fragment(), ViewObserver {
+abstract class ViewObservingFragment(
+    disposalMode: UiDisposablesComponent.DisposalMode = UiDisposablesComponent.DisposalMode.ON_PAUSE
+) : Fragment(), ViewObserver {
 
-    override val uiDisposables = UiDisposablesComponent()
+    override val uiDisposables = UiDisposablesComponent(disposalMode)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle += uiDisposables
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onResume() {
+        super.onResume()
         observeViews()
     }
 }

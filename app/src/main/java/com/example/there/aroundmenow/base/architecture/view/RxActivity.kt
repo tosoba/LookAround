@@ -6,14 +6,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import com.example.there.aroundmenow.base.architecture.vm.ObservableStateHolder
+import com.example.there.aroundmenow.util.lifecycle.UiDisposablesComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import javax.inject.Inject
 
 sealed class RxActivity<State : Any, Actions : Any>(
-    @LayoutRes protected val layoutResource: Int
-) : ViewObservingActivity(), ViewObserver, HasSupportFragmentInjector, StateObserver<State> {
+    @LayoutRes protected val layoutResource: Int,
+    viewDisposalMode: UiDisposablesComponent.DisposalMode = UiDisposablesComponent.DisposalMode.ON_DESTROY
+) : ViewObservingActivity(viewDisposalMode), ViewObserver, HasSupportFragmentInjector, StateObserver<State> {
 
     @Inject
     lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>

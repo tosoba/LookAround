@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_place_types.*
 
 class PlaceTypesFragment : ViewObservingFragment() {
 
-    private val groupsAdapterVertical: PlaceTypeGroupsAdapter by lazy {
+    private val groupsAdapter: PlaceTypeGroupsAdapter by lazy {
         PlaceTypeGroupsAdapter(placeTypeGroups)
     }
 
@@ -26,13 +26,12 @@ class PlaceTypesFragment : ViewObservingFragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_place_types, container, false)
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        place_type_groups_recycler_view?.initDefault(groupsAdapterVertical)
+        place_type_groups_recycler_view?.initDefault(groupsAdapter)
     }
 
-    override fun observeViews() = groupsAdapterVertical.placeTypeSelected.subscribeWithAutoDispose {
+    override fun observeViews() = groupsAdapter.placeTypeSelected.subscribeWithAutoDispose {
         mainActivity?.checkPermissions(onGranted = {
             mainActivity?.startLocationUpdatesIfNotStartedYet()
             mainActivity?.showFragment(

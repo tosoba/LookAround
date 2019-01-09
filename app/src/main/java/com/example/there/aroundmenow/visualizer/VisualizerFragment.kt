@@ -73,7 +73,7 @@ class VisualizerFragment :
             ).withLatestFrom(observableStateHolder.observableState.map {
                 it.places
             }).subscribeWithAutoDispose { (mainState, places) ->
-                if (!places.hasValue) {
+                if (!places.hasValue && places !is ViewDataState.Loading) {
                     val (userLatLng, connected) = mainState
                     if (connected.value) {
                         if (userLatLng is ViewDataState.Value)

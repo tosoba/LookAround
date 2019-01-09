@@ -15,10 +15,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 sealed class RxFragment(
-    @LayoutRes private val layoutResource: Int
-) : ViewObservingFragment() {
-
-    override val uiDisposables = UiDisposablesComponent()
+    @LayoutRes private val layoutResource: Int,
+    viewDisposalMode: UiDisposablesComponent.DisposalMode = UiDisposablesComponent.DisposalMode.ON_PAUSE
+) : ViewObservingFragment(viewDisposalMode) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,8 +83,8 @@ sealed class RxFragment(
                     else throw  IllegalArgumentException("RxFragment State type error.")
                 }
 
-            override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-                super.onViewCreated(view, savedInstanceState)
+            override fun onResume() {
+                super.onResume()
 
                 if (mode == HostAwarenessMode.ACTIVITY_ONLY || mode == HostAwarenessMode.BOTH)
                     observableActivityState.observeOn(AndroidSchedulers.mainThread())
@@ -119,8 +118,8 @@ sealed class RxFragment(
         @Inject
         lateinit var actions: Actions
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
+        override fun onResume() {
+            super.onResume()
             observableStateHolder.observableState
                 .observeOn(AndroidSchedulers.mainThread())
                 .observe()
@@ -162,8 +161,8 @@ sealed class RxFragment(
                     else throw  IllegalArgumentException("RxFragment State type error.")
                 }
 
-            override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-                super.onViewCreated(view, savedInstanceState)
+            override fun onResume() {
+                super.onResume()
 
                 if (mode == HostAwarenessMode.ACTIVITY_ONLY || mode == HostAwarenessMode.BOTH)
                     observableActivityState.observeOn(AndroidSchedulers.mainThread())
