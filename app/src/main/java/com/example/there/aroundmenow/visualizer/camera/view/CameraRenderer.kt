@@ -35,6 +35,84 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
 
     var userLatLng: LatLng? = null
 
+    private val grid: CameraGrid by lazy {
+        CameraGrid(
+            cameraParams.cameraGridNumberOfRows,
+            cameraParams.cameraTopEdgePositionPx
+        )
+    }
+
+    class CameraGrid(gridRows: Int, private val cameraTopEdgePositionPx: Int) {
+        private val gridMap: MutableMap<Int, MutableMap<Pair<Int, Int>, CameraObject?>> = HashMap()
+
+        private val columnNumbers = IntArray(GRID_NUMBER_OF_COLUMNS) { it }
+        private val rowNumbers = IntArray(gridRows) { it }
+
+        private val bearingRanges: List<IntRange> = columnNumbers.map {
+            (it * BEARING_SPACING)..((it + 1) * BEARING_SPACING)
+        }
+
+        fun calculateCameraObjectPosition(cameraObject: CameraObject) {
+            val column = calculateCameraObjectColumn(cameraObject.userLatLngBearing!!)
+            if (gridMap.isEmpty()) {
+                insertEmptyPage(0)
+                gridMap[0]!![Pair(0, column)] = cameraObject
+                cameraObject.pageNumber = 0
+                cameraObject.yAxisPosition = cameraTopEdgePositionPx.toFloat()
+            } else {
+                var objectPosition: CameraObjectPosition? = null
+                gridMap.keys.forEach outer@{ pageNumber ->
+                    val page = gridMap[pageNumber]!!
+                    rowNumbers.forEach { rowNumber ->
+                        val cell = page[Pair(rowNumber, column)]
+                        if (cell == null) {
+                            val y = cameraTopEdgePositionPx + rowNumber * CameraObjectDialogConstants.HEIGHT
+                            objectPosition = CameraObjectPosition(pageNumber, y)
+                            return@outer
+                        }
+                    }
+                }
+                if (objectPosition == null) {
+                    val nextPageNumber = gridMap.keys.max()!! + 1
+                    insertEmptyPage(nextPageNumber)
+                    gridMap[nextPageNumber]!![Pair(0, column)] = cameraObject
+                    cameraObject.pageNumber = nextPageNumber
+                    cameraObject.yAxisPosition = cameraTopEdgePositionPx.toFloat()
+                } else {
+                    cameraObject.pageNumber = objectPosition!!.pageNumber
+                    //TODO: use this and remove yAxisPositionOnPage
+                    cameraObject.yAxisPosition = objectPosition!!.yPosition
+                }
+            }
+        }
+
+
+        private fun insertEmptyPage(number: Int) {
+            val pageKeys = rowNumbers.map { row ->
+                columnNumbers.map { column ->
+                    Pair(row, column)
+                }
+            }.flatten()
+
+            val emptyPage = HashMap<Pair<Int, Int>, CameraObject?>().apply {
+                putAll(pageKeys.map { it to null })
+            }
+
+            gridMap[number] = emptyPage
+        }
+
+        private fun calculateCameraObjectColumn(
+            bearing: Double
+        ): Int = bearingRanges.indexOfFirst { bearing in it }
+
+        companion object {
+            private const val BEARING_SPACING = 45
+            private const val GRID_NUMBER_OF_COLUMNS = 360 / 45
+        }
+    }
+
+    data class CameraObjectPosition(val pageNumber: Int, val yPosition: Float)
+
     // TODO: try to divide the screen into a grid - first calculate the number of rows based on screen height, toolbar height, dialog height etc. (probably in Application class) - round it down and store it in settings
     // there will be for example 8 columns (360 / 45) on each page (or a different number depending on what works :p)
     // assign cameraObject to a column based on its userLatLngBearing
@@ -49,13 +127,13 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
 
         if (camObject != null && lastUserLatLng != null) {
             if (camObject.yAxisPosition == null) {
-                val (yPosition, pageNumber) = findNextYAxisPosition(
-                    cameraObjects.getTakenYAxisPositionsForCameraObject(camObject)
+                camObject.userLatLngBearing = PointsUtil.calculateBearing(
+                    lastUserLatLng.location,
+                    camObject.place.latLng.location
                 )
-                camObject.yAxisPosition = yPosition
-                camObject.pageNumber = pageNumber
+                grid.calculateCameraObjectPosition(camObject)
             }
-            point.y = camObject.yAxisPositionOnPage!!
+            point.y = camObject.yAxisPosition!!
 
             if (currentPage == camObject.pageNumber) {
                 val background = drawBackground(canvas, point)
