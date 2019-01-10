@@ -46,13 +46,13 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
 
     private val cameraParams: CameraParams by lazy {
         CameraParams(
+            screenHeightPx = if (context?.orientation == ScreenOrientation.VERTICAL)
+                appPreferences.screenHeightVerticalPx
+            else appPreferences.screenHeightHorizontalPx,
             cameraTopEdgePositionPx = appPreferences.cameraTopEdgePositionPx,
             cameraBottomEdgePositionPx = if (context?.orientation == ScreenOrientation.VERTICAL)
                 appPreferences.cameraBottomEdgePositionVerticalPx
-            else appPreferences.cameraBottomEdgePositionHorizontalPx,
-            cameraGridNumberOfRows = if (context?.orientation == ScreenOrientation.VERTICAL)
-                appPreferences.cameraGridNumberOfRowsVertical
-            else appPreferences.cameraGridNumberOfRowsHorizontal
+            else appPreferences.cameraBottomEdgePositionHorizontalPx
         )
     }
 
@@ -125,7 +125,7 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
         .subscribeWithAutoDispose { (placesState, userLatLngState) ->
             when {
                 placesState is ViewDataState.Value && userLatLngState is ViewDataState.Value -> with(placesState.value.map {
-                    CameraObject(it, cameraRenderer)
+                    CameraObject(it, cameraRenderer, cameraParams)
                 }) {
                     camera_error_card_view?.hide()
                     updatePoints(map { it.point })
