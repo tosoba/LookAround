@@ -38,11 +38,13 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.patloew.rxlocation.RxLocation
 import dagger.android.AndroidInjector
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.withLatestFrom
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 
 class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity_main) {
@@ -63,8 +65,12 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
 
     private var lastBottomSheetDialog: BottomSheetDialog? = null
 
+    @Inject
+    lateinit var rxLocation: RxLocation
+
     private val rxLocationComponent: RxLocationComponent by lazy {
         RxLocationComponent(
+            rxLocation,
             this,
             ::showGooglePlayServicesSnackbar,
             actions::setUserLatLng,

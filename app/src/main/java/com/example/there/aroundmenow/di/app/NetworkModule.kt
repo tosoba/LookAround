@@ -1,6 +1,5 @@
 package com.example.there.aroundmenow.di.app
 
-import com.example.data.api.geocoding.GeocodingAPIClient
 import com.example.data.api.overpass.OverpassAPIClient
 import dagger.Module
 import dagger.Provides
@@ -21,16 +20,6 @@ class NetworkModule {
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(url)
         .build()
-
-    @Provides
-    @Named(GEOCODING_API_RETROFIT)
-    fun geocodingAPIClientRetrofit(): Retrofit = Retrofit.Builder()
-        .buildWithDefaultClientFactoriesAndBaseURL(GeocodingAPIClient.BASE_URL)
-
-    @Provides
-    fun geocodingAPIClient(
-        @Named(GEOCODING_API_RETROFIT) retrofit: Retrofit
-    ): GeocodingAPIClient = retrofit.create(GeocodingAPIClient::class.java)
 
     @Provides
     @Named(OVERPASS_API_RETROFIT)
@@ -62,7 +51,6 @@ class NetworkModule {
     ): OverpassAPIClient = retrofit.create(OverpassAPIClient::class.java)
 
     companion object {
-        private const val GEOCODING_API_RETROFIT = "GEOCODING_API_RETROFIT"
         private const val OVERPASS_API_RETROFIT = "OVERPASS_API_RETROFIT"
     }
 }

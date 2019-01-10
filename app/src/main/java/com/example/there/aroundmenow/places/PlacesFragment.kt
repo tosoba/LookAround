@@ -1,23 +1,28 @@
 package com.example.there.aroundmenow.places
 
 import android.util.Log
-import android.view.View
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
 import com.example.there.aroundmenow.databinding.FragmentPlacesBinding
+import com.example.there.aroundmenow.main.MainState
 import com.example.there.aroundmenow.places.favourites.FavouritesFragment
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import com.example.there.aroundmenow.util.ext.checkItem
 import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapter
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_places.*
+import java.util.concurrent.TimeUnit
 
 
-class PlacesFragment : RxFragment.Stateful.HostUnaware.DataBound<PlacesState, PlacesActions, FragmentPlacesBinding>(
-    R.layout.fragment_places
-) {
+class PlacesFragment :
+    RxFragment.Stateful.HostAware.DataBound<PlacesState, MainState, Unit, PlacesActions, FragmentPlacesBinding>(
+        R.layout.fragment_places,
+        HostAwarenessMode.ACTIVITY_ONLY
+    ) {
+
     private val viewPagerAdapter by lazy {
         FragmentViewPagerAdapter(
             manager = childFragmentManager,
@@ -27,9 +32,6 @@ class PlacesFragment : RxFragment.Stateful.HostUnaware.DataBound<PlacesState, Pl
 
     override fun FragmentPlacesBinding.init() {
         pagerAdapter = viewPagerAdapter
-        onReverseGeocodingFabClick = View.OnClickListener {
-            actions.reverseGeocodeLocation()
-        }
     }
 
     override fun observeViews() {
@@ -40,14 +42,23 @@ class PlacesFragment : RxFragment.Stateful.HostUnaware.DataBound<PlacesState, Pl
         places_view_pager.onPageSelected {
             places_bottom_navigation_view?.checkItem(it)
         }
+
+        reverse_geocoding_fab.clicks()
+            .debounce(3, TimeUnit.SECONDS)
+            .subscribeWithAutoDispose { actions.reverseGeocodeLocation() }
     }
 
     override fun Observable<PlacesState>.observe() = subscribeWithAutoDispose {
         when (it.lastGeocodingResult) {
-            is ViewDataState.Value -> Log.e("ADDR", it.lastGeocodingResult.value.formattedAddress)
-            is ViewDataState.Error -> Log.e(this@PlacesFragment.javaClass.name, "Reverse geocoding error.")
+            is ViewDataState.Value -> Log.e(
+                "ADDR",
+                it.lastGeocodingResult.value.address.getAddressLine(0) ?: "null addr"
+            )
+            is ViewDataState.Error -> Log.e("ADDR", "Reverse geocoding error.")
+            is ViewDataState.Loading -> Log.e("ADDR", "loading")
         }
     }
+
 
     companion object {
         private val viewPagerItemIndexes = mapOf(
@@ -57,3 +68,5 @@ class PlacesFragment : RxFragment.Stateful.HostUnaware.DataBound<PlacesState, Pl
         )
     }
 }
+
+

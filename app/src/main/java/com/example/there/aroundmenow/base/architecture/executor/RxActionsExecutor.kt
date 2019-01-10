@@ -27,10 +27,17 @@ sealed class RxActionsExecutor<State, VM : RxViewModel<State>>(
 
         protected val lastHostState: HostState
             get() = hostViewModel.state.value
+
+
+        protected val hostStateObservable: Observable<HostState>
+            get() = hostViewModel.state
     }
 
     protected val lastState: State
         get() = viewModel.state.value
+
+    protected val stateObservable: Observable<State>
+        get() = viewModel.state
 
     private fun reduceState(
         mapCurrentStateToNextState: (State) -> State

@@ -1,18 +1,15 @@
 package com.example.data.repo.datastore
 
 import android.graphics.Bitmap
-import com.example.data.api.geocoding.GeocodingAPIClient
 import com.example.data.api.overpass.OverpassAPIClient
 import com.example.data.api.overpass.model.OverpassPlacesResponse
 import com.example.data.preferences.AppPreferences
-import com.example.data.util.ext.reverseGeocodingString
 import com.example.data.util.ext.toBoundsWithRadius
 import com.example.data.util.ext.toOverpassPOIsQueryWithRadius
 import com.example.data.util.ext.toOverpassQueryWithRadius
 import com.example.domain.repo.Result
 import com.example.domain.repo.datastore.DataStoreError
 import com.example.domain.repo.datastore.IRemotePlacesDataStore
-import com.example.domain.repo.model.GeocodingInfo
 import com.example.domain.repo.model.SimplePlace
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.Place
@@ -25,18 +22,8 @@ import javax.inject.Inject
 class RemotePlacesDataStore @Inject constructor(
     private val geoDataClient: GeoDataClient,
     private val preferences: AppPreferences,
-    private val geocodingAPIClient: GeocodingAPIClient,
     private val overpassAPIClient: OverpassAPIClient
 ) : IRemotePlacesDataStore {
-
-    override fun reverseGeocodeLocation(
-        latLng: LatLng
-    ): Single<Result<GeocodingInfo, DataStoreError>> = geocodingAPIClient.reverseGeocode(
-        latLng = latLng.reverseGeocodingString
-    ).map {
-        if (it.isValid) Result.Value<GeocodingInfo, DataStoreError>(GeocodingInfo(latLng, it.formattedAddress))
-        else Result.Error<GeocodingInfo, DataStoreError>(DataStoreError.Invalid)
-    }
 
     override fun findNearbyPOIs(
         latLng: LatLng

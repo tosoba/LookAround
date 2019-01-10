@@ -21,6 +21,7 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class RxLocationComponent(
+    private val rxLocation: RxLocation,
     private val activity: Activity,
     private val onGooglePlayServicesUnavailable: () -> Unit,
     private val onLocationChange: (LatLng) -> Unit,
@@ -30,10 +31,6 @@ class RxLocationComponent(
     private val disposables = CompositeDisposable()
 
     private var updatesDisposable: Disposable? = null
-
-    private val rxLocation: RxLocation by lazy {
-        RxLocation(activity).apply { setDefaultTimeout(15, TimeUnit.SECONDS) }
-    }
 
     private val locationRequest: LocationRequest by lazy {
         LocationRequest.create()

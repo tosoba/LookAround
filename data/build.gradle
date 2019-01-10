@@ -58,6 +58,8 @@ dependencies {
 
     implementation 'com.google.maps.android:android-maps-utils:0.4.4'
 
+    implementation 'com.patloew.rxlocation:rxlocation:1.0.5'
+
     implementation files('libs/RxTasks.jar')
 
     implementation project(path: ':domain')

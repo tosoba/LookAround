@@ -2,7 +2,6 @@
 <layout>
     <data>
         <variable name="pagerAdapter" type="androidx.viewpager.widget.PagerAdapter"/>
-        <variable name="onReverseGeocodingFabClick" type="android.view.View.OnClickListener"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,8 +45,7 @@
                 app:layout_constraintBottom_toTopOf="@id/places_bottom_navigation_view"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_margin="10dp"
-                android:src="@drawable/my_location"
-                android:onClick="@{onReverseGeocodingFabClick}"/>
+                android:src="@drawable/my_location"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
