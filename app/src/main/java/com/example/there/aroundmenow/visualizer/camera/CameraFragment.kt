@@ -46,9 +46,13 @@ class CameraFragment : RxFragment.Stateful.HostAware.WithLayout<CameraState, Mai
 
     private val cameraParams: CameraParams by lazy {
         CameraParams(
-            screenHeightPx = appPreferences.screenHeightPx,
+            screenHeightPx = if (context?.orientation == ScreenOrientation.VERTICAL)
+                appPreferences.screenHeightVerticalPx
+            else appPreferences.screenHeightHorizontalPx,
             cameraTopEdgePositionPx = appPreferences.cameraTopEdgePositionPx,
-            cameraBottomEdgePositionPx = appPreferences.cameraBottomEdgePositionPx
+            cameraBottomEdgePositionPx = if (context?.orientation == ScreenOrientation.VERTICAL)
+                appPreferences.cameraBottomEdgePositionVerticalPx
+            else appPreferences.cameraBottomEdgePositionHorizontalPx
         )
     }
 

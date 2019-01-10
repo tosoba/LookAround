@@ -5,7 +5,9 @@ import android.app.Application
 import com.example.data.preferences.AppPreferences
 import com.example.there.aroundmenow.di.AppInjector
 import com.example.there.aroundmenow.util.AppConstants
+import com.example.there.aroundmenow.util.ext.ScreenOrientation
 import com.example.there.aroundmenow.util.ext.dpToPx
+import com.example.there.aroundmenow.util.ext.orientation
 import com.example.there.aroundmenow.util.ext.screenDimensionsPx
 import com.example.there.aroundmenow.util.rx.RxHandlers
 import com.example.there.aroundmenow.visualizer.camera.view.CameraObjectDialogConstants
@@ -14,6 +16,7 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import io.reactivex.plugins.RxJavaPlugins
 import javax.inject.Inject
+
 
 class AroundMeNowApp : Application(), HasActivityInjector {
 
@@ -36,14 +39,27 @@ class AroundMeNowApp : Application(), HasActivityInjector {
     }
 
     private fun initCameraPreferences() = with(appPreferences) {
-        val (_, screenHeight) = screenDimensionsPx
-        cameraBottomEdgePositionPx =
-                (screenHeight - dpToPx(AppConstants.BOTTOM_NAVIGATION_VIEW_HEIGHT_DP.toFloat())).toInt()
+        val (screenWidth, screenHeight) = screenDimensionsPx
+
+        val shortScreenEdge = if (orientation == ScreenOrientation.HORIZONTAL)
+            screenHeight else screenWidth
+        val longScreenEdge = if (orientation == ScreenOrientation.HORIZONTAL)
+            screenWidth else screenHeight
+
+        cameraBottomEdgePositionVerticalPx =
+                (longScreenEdge - dpToPx(AppConstants.BOTTOM_NAVIGATION_VIEW_HEIGHT_DP.toFloat())).toInt()
+
+        cameraBottomEdgePositionHorizontalPx =
+                (shortScreenEdge - dpToPx(AppConstants.BOTTOM_NAVIGATION_VIEW_HEIGHT_DP.toFloat())).toInt()
+
         cameraTopEdgePositionPx =
-                (CameraObjectDialogConstants.HEIGHT / 2 + resources.getDimensionPixelSize(R.dimen.radar_layout_dimension) + 2 * resources.getDimensionPixelSize(
-                    R.dimen.radar_margin
-                )).toInt()
-        screenHeightPx = screenHeight
+                (CameraObjectDialogConstants.HEIGHT / 2 + dpToPx(AppConstants.TOOLBAR_HEIGHT_DP.toFloat())).toInt()
+
+        screenHeightVerticalPx = longScreenEdge
+        screenHeightHorizontalPx = shortScreenEdge
+
+        cameraGridNumberOfRowsVertical = cameraBottomEdgePositionVerticalPx / cameraTopEdgePositionPx
+        cameraGridNumberOfRowsHorizontal = cameraBottomEdgePositionHorizontalPx / cameraTopEdgePositionPx
     }
 
     private fun initAppRxErrorHandler() {

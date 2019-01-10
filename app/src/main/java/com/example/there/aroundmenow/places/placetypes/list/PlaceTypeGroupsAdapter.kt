@@ -1,6 +1,5 @@
 package com.example.there.aroundmenow.places.placetypes.list
 
-import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -11,6 +10,7 @@ import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.databinding.PlaceTypeGroupItemBinding
 import com.example.there.aroundmenow.model.UIPlaceType
 import com.example.there.aroundmenow.model.UIPlaceTypeGroup
+import com.example.there.aroundmenow.util.ext.ScreenOrientation
 import com.example.there.aroundmenow.util.ext.orientation
 import io.reactivex.subjects.PublishSubject
 
@@ -49,7 +49,7 @@ class PlaceTypeGroupsAdapter(
 
         init {
             with(binding.root.findViewById<RecyclerView>(R.id.place_types_recycler_view)) {
-                layoutManager = if (binding.root.context.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                layoutManager = if (binding.root.context.orientation == ScreenOrientation.HORIZONTAL) {
                     GridLayoutManager(binding.root.context, 2, RecyclerView.VERTICAL, false)
                 } else {
                     LinearLayoutManager(
