@@ -42,4 +42,11 @@
 
     <string name="more">More</string>
     <string name="add_to_favourites">Add to favourites</string>
+    <string name="place_autocomplete_error">Place Autocomplete error.</string>
+    <string name="unable_to_visualize_place_no_location">Cannot show the place on camera - location unavailable.
+    </string>
+    <string name="google_play_service_unavailable">Google Play Services unavailable. Features requiring device location
+        will not work.
+    </string>
+    <string name="location_disabled">Location disabled.</string>
 </resources>

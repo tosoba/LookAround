@@ -37,6 +37,14 @@ data class UISimplePlace(
             formattedDistanceFromUser = domainPlace.latLng.formattedDistanceTo(userLatLng)
         )
 
+        fun fromGooglePlace(
+            place: Place
+        ): UISimplePlace = UISimplePlace(
+            name = place.name.toString(),
+            latLng = place.latLng,
+            formattedDistanceFromUser = ""
+        )
+
         fun fromGooglePlaceWithUserLatLng(
             place: Place,
             userLatLng: LatLng

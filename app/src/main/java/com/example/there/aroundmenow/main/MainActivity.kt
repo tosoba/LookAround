@@ -132,7 +132,7 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
 
                 PlaceAutocomplete.RESULT_ERROR -> Toast.makeText(
                     this,
-                    "Place Autocomplete error.",
+                    getString(R.string.place_autocomplete_error),
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -161,34 +161,27 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
                 })
                 else Toast.makeText(
                     this@MainActivity,
-                    "Cannot show the place on camera - location unavailable.",
+                    getString(R.string.unable_to_visualize_place_no_location),
                     Toast.LENGTH_LONG
                 ).show()
 
                 lastBottomSheetDialog?.dismiss()
             }
 
-        autocompletePlaceDetailsRequest.withLatestFrom(this)
-            .subscribeWithAutoDispose { (intent, mainState) ->
-                if (mainState.userLatLng is ViewDataState.Value) showFragment(
-                    PlaceDetailsFragment.with(
-                        PlaceDetailsFragment.Arguments.PlaceAutocompleteIntent(
-                            intent,
-                            UISimplePlace.fromGooglePlaceWithUserLatLng(
-                                PlaceAutocomplete.getPlace(this@MainActivity, intent),
-                                mainState.userLatLng.value
-                            )
+        autocompletePlaceDetailsRequest.subscribeWithAutoDispose { intent ->
+            showFragment(
+                PlaceDetailsFragment.with(
+                    PlaceDetailsFragment.Arguments.PlaceAutocompleteIntent(
+                        intent,
+                        UISimplePlace.fromGooglePlace(
+                            PlaceAutocomplete.getPlace(this@MainActivity, intent)
                         )
-                    ), true
-                )
-                else Toast.makeText(
-                    this@MainActivity,
-                    "Cannot show place details - location unavailable.",
-                    Toast.LENGTH_LONG
-                ).show()
+                    )
+                ), true
+            )
 
-                lastBottomSheetDialog?.dismiss()
-            }
+            lastBottomSheetDialog?.dismiss()
+        }
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
@@ -304,7 +297,7 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
 
     private fun showGooglePlayServicesSnackbar() = Snackbar.make(
         findViewById(R.id.container),
-        "Google Play Services unavailable. Features requiring device location will not work.",
+        getString(R.string.google_play_service_unavailable),
         Snackbar.LENGTH_LONG
     ).run {
         duration = BaseTransientBottomBar.LENGTH_INDEFINITE
@@ -312,7 +305,7 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
     }
 
     private fun showLocationDisabledSnackbar() = Snackbar.make(
-        findViewById(R.id.container), "Location disabled.", Snackbar.LENGTH_INDEFINITE
+        findViewById(R.id.container), getString(R.string.location_disabled), Snackbar.LENGTH_INDEFINITE
     ).setAction(getString(R.string.settings)) {
         startActivityForResult(
             Intent(Settings.ACTION_SETTINGS),
