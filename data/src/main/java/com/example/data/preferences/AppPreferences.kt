@@ -18,12 +18,4 @@ class AppPreferences @Inject constructor(context: Context) {
     )
     var screenHeightVerticalPx: Int by SharedPreference(context, PreferencesEntry.ScreenHeightVerticalPx)
     var screenHeightHorizontalPx: Int by SharedPreference(context, PreferencesEntry.ScreenHeightHorizontalPx)
-    var cameraGridNumberOfRowsVertical: Int by SharedPreference(
-        context,
-        PreferencesEntry.CameraGridNumberOfRowsVertical
-    )
-    var cameraGridNumberOfRowsHorizontal: Int by SharedPreference(
-        context,
-        PreferencesEntry.CameraGridNumberOfRowsHorizontal
-    )
 }

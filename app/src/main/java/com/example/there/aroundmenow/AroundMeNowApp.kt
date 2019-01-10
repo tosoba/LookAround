@@ -57,13 +57,6 @@ class AroundMeNowApp : Application(), HasActivityInjector {
 
         screenHeightVerticalPx = longScreenEdge
         screenHeightHorizontalPx = shortScreenEdge
-
-        cameraGridNumberOfRowsVertical = (cameraBottomEdgePositionVerticalPx - cameraTopEdgePositionPx) / dpToPx(
-            AppConstants.BOTTOM_NAVIGATION_VIEW_HEIGHT_DP.toFloat()
-        ).toInt()
-        cameraGridNumberOfRowsHorizontal = (cameraBottomEdgePositionHorizontalPx / cameraTopEdgePositionPx) / dpToPx(
-            AppConstants.BOTTOM_NAVIGATION_VIEW_HEIGHT_DP.toFloat()
-        ).toInt()
     }
 
     private fun initAppRxErrorHandler() {

@@ -35,14 +35,6 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
 
     var userLatLng: LatLng? = null
 
-    // TODO: try to divide the screen into a grid - first calculate the number of rows based on screen height, toolbar height, dialog height etc. (probably in Application class) - round it down and store it in settings
-    // there will be for example 8 columns (360 / 45) on each page (or a different number depending on what works :p)
-    // assign cameraObject to a column based on its userLatLngBearing
-    // look for an empty cell in that column starting with page 0
-    // assign cameraObject to cell
-    // store the information which "cells" are taken in a map or smth
-
-    // this will HOPEFULLY help to avoid running loops for every cameraObject (like in getTakenYAxisPositionsForCameraObject)
     override fun drawPoint(point: Point, canvas: Canvas, orientation: Orientation) {
         val camObject = cameraObjects.findByPoint(point)
         val lastUserLatLng = userLatLng

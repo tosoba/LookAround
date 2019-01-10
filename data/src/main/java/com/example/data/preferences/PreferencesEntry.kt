@@ -26,12 +26,6 @@ sealed class PreferencesEntry<T>(
     object CameraBottomEdgePositionHorizontalPx :
         PreferencesEntry<Int>("PREF_KEY_BOTTOM_EDGE_HORIZONTAL", 0, Options.CALCULATED_ON_APP_START)
 
-    object CameraGridNumberOfRowsVertical :
-        PreferencesEntry<Int>("PREF_NUM_OF_ROWS_VERTICAL", 0, Options.CALCULATED_ON_APP_START)
-
-    object CameraGridNumberOfRowsHorizontal :
-        PreferencesEntry<Int>("PREF_NUM_OF_ROWS_HORIZONTAL", 0, Options.CALCULATED_ON_APP_START)
-
     class Options private constructor(
         val initializeWithDefault: Boolean,
         val mutableAfterOnceSet: Boolean,
