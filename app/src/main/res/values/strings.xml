@@ -49,4 +49,6 @@
         will not work.
     </string>
     <string name="location_disabled">Location disabled.</string>
+    <string name="your_address_is">Your address is:</string>
+    <string name="unable_to_find_your_address">Unable to find your address - check if location is enabled.</string>
 </resources>

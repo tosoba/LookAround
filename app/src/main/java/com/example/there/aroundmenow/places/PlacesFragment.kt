@@ -1,6 +1,7 @@
 package com.example.there.aroundmenow.places
 
-import android.util.Log
+import android.location.Address
+import android.widget.Toast
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
@@ -10,10 +11,13 @@ import com.example.there.aroundmenow.places.favourites.FavouritesFragment
 import com.example.there.aroundmenow.places.placetypes.PlaceTypesFragment
 import com.example.there.aroundmenow.places.pois.POIsFragment
 import com.example.there.aroundmenow.util.ext.checkItem
+import com.example.there.aroundmenow.util.ext.wholeAddressString
 import com.example.there.aroundmenow.util.view.viewpager.FragmentViewPagerAdapter
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_places.*
+import kotlinx.android.synthetic.main.reverse_geocoding_result_dialog.view.*
 import java.util.concurrent.TimeUnit
 
 
@@ -44,21 +48,37 @@ class PlacesFragment :
         }
 
         reverse_geocoding_fab.clicks()
-            .debounce(3, TimeUnit.SECONDS)
+            .debounce(1, TimeUnit.SECONDS)
             .subscribeWithAutoDispose { actions.reverseGeocodeLocation() }
     }
 
     override fun Observable<PlacesState>.observe() = subscribeWithAutoDispose {
         when (it.lastGeocodingResult) {
-            is ViewDataState.Value -> Log.e(
-                "ADDR",
-                it.lastGeocodingResult.value.address.getAddressLine(0) ?: "null addr"
-            )
-            is ViewDataState.Error -> Log.e("ADDR", "Reverse geocoding error.")
-            is ViewDataState.Loading -> Log.e("ADDR", "loading")
+            is ViewDataState.Value -> onReverseGeocodingResultValue(it.lastGeocodingResult.value.address)
+            is ViewDataState.Error -> onReverseGeocodingError()
         }
     }
 
+    private fun onReverseGeocodingResultValue(address: Address) {
+        context?.let {
+            BottomSheetDialog(it).run {
+                setContentView(layoutInflater.inflate(
+                    R.layout.reverse_geocoding_result_dialog,
+                    null,
+                    false
+                ).apply {
+                    reverse_geocoded_address_text_view?.text = address.wholeAddressString
+                })
+                show()
+            }
+        }
+    }
+
+    private fun onReverseGeocodingError() {
+        context?.let {
+            Toast.makeText(it, getString(R.string.unable_to_find_your_address), Toast.LENGTH_LONG).show()
+        }
+    }
 
     companion object {
         private val viewPagerItemIndexes = mapOf(

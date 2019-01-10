@@ -1,5 +1,6 @@
 package com.example.there.aroundmenow.util.ext
 
+import android.location.Address
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 
@@ -18,3 +19,10 @@ fun locationFromLatLng(lat: Double, lng: Double) = Location("").also {
 
 val Location.latLng: LatLng
     get() = LatLng(latitude, longitude)
+
+val Address.latLng: LatLng?
+    get() = if (hasLatitude() && hasLongitude()) LatLng(latitude, longitude) else null
+
+val Address.wholeAddressString: String
+    get() = if (maxAddressLineIndex == -1) ""
+    else (0..maxAddressLineIndex).joinToString(" ") { getAddressLine(it) }
