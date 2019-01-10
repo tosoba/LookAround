@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.preference.ListPreference
+            android:defaultValue="0"
+            android:dialogIcon="@drawable/visualizer"
+            android:entries="@array/default_visualizer_names"
+            android:entryValues="@array/default_visualizer_values"
+            android:icon="@drawable/visualizer"
+            android:key="@string/default_visualizer"
+            android:summary="@string/visaulizer_summary"
+            android:title="@string/default_visualizer"/>
+
+    <androidx.preference.ListPreference
+            android:defaultValue="500"
+            android:dialogIcon="@drawable/radius"
+            android:entries="@array/place_search_radius_names"
+            android:entryValues="@array/place_search_radius_values"
+            android:icon="@drawable/radius"
+            android:key="@string/place_search_radius"
+            android:summary="@string/place_search_radius_summary"
+            android:title="@string/place_search_radius"/>
+
+</androidx.preference.PreferenceScreen>

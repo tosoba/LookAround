@@ -51,4 +51,10 @@
     <string name="location_disabled">Location disabled.</string>
     <string name="your_address_is">Your address is:</string>
     <string name="unable_to_find_your_address">Unable to find your address - check if location is enabled.</string>
+    <string name="default_visualizer">Default visualizer</string>
+    <string name="visaulizer_summary">Select whether found places should be displayed on camera or on map first by
+        default.
+    </string>
+    <string name="place_search_radius_summary">Choose maximum place search radius.</string>
+    <string name="place_search_radius">Place search radius</string>
 </resources>

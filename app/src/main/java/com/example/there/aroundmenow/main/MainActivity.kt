@@ -24,6 +24,7 @@ import com.example.there.aroundmenow.databinding.PlaceAutocompleteResultDialogBi
 import com.example.there.aroundmenow.model.UISimplePlace
 import com.example.there.aroundmenow.placedetails.PlaceDetailsFragment
 import com.example.there.aroundmenow.places.PlacesFragment
+import com.example.there.aroundmenow.preferences.PreferencesFragment
 import com.example.there.aroundmenow.util.AppConstants
 import com.example.there.aroundmenow.util.ext.*
 import com.example.there.aroundmenow.util.lifecycle.RxLocationComponent
@@ -88,7 +89,15 @@ class MainActivity : RxActivity.Layout<MainState, MainActions>(R.layout.activity
 
         supportFragmentManager.addOnBackStackChangedListener(onBackStackChangedListener)
 
-        drawer_navigation_view.onItemWithIdSelected { drawer_layout.closeDrawers() }
+        drawer_navigation_view.onItemWithIdSelected {
+            when (it) {
+                R.id.drawer_menu_settings_item -> showFragment(PreferencesFragment(), true)
+                R.id.drawer_menu_about_item -> {
+                    //TODO: about fragment with viewpager that will have a big image (screen from app) and some description below
+                }
+            }
+            drawer_layout.closeDrawers()
+        }
 
         disableScreenRotation()
         checkPermissions(

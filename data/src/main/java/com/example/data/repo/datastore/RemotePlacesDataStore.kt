@@ -28,7 +28,7 @@ class RemotePlacesDataStore @Inject constructor(
     override fun findNearbyPOIs(
         latLng: LatLng
     ): Single<Result<List<SimplePlace>, DataStoreError>> = overpassAPIClient.getPlaces(
-        query = latLng.toOverpassPOIsQueryWithRadius(preferences.radius)
+        query = latLng.toOverpassPOIsQueryWithRadius(preferences.placesSearchRadius)
     ).result
 
     override fun findNearbyPlacesOfType(
@@ -37,7 +37,7 @@ class RemotePlacesDataStore @Inject constructor(
     ): Single<Result<List<SimplePlace>, DataStoreError>> = overpassAPIClient.getPlaces(
         query = latLng.toOverpassQueryWithRadius(
             query = placeTypeQuery,
-            radius = preferences.radius
+            radius = preferences.placesSearchRadius
         )
     ).result
 

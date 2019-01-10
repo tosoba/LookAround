@@ -4,4 +4,8 @@
             android:id="@+id/drawer_menu_about_item"
             android:icon="@drawable/info_outline"
             android:title="@string/about"/>
+
+    <item android:id="@+id/drawer_menu_settings_item"
+          android:icon="@drawable/settings"
+          android:title="@string/settings"/>
 </menu>

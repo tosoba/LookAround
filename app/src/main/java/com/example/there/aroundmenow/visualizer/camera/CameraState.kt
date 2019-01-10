@@ -9,19 +9,18 @@ data class CameraState(
     val lastPressedPoint: ViewDataState<Point, Nothing>
 ) {
     companion object {
-        val INITIAL = CameraState(0, 2, ViewDataState.Idle)
+        val INITIAL = CameraState(0, 3, ViewDataState.Idle)
     }
 
     object Constants {
         val cameraRanges = sortedMapOf(
             50 to "50 m",
             100 to "100 m",
-            200 to "250 m",
+            250 to "250 m",
             500 to "500 m",
             1000 to "1 km",
             2000 to "2 km",
-            5000 to "5 km",
-            10000 to "10 km"
+            5000 to "5 km"
         )
     }
 }

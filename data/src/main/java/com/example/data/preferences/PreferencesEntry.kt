@@ -8,8 +8,11 @@ sealed class PreferencesEntry<T>(
     operator fun component1(): String = key
     operator fun component2(): T = defaultValue
 
-    object PlaceSearchRadius :
+    object PlacesSearchRadius :
         PreferencesEntry<Int>("PREF_KEY_SEARCH_RADIUS", 10000, Options.DEFINED_BY_USER)
+
+    object DefaultVisualizer :
+        PreferencesEntry<Int>("PREF_KEY_DEFAULT_VISUALIZER", 0, Options.DEFINED_BY_USER)
 
     object ScreenHeightVerticalPx :
         PreferencesEntry<Int>("PREF_SCREEN_HEIGHT_VERTICAL", 0, Options.CALCULATED_ON_APP_START)
