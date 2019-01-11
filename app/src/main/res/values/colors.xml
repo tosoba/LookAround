@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryLight">#9c4dcc</color>
-    <color name="colorPrimary">#4a148c</color>
-    <color name="colorPrimaryDark">#E6000000</color>
-    <color name="colorAccent">#ffc4ff</color>
+    <color name="colorPrimaryLight">#1976d2</color>
+    <color name="colorPrimary">#003c8f</color>
+    <color name="colorPrimaryDark">#E6000005</color>
+    <color name="colorAccent">#b3e5fc</color>
 
     <color name="fab_menu_labels_colorRipple">#66FFFFFF</color>
     <color name="fab_menu_labels_colorPressed">#444444</color>
     <color name="fab_menu_labels_colorNormal">#333333</color>
 
-    <color name="dark_gray_background">#181818</color>
+    <color name="dark_gray_background">#090912</color>
     <color name="dark_gray_card_background">#373737</color>
 </resources>

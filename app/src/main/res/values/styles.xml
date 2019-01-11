@@ -8,7 +8,22 @@
 
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/darker_gray</item>
+        <item name="android:textColorHighlight">@color/colorAccent</item>
+
+        <item name="alertDialogTheme">@style/DialogStyle</item>
+
     </style>
+
+    <style name="DialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="android:windowBackground">@color/dark_gray_card_background</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
 
     <style name="BlackShadowTextView">
         <item name="android:shadowColor">#000000</item>

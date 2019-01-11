@@ -2,6 +2,8 @@ package com.example.there.aroundmenow.visualizer
 
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.View
+import com.example.data.preferences.AppPreferences
 import com.example.there.aroundmenow.R
 import com.example.there.aroundmenow.base.architecture.view.RxFragment
 import com.example.there.aroundmenow.base.architecture.view.ViewDataState
@@ -32,6 +34,7 @@ import kotlinx.android.synthetic.main.fragment_visualizer.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import javax.inject.Inject
 
 
 class VisualizerFragment :
@@ -51,10 +54,21 @@ class VisualizerFragment :
         )
     }
 
+    @Inject
+    lateinit var appPreferences: AppPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle += EventBusComponent(this)
         if (savedInstanceState == null) initFromArguments()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState == null && appPreferences.defaultVisualizer == "1") {
+            visualizer_view_pager.postDelayed({ visualizer_view_pager.setCurrentItem(1, false) }, 100)
+            visualizer_bottom_navigation_view?.checkItem(1)
+        }
     }
 
     override fun FragmentVisualizerBinding.init() {
