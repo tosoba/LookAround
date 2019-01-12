@@ -4,6 +4,6 @@
           android:id="@+id/pois_list_fragment"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:name="com.example.there.aroundmenow.list.simpleplaces.SimplePlacesListFragment"
+          android:name="com.example.there.lookaround.list.simpleplaces.SimplePlacesListFragment"
           app:eventTag="FromSimpleListToPOIs"
           tools:context=".places.pois.POIsFragment"/>

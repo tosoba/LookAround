@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <data>
-        <variable name="place" type="com.example.there.aroundmenow.model.UIPlace"/>
+        <variable name="place" type="com.example.there.lookaround.model.UIPlace"/>
         <variable name="distanceFromUser" type="String"/>
         <variable name="pagerAdapter" type="androidx.fragment.app.FragmentPagerAdapter"/>
     </data>
@@ -122,7 +122,7 @@
                     app:layout_constraintLeft_toLeftOf="@id/place_details_center_guideline"
                     app:layout_constraintRight_toRightOf="parent"/>
 
-            <com.example.there.aroundmenow.util.view.viewpager.SwipeableViewPager
+            <com.example.there.lookaround.util.view.viewpager.SwipeableViewPager
                     android:id="@+id/place_details_view_pager"
                     android:layout_width="0dp"
                     android:layout_height="0dp"

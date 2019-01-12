@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <data>
-        <variable name="group" type="com.example.there.aroundmenow.model.UIPlaceTypeGroup"/>
+        <variable name="group" type="com.example.there.lookaround.model.UIPlaceTypeGroup"/>
     </data>
 
     <androidx.cardview.widget.CardView

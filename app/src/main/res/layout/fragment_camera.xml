@@ -11,12 +11,12 @@
                  android:layout_width="match_parent"
                  android:layout_height="match_parent"/>
 
-    <com.example.there.aroundmenow.visualizer.camera.view.CameraView
+    <com.example.there.lookaround.visualizer.camera.view.CameraView
             android:id="@+id/camera_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    <com.example.there.aroundmenow.visualizer.camera.view.CameraRadarView
+    <com.example.there.lookaround.visualizer.camera.view.CameraRadarView
             android:id="@+id/radar_view"
             android:layout_width="@dimen/radar_layout_dimension"
             android:layout_height="@dimen/radar_layout_dimension"

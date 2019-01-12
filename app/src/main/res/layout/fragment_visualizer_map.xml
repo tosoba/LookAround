@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.there.aroundmenow.util.view.map.GoogleMapWrapperLayout
+<com.example.there.lookaround.util.view.map.GoogleMapWrapperLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/visualizer_map_wrapper_layout"
@@ -41,4 +41,4 @@
 
     </androidx.cardview.widget.CardView>
 
-</com.example.there.aroundmenow.util.view.map.GoogleMapWrapperLayout>
+</com.example.there.lookaround.util.view.map.GoogleMapWrapperLayout>

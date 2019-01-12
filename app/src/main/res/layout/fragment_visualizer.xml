@@ -13,7 +13,7 @@
             android:orientation="vertical"
             tools:context=".visualizer.VisualizerFragment">
 
-        <com.example.there.aroundmenow.util.view.viewpager.SwipeableViewPager
+        <com.example.there.lookaround.util.view.viewpager.SwipeableViewPager
                 android:id="@+id/visualizer_view_pager"
                 android:layout_width="0dp"
                 android:layout_height="0dp"

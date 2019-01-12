@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <data>
-        <variable name="placeType" type="com.example.there.aroundmenow.model.UIPlaceType"/>
+        <variable name="placeType" type="com.example.there.lookaround.model.UIPlaceType"/>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

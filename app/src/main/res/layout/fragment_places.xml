@@ -11,9 +11,9 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="com.example.there.aroundmenow.places.PlacesFragment">
+            tools:context="com.example.there.lookaround.places.PlacesFragment">
 
-        <com.example.there.aroundmenow.util.view.viewpager.SwipeableViewPager
+        <com.example.there.lookaround.util.view.viewpager.SwipeableViewPager
                 android:id="@+id/places_view_pager"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
