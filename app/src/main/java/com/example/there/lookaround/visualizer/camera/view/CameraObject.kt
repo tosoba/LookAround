@@ -9,8 +9,8 @@ class CameraObject(
     renderer: CameraRenderer,
     private val cameraParams: CameraParams
 ) {
-    val point: SimplePoint =
-        SimplePoint(CameraUtils.objectId, place.latLng.location, renderer).apply { name = place.name }
+    val point: SimplePoint = SimplePoint(CameraUtils.objectId, place.latLng.location, renderer)
+        .apply { name = place.name }
     val radarPoint: SimplePoint = SimplePoint(CameraUtils.objectId, place.latLng.location, CameraUtils.radarRenderer)
 
     var yAxisPosition: Float? = null
@@ -24,7 +24,8 @@ class CameraObject(
 
     var yAxisPositionOnPage: Float? = null
         private set(value) {
-            field = value!! - pageNumber * (cameraParams.screenHeightPx - cameraParams.cameraTopEdgePositionPx)
+            field =
+                value!! - pageNumber * (cameraParams.screenHeightPx - cameraParams.cameraTopEdgePositionPx)
         }
 
     var pageNumber = 0

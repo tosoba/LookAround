@@ -36,54 +36,58 @@ class PlacesRepository @Inject constructor(
             )
         )
 
-    override fun findNearbyPOIs(
-        latLng: LatLng
-    ): Single<FindNearbyPlacesResult> = remote.findNearbyPOIs(latLng).map { result ->
-        when (result) {
-            is Result.Value -> result.mapToType()
-            is Result.Error -> result.error.toRepositoryResult<FindNearbyPlacesResult> {
-                result.mapTo(FindNearbyPlacesError.NoPlacesFound)
+    override fun findNearbyPOIs(latLng: LatLng): Single<FindNearbyPlacesResult> = remote
+        .findNearbyPOIs(latLng)
+        .map { result ->
+            when (result) {
+                is Result.Value -> result.mapToType()
+                is Result.Error -> result.error.toRepositoryResult<FindNearbyPlacesResult> {
+                    result.mapTo(FindNearbyPlacesError.NoPlacesFound)
+                }
             }
         }
-    }
 
     override fun findNearbyPlacesOfType(
         latLng: LatLng,
         placeTypeQuery: String
-    ): Single<FindNearbyPlacesResult> = remote.findNearbyPlacesOfType(latLng, placeTypeQuery).map { result ->
-        when (result) {
-            is Result.Value -> result.mapToType()
-            is Result.Error -> result.error.toRepositoryResult<FindNearbyPlacesResult> {
-                result.mapTo(FindNearbyPlacesError.NoPlacesFound)
+    ): Single<FindNearbyPlacesResult> = remote.findNearbyPlacesOfType(latLng, placeTypeQuery)
+        .map { result ->
+            when (result) {
+                is Result.Value -> result.mapToType()
+                is Result.Error -> result.error.toRepositoryResult<FindNearbyPlacesResult> {
+                    result.mapTo(FindNearbyPlacesError.NoPlacesFound)
+                }
             }
         }
-    }
 
     override fun findPlaceDetails(
         simplePlace: SimplePlace
-    ): Single<FindPlaceDetailsResult> = remote.findPlaceDetails(simplePlace).map {
-        when (it) {
-            is Result.Value -> it.mapToType()
-            is Result.Error -> it.error.toRepositoryResult<FindPlaceDetailsResult> {
-                it.mapTo(FindPlaceDetailsError.PlaceDetailsNotFound)
+    ): Single<FindPlaceDetailsResult> = remote.findPlaceDetails(simplePlace)
+        .map {
+            when (it) {
+                is Result.Value -> it.mapToType()
+                is Result.Error -> it.error.toRepositoryResult<FindPlaceDetailsResult> {
+                    it.mapTo(FindPlaceDetailsError.PlaceDetailsNotFound)
+                }
             }
         }
-    }
 
     override fun findPlacePhotos(
         id: String
-    ): Single<FindPlacePhotosResult> = remote.findPlacePhotos(id).map {
-        when (it) {
-            is Result.Value -> it.mapToType()
-            is Result.Error -> it.error.toRepositoryResult<FindPlacePhotosResult> {
-                it.mapTo(FindPlacePhotosError.NoPhotosFound)
+    ): Single<FindPlacePhotosResult> = remote.findPlacePhotos(id)
+        .map {
+            when (it) {
+                is Result.Value -> it.mapToType()
+                is Result.Error -> it.error.toRepositoryResult<FindPlacePhotosResult> {
+                    it.mapTo(FindPlacePhotosError.NoPhotosFound)
+                }
             }
         }
-    }
 
-    override fun addPlaceToFavourites(savedPlace: SavedPlace): Completable = local.addPlaceToFavourites(savedPlace)
+    override fun addPlaceToFavourites(savedPlace: SavedPlace): Completable = local
+        .addPlaceToFavourites(savedPlace)
 
-    override fun getFavouritePlaces(): Flowable<GetFavouritePlacesResult> = local.getFavouritePlaces().map {
-        Result.Value<List<SavedPlace>, GetFavouritePlacesError>(it)
-    }
+    override fun getFavouritePlaces(): Flowable<GetFavouritePlacesResult> = local
+        .getFavouritePlaces()
+        .map { Result.Value<List<SavedPlace>, GetFavouritePlacesError>(it) }
 }

@@ -13,6 +13,7 @@ import com.example.there.appuntalib.point.renderer.PointRenderer
 import com.example.there.lookaround.util.ext.firstOrNull
 import com.example.there.lookaround.util.ext.location
 import com.google.android.gms.maps.model.LatLng
+import kotlin.math.abs
 
 class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
 
@@ -51,7 +52,8 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
 
             if (currentPage == camObject.pageNumber) {
                 val background = drawBackground(canvas, point)
-                val textWidth = (background.width() - 10).toInt() // 10 to keep some space on the right for the "..."
+                val textWidth =
+                    (background.width() - 10).toInt() // 10 to keep some space on the right for the "..."
 
                 drawTitle(camObject.place.name, textWidth, canvas, point)
 
@@ -63,7 +65,8 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
     }
 
     private fun drawTitle(title: String, textWidth: Int, canvas: Canvas, point: Point) {
-        val txtTitle = TextUtils.ellipsize(title, textPaint, textWidth.toFloat(), TextUtils.TruncateAt.END)
+        val txtTitle =
+            TextUtils.ellipsize(title, textPaint, textWidth.toFloat(), TextUtils.TruncateAt.END)
         textPaint.textSize = CameraObjectDialogConstants.TITLE_TEXT_SIZE
         canvas.drawText(
             txtTitle,
@@ -96,14 +99,16 @@ class CameraRenderer(private val cameraParams: CameraParams) : PointRenderer {
     private fun List<CameraObject>.getTakenYAxisPositionsForCameraObject(
         cameraObject: CameraObject
     ): List<Float> = userLatLng?.let { latLng ->
-        if (cameraObject.userLatLngBearing == null) cameraObject.userLatLngBearing = PointsUtil.calculateBearing(
-            latLng.location,
-            cameraObject.place.latLng.location
-        )
+        if (cameraObject.userLatLngBearing == null) {
+            cameraObject.userLatLngBearing = PointsUtil.calculateBearing(
+                latLng.location,
+                cameraObject.place.latLng.location
+            )
+        }
 
         return filter {
             it.point.name != cameraObject.point.name && it.yAxisPosition != null && it.userLatLngBearing != null
-                    && Math.abs(it.userLatLngBearing!! - cameraObject.userLatLngBearing!!) < 45.0
+                    && abs(it.userLatLngBearing!! - cameraObject.userLatLngBearing!!) < 45.0
         }.map { co -> co.yAxisPosition!! }
     } ?: emptyList()
 
